@@ -15,13 +15,14 @@ class AboutPage extends StatelessWidget {
                   child: Column(
                     children: <Widget>[
                       Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 60.0, vertical: 8.0),
                         margin: EdgeInsets.all(20.0),
                         child: Image.asset('assets/BGC_Niagara_logo.png'),
                       ),
                       
                       Text(
                         '\n\nWelcome to the Boys and Girls Club Messaging App. This app allows you to stay up to date with the latest anouncements based on your specific class enrollment. It also allows yur to quickly communicate with the instructor.',
-                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 18), textAlign: TextAlign.center,
                       ),
                     ],
                   )),

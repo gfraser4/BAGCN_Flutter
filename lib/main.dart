@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import './aboutPage.dart';
 import './addClassesPage.dart';
@@ -11,7 +12,7 @@ import './signupPage.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  final appTitle = 'My Classes';
+  final appTitle = 'BAGC Niagara';
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/login',
       routes: {
         // When we navigate to the "/" route, build the FirstScreen Widget
-        '/': (context) => MyHomePage(),
+        '/': (context) => MyClassList(),
         // When we navigate to the "/second" route, build the SecondScreen Widget
         '/login': (context) => LoginPage(),
         '/signup': (context) => SignUpPage(),
@@ -28,17 +29,15 @@ class MyApp extends StatelessWidget {
         // Define the default Brightness and Colors
         brightness: Brightness.light,
         primaryColor: Colors.lightGreen,
-        accentColor: Colors.lightGreen,
+        accentColor: Color(0xFF1ca5e5),
 
-        // Define the default Font Family
-        fontFamily: 'Montserrat',
-
+        // Define the default Font Famil
         // Define the default TextTheme. Use this to specify the default
         // text styling for headlines, titles, bodies of text, and more.
         textTheme: TextTheme(
           headline: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
           title: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
-          body1: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+          body1: TextStyle(fontSize: 14.0),
         ),
       ),
       title: appTitle,
@@ -47,106 +46,59 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  MyHomePage({Key key}) : super(key: key);
+class MyClassList extends StatefulWidget {
+  @override
+  _MyClassList createState() {
+    return _MyClassList();
+  }
+}
 
+class _MyClassList extends State<MyClassList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(title: Text('My Classes')),
-      body: ListView(
-        // Important: Remove any padding from the ListView.
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          Divider(
-            color: Colors.lightGreen,
-          ),
-          ListTile(
-              trailing: Icon(
-                Icons.warning,
-                color: Colors.redAccent,
-              ),
-              title: Text('Aquatics 101'),
-              subtitle: Text('Section: 2\nInstructor: John Smith'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ClassPage('Aquatics 2 - Annoucements')),
-                );
-              }),
-          Divider(
-            color: Colors.lightGreen,
-          ),
-          ListTile(
-              title: Text('Teen Zone'),
-              subtitle: Text('Section: 1\nInstructor: Jane Doe'),
-              onTap: () {}),
-          Divider(
-            color: Colors.lightGreen,
-          ),
-          ListTile(
-              title: Text('Jr. Ball Hockey/Soccer'),
-              subtitle: Text('Section: 1\nInstructor: Bobby Orr'),
-              onTap: () {}),
-          Divider(
-            color: Colors.lightGreen,
-          ),
-          ListTile(
-              title: Text('Gymnastics'),
-              subtitle: Text('Section: 3\nInstructor: Laura Smith'),
-              onTap: () {}),
-          Divider(
-            color: Colors.lightGreen,
-          ),
-          ListTile(
-              title: Text('Kitchen Creations'),
-              subtitle: Text('Section: 1\nInstructor: Julie Cook'),
-              onTap: () {}),
-          Divider(
-            color: Colors.lightGreen,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.only(right: 20, bottom: 5),
-                child: FittedBox(
-                  child: FloatingActionButton(
-                    child: Icon(Icons.add),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AddClassesPage()),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ],
-          )
-        ],
+      body: _buildBody(context),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddClassesPage()),
+          );
+        },
       ),
       drawer: Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the Drawer if there isn't enough vertical
-        // space to fit everything.
         child: ListView(
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-              child: Image.asset('assets/BGC_Niagara_logo.png'),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 50.0, vertical: 8.0),
+              child: Image.asset(
+                'assets/BGC_Niagara_logo.png',
+              ),
               decoration: BoxDecoration(
+                boxShadow: [
+                  new BoxShadow(
+                    color: Colors.grey,
+                    blurRadius: 5.0, // has the effect of softening the shadow
+                    spreadRadius: 0.7, // has the effect of extending the shadow
+                    offset: Offset(
+                      -1.0, // horizontal, move right 10
+                      1.0, // vertical, move down 10
+                    ),
+                  ),
+                ],
                 color: Colors.lightGreen[100],
               ),
             ),
             ListTile(
               trailing: Icon(
                 Icons.announcement,
-                color: Colors.redAccent,
+                color: Color(0xFF1ca5e5),
               ),
               title: Text('Messages'),
               onTap: () {
@@ -157,7 +109,7 @@ class MyHomePage extends StatelessWidget {
               },
             ),
             Divider(
-              color: Colors.lightGreen,
+              color: Color(0xFF1ca5e5),
             ),
             ListTile(
               title: Text('Manage Classes'),
@@ -169,7 +121,7 @@ class MyHomePage extends StatelessWidget {
               },
             ),
             Divider(
-              color: Colors.lightGreen,
+              color: Color(0xFF1ca5e5),
             ),
             ListTile(
               title: Text('Profile Settings'),
@@ -181,7 +133,7 @@ class MyHomePage extends StatelessWidget {
               },
             ),
             Divider(
-              color: Colors.lightGreen,
+              color: Color(0xFF1ca5e5),
             ),
             ListTile(
               title: Text('About'),
@@ -192,9 +144,138 @@ class MyHomePage extends StatelessWidget {
                 );
               },
             ),
+            Divider(
+              color: Color(0xFF1ca5e5),
+            ),
           ],
         ),
       ),
     );
   }
+}
+
+Widget _buildBody(BuildContext context) {
+  String user = 'lj@gmail.com';
+  return StreamBuilder<QuerySnapshot>(
+    stream: Firestore.instance
+        .collection('class')
+        .where('parents', arrayContains: user)
+        //.orderBy('clsName')
+        .snapshots(),
+    builder: (context, snapshot) {
+      if (!snapshot.hasData) return LinearProgressIndicator();
+
+      return _buildList(context, snapshot.data.documents);
+    },
+  );
+}
+
+Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
+  return ListView(
+    padding: const EdgeInsets.only(top: 8.0),
+    children: snapshot.map((data) => _buildListItem(context, data)).toList(),
+  );
+}
+
+Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
+  final classes = Classes.fromSnapshot(data);
+  List<String> user = ['lj@gmail.com'];
+  return Column(
+    children: <Widget>[
+      Container(
+        decoration: new BoxDecoration(color: Colors.lightBlue[50]),
+        child: ListTile(
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 3.0, vertical: 8.0),
+            title: Text('${classes.clsName} - ${classes.code}',
+                style: TextStyle(fontWeight: FontWeight.w600)),
+            subtitle: Text(
+                '\nDates: ${classes.dates}\nTimes: ${classes.times}\nLocation: ${classes.location}'),
+            leading: IconButton(
+              icon: Icon(Icons.settings),
+              color: Colors.grey,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Remove Class?'),
+                      content: Text(
+                          'Are you sure you want to remove ${classes.clsName} - ${classes.code} from your class list?'),
+                      actions: <Widget>[
+                        FlatButton(
+                          child: Text("Cancel"),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        FlatButton(
+                          child: Text("Accept"),
+                          onPressed: () {
+                            classes.reference.updateData(
+                                {"parents": FieldValue.arrayRemove(user)});
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+            trailing: IconButton(
+              icon: Icon(Icons.chevron_right),
+              color: Color(0xFF1ca5e5),
+              onPressed: () {
+                Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        ClassPage(classes.clsName, classes.code)),
+              );
+              },
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        ClassPage(classes.clsName, classes.code)),
+              );
+            }),
+      ),
+      Divider(
+        color: Colors.lightBlue,
+      ),
+    ],
+    key: ValueKey(classes.clsName),
+    // padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+  );
+}
+
+class Classes {
+  final String clsName;
+  final String location;
+  final String dates;
+  final String times;
+  final int code;
+  final DocumentReference reference;
+
+  Classes.fromMap(Map<String, dynamic> map, {this.reference})
+      : assert(map['clsName'] != null),
+        assert(map['code'] != null),
+        assert(map['dates'] != null),
+        assert(map['times'] != null),
+        assert(map['location'] != null),
+        clsName = map['clsName'],
+        location = map['location'],
+        dates = map['dates'],
+        times = map['times'],
+        code = map['code'];
+
+  Classes.fromSnapshot(DocumentSnapshot snapshot)
+      : this.fromMap(snapshot.data, reference: snapshot.reference);
+
+  @override
+  String toString() => "Record<$clsName:$code>";
 }
