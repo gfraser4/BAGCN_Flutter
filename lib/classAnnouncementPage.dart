@@ -63,6 +63,8 @@ Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
 
 Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
   final announcements = Announcements.fromSnapshot(data);
+  final _likesCountController = new TextEditingController();
+  int likes = 0;
   return Padding(
     key: ValueKey(announcements.clsName),
     padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 2.0),
@@ -96,12 +98,11 @@ Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
                           color: Color(0xFF1ca5e5),
                           onPressed: () {},
                         ),
-                        Text('0', style: TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF1ca5e5), )),
-                        IconButton(
-                          icon: Icon(Icons.thumb_down),
-                          color: Color(0xFF1ca5e5),
-                          onPressed: () {},
-                        ),
+                        Text('0',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF1ca5e5),
+                            )),
                       ],
                     ),
                   ),
@@ -111,18 +112,29 @@ Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
                         IconButton(
                           icon: Icon(Icons.forum),
                           color: Color(0xFF1ca5e5),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => NewMessagePage()),
+                      );
+                          },
                         ),
-                        Text('0', style: TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF1ca5e5), )),
-                        
+                        Text('0',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF1ca5e5),
+                            )),
                       ],
                     ),
                   ),
-                        IconButton(
-                          icon: Icon(Icons.more_horiz),
-                          color: Color(0xFF1ca5e5),
-                          onPressed: () {},
-                        ),
+                  IconButton(
+                    icon: Icon(Icons.more_horiz),
+                    color: Color(0xFF1ca5e5),
+                    onPressed: () {
+                      
+                    },
+                  ),
                 ],
               )
             ],
