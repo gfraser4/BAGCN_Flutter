@@ -10,7 +10,9 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPage extends State<SignUpPage> {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { //SEE BOTTOM OF PAGE FOR LAYOUT/SCAFFOLD
+
+//HERO/LOGO AREA
     final logo = Hero(
       tag: 'hero',
       child: Container(
@@ -19,6 +21,7 @@ class _SignUpPage extends State<SignUpPage> {
       ),
     );
 
+//FIRST NAME INPUT FIELD
     final firstName = TextFormField(
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
@@ -35,6 +38,7 @@ class _SignUpPage extends State<SignUpPage> {
       ),
     );
 
+//LAST NAME INPUT FIELD
     final lastName = TextFormField(
       autofocus: false,
       //initialValue: 'password',
@@ -51,6 +55,7 @@ class _SignUpPage extends State<SignUpPage> {
       ),
     );
 
+//EMAIL INPUT FIELD
     final email = TextFormField(
       autofocus: false,
       //initialValue: 'password',
@@ -67,6 +72,7 @@ class _SignUpPage extends State<SignUpPage> {
       ),
     );
 
+//PASSWORD INPUT FIELD
     final password = TextFormField(
       autofocus: false,
       //initialValue: 'password',
@@ -83,6 +89,7 @@ class _SignUpPage extends State<SignUpPage> {
       ),
     );
 
+//CONFIRM PASSWORD INPUT FIELD
     final confirmPassword = TextFormField(
       autofocus: false,
       //initialValue: 'password',
@@ -99,31 +106,7 @@ class _SignUpPage extends State<SignUpPage> {
       ),
     );
 
-    final loginButton = Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.0),
-      child: RaisedButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(6),
-        ),
-        onPressed: () {
-          Navigator.pushReplacementNamed(context, '/');
-        },
-        padding: EdgeInsets.all(12),
-        color: Color(0xFF1ca5e5),
-        child: Text('Log In', style: TextStyle(color: Colors.white)),
-      ),
-    );
-
-    final signup = FlatButton(
-      child: Text(
-        'Sign up',
-        style: TextStyle(color: Color(0xFF1ca5e5)),
-      ),
-      onPressed: () {
-        Navigator.pushReplacementNamed(context, '/signup');
-      },
-    );
-
+//CHOOSE ROLE TEXT
     final choice = Text(
       'Choose your Role:',
       textAlign: TextAlign.center,
@@ -131,6 +114,7 @@ class _SignUpPage extends State<SignUpPage> {
           color: Color(0xFF1ca5e5), fontWeight: FontWeight.w600, fontSize: 18),
     );
 
+//SUPERVISOR AND PARENT BUTTONS
     final role = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -148,7 +132,7 @@ class _SignUpPage extends State<SignUpPage> {
                   ),
                 ),
                 Text(
-                  'Instructor',
+                  'Supervisor',
                   style: TextStyle(color: Color(0xFF1ca5e5)),
                 ),
               ],
@@ -185,19 +169,18 @@ class _SignUpPage extends State<SignUpPage> {
       ],
     );
 
+//BACK TO LOGIN BUTTON
     final loginPage = FlatButton(
       child: Text(
         'Back to Login',
         style: TextStyle(color: Color(0xFF1ca5e5)),
       ),
       onPressed: () {
-        // Update the state of the app
-        // ...
-        // Then close the drawer
         Navigator.pushReplacementNamed(context, '/login');
       },
     );
 
+//PAGE LAYOU AND SCAFFOLD
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -236,126 +219,3 @@ class _SignUpPage extends State<SignUpPage> {
     );
   }
 }
-
-// class SignUpPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       resizeToAvoidBottomPadding: true,
-//       body:
-//       Center(
-//         child: ListView(
-
-//           children: <Widget>[
-
-//             Container(
-//               margin: EdgeInsets.only(left: 20.0, right: 20.0),
-//               child: Image.asset('assets/BGC_Niagara_logo.png'),
-//             ),
-//             TextFormField(
-//               decoration: InputDecoration(
-//                   labelText: 'First Name',
-//                   icon: Icon(
-//                     Icons.account_circle,
-//                     color: Colors.lightGreen,
-//                   )),
-//             ),
-//             TextFormField(
-//               decoration: InputDecoration(
-//                   labelText: 'Last Name',
-//                   icon: Icon(
-//                     Icons.account_circle,
-//                     color: Colors.lightGreen,
-//                   )),
-//             ),
-//             TextFormField(
-//               decoration: InputDecoration(
-//                   labelText: 'Email',
-//                   icon: Icon(
-//                     Icons.email,
-//                     color: Colors.lightGreen,
-//                   )),
-//             ),
-//             TextFormField(
-//               obscureText: true,
-//               decoration: InputDecoration(
-//                   labelText: 'Password',
-//                   icon: Icon(
-//                     Icons.lock,
-//                     color: Colors.lightGreen,
-//                   )),
-//             ),
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.center,
-//               children: <Widget>[
-//                 Container(
-//                   margin: EdgeInsets.only(top: 10, right: 10),
-//                   child: RaisedButton(
-//                     //color: Colors.lightGreen,
-//                     child: Row(
-//                       children: <Widget>[
-//                         Container(
-//                           margin: EdgeInsets.only(right: 5),
-//                           child: Icon(
-//                             Icons.assignment_ind,
-//                             color: Colors.lightGreen,
-//                           ),
-//                         ),
-//                         Text(
-//                           'Instructor',
-//                           style: TextStyle(color: Colors.lightGreen),
-//                         ),
-//                       ],
-//                     ),
-//                     onPressed: () {
-//                       Navigator.pushReplacementNamed(context, '/');
-//                     },
-//                   ),
-//                 ),
-//                 Container(
-//                   margin: EdgeInsets.only(top: 10, right: 10),
-//                   child: RaisedButton(
-//                     color: Colors.lightGreen,
-//                     child: Row(
-//                       children: <Widget>[
-//                         Container(
-//                           margin: EdgeInsets.only(right: 5),
-//                           child: Icon(
-//                             Icons.child_care,
-//                             color: Colors.lightGreen[50],
-//                           ),
-//                         ),
-//                         Text(
-//                           'Parent',
-//                           style: TextStyle(color: Colors.lightGreen[50]),
-//                         ),
-//                       ],
-//                     ),
-//                     onPressed: () {
-//                       Navigator.pushReplacementNamed(context, '/');
-//                     },
-//                   ),
-//                 ),
-//               ],
-//             ),
-//             Container(
-//               margin: EdgeInsets.only(top: 3.0),
-//               child: FlatButton(
-//                 child: Text(
-//                   'Back to Login',
-//                   style: TextStyle(color: Colors.lightGreen),
-//                 ),
-//                 onPressed: () {
-//                   // Update the state of the app
-//                   // ...
-//                   // Then close the drawer
-//                   Navigator.pushReplacementNamed(context, '/login');
-//                 },
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),)
-//       ;
-//   }
-// }

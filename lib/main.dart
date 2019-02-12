@@ -1,6 +1,8 @@
+//STANDARD MATERIAL LIBRARY AND FIRESTORE LIBRARY
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+//IMPORT OTHER PAGES SO CAN BE NAVIGATED TO
 import './aboutPage.dart';
 import './addClassesPage.dart';
 import './messagesPage.dart';
@@ -9,31 +11,29 @@ import './classAnnouncementPage.dart';
 import './loginPage.dart';
 import './signupPage.dart';
 
+//MAIN FUNCTION TO LAUNCH APP --> CALLS MyApp() WIDGET
 void main() => runApp(MyApp());
 
+//MyApp WIDGET - OVERALL APP STYLING AND ROUTES
 class MyApp extends StatelessWidget {
   final appTitle = 'BAGC Niagara';
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      // Page routes --> defaults at login for now
       initialRoute: '/login',
       routes: {
-        // When we navigate to the "/" route, build the FirstScreen Widget
         '/': (context) => MyClassList(),
-        // When we navigate to the "/second" route, build the SecondScreen Widget
         '/login': (context) => LoginPage(),
         '/signup': (context) => SignUpPage(),
       },
+      //Theme data for app *FONT NOT CURRENTLY WORKING*
       theme: ThemeData(
-        // Define the default Brightness and Colors
         brightness: Brightness.light,
         primaryColor: Colors.lightGreen,
         accentColor: Color(0xFF1ca5e5),
 
-        // Define the default Font Famil
-        // Define the default TextTheme. Use this to specify the default
-        // text styling for headlines, titles, bodies of text, and more.
         textTheme: TextTheme(
           headline: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
           title: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
@@ -41,11 +41,14 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: appTitle,
-      //home: MyHomePage(title: appTitle),
     );
   }
 }
 
+//STATELESS WIDGET --> CONTENT STAYS THE SAME, DON't NEED TO REBUILD
+//STATEFUL WIDGET --> CONTENT CHANGING, PAGE WILL REBUILD
+
+//MyClassList WIDGET - MY CLASSES PAGE CLASS -- HOW THE MAIN PAGE LOADS AND ITS CONTENT
 class MyClassList extends StatefulWidget {
   @override
   _MyClassList createState() {
@@ -53,23 +56,31 @@ class MyClassList extends StatefulWidget {
   }
 }
 
+//LAYOUT OF MY CLASSES PAGE --> CALLS WIDGETS BELOW IT
 class _MyClassList extends State<MyClassList> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(title: Text('My Classes')),
-      body: _buildBody(context),
-      floatingActionButton: FloatingActionButton(
+      return Scaffold(
+      backgroundColor: Colors.grey[100], //PAGE BACKGROUND COLOUR
+      appBar: AppBar(title: Text('My Classes')), //PAGE APP BAR AND TITLE
+      body: _buildBody(context), //PAGE CONTENT --> CALLING _buildBody WIDGET
+      floatingActionButton: FloatingActionButton( //FLOATING ACTION BUTTON TO ADD CLASSES
         child: Icon(Icons.add),
-        onPressed: () {
+        onPressed: () { //BUTTON PRESSED EVENT --> NAVIGATES TO AddClassesPAGE()
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => AddClassesPage()),
           );
         },
       ),
-      drawer: Drawer(
+      drawer: _navDrawer(context), //BUILDS MENU DRAWER BY CALLING _navDrawer WIDGET
+    );
+  }
+}
+
+//HAMBURGER DRAWER MENU WIDGET
+Widget _navDrawer(BuildContext context) { 
+  return Drawer(
         child: ListView(
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
@@ -149,11 +160,11 @@ class _MyClassList extends State<MyClassList> {
             ),
           ],
         ),
-      ),
-    );
-  }
+      );
 }
 
+
+//QUERY FIRESTORE FOR ALL CLASSES FOR A USER --> currently using hardcoded userid 'lj@gmail.com' in where clause, this will need to be dynamic for userid 
 Widget _buildBody(BuildContext context) {
   String user = 'lj@gmail.com';
   return StreamBuilder<QuerySnapshot>(
@@ -164,12 +175,13 @@ Widget _buildBody(BuildContext context) {
         .snapshots(),
     builder: (context, snapshot) {
       if (!snapshot.hasData) return LinearProgressIndicator();
-
+      //call to build map of database query --> see next widget
       return _buildList(context, snapshot.data.documents);
     },
   );
 }
 
+//widget to build list of classes for user based on previous widget query
 Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
   return ListView(
     padding: const EdgeInsets.only(top: 8.0),
@@ -177,6 +189,7 @@ Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
   );
 }
 
+//widget to build individual item for each class from original query
 Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
   final classes = Classes.fromSnapshot(data);
   List<String> user = ['lj@gmail.com'];
@@ -231,7 +244,7 @@ Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        ClassPage(classes.clsName, classes.code)),
+                        ClassPage(classes.clsName, classes.code)), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE 
               );
               },
             ),
@@ -240,7 +253,7 @@ Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        ClassPage(classes.clsName, classes.code)),
+                        ClassPage(classes.clsName, classes.code)), //PRESS ON TILE NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE 
               );
             }),
       ),
@@ -253,6 +266,7 @@ Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
   );
 }
 
+//class used for mapping of classes query --> essentially has fields initialized and then mapped to their field in the database
 class Classes {
   final String clsName;
   final String location;
@@ -279,3 +293,5 @@ class Classes {
   @override
   String toString() => "Record<$clsName:$code>";
 }
+
+

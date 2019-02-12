@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
+//CREATE ANNOUNCEMENT PAGE --> REQUIRES title and code PASSED TO IT AS ARGUMENTS
 class AnnouncementPage extends StatefulWidget {
   final String title;
   final int code;
@@ -20,14 +22,17 @@ class _AnnouncementPage extends State<AnnouncementPage> {
         title: Text('Create Announcement'),
       ),
       resizeToAvoidBottomPadding: true,
-      body: _buildBody(context, widget.title, widget.code),
+      body: _buildBody(context, widget.title, widget.code), //build body of page pasing CLASS TITLE and CLASS CODE to be used for update
     );
   }
 }
 
 Widget _buildBody(BuildContext context, String title, int code) {
+  //AUTO DATE FIELD --> NEEDS TO BE FORMATTED
   DateTime nowTime = new DateTime.now().toUtc();
+  //INPUT FIELD FOR TITLE
   final _titleController = new TextEditingController();
+  //INPUT FIELD FOR DESCRIPTION
   final _descriptionController = new TextEditingController();
   return Center(
     child: Padding(
@@ -54,7 +59,7 @@ Widget _buildBody(BuildContext context, String title, int code) {
             SizedBox(height: 58.0),
             TextFormField(
               autofocus: false,
-              controller: _titleController,
+              controller: _titleController, //set controller for title textfield
               decoration: InputDecoration(
                 labelText: 'Announcement Title',
                 icon: Icon(
@@ -69,7 +74,7 @@ Widget _buildBody(BuildContext context, String title, int code) {
             SizedBox(height: 58.0),
             TextFormField(
               autofocus: false,
-              controller: _descriptionController,
+              controller: _descriptionController, //set controller for description textfield
               keyboardType: TextInputType.multiline,
               maxLines: 8,
               decoration: InputDecoration(
@@ -90,7 +95,7 @@ Widget _buildBody(BuildContext context, String title, int code) {
                   'Submit',
                   style: TextStyle(color: Colors.lightBlue[50]),
                 ),
-                onPressed: () {
+                onPressed: () { //FIRESTORE CREATE ANNOUNCEMENT STATEMENT USING title, code, _titleController.text, _descriptionController.text, nowTime
                   Navigator.pop(context);
                   Firestore.instance
                       .collection('announcements')
@@ -109,17 +114,9 @@ Widget _buildBody(BuildContext context, String title, int code) {
       ),
     ),
   );
-
-  // StreamBuilder<QuerySnapshot>(
-  //   stream: Firestore.instance.collection('announcements').snapshots(),
-  //   builder: (context, snapshot) {
-  //     if (!snapshot.hasData) return LinearProgressIndicator();
-
-  //     return _buildList(context, snapshot.data.documents);
-  //   },
-  // );
 }
 
+//CLASS MAP BASED ON FIRESTORE ANNOUNCEMENT TABLE
 class Announcements {
   final String clsName;
   final String title;

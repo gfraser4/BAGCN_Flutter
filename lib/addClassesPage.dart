@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
+//SEARCH AND ADD CLASSES PAGE
 class AddClassesPage extends StatefulWidget {
   @override
   _AddClassesPage createState() {
@@ -9,38 +11,40 @@ class AddClassesPage extends StatefulWidget {
 }
 
 class _AddClassesPage extends State<AddClassesPage> {
-  final _classNameController = new TextEditingController();
-  final _classCodeController = new TextEditingController();
+  final _classNameController = new TextEditingController(); //VAR TO HOLD CLASSNAME INPUT
+  final _classCodeController = new TextEditingController(); //VAR TO HOLD CLASSCODE INPUT
   String className;
   var stream =
-      Firestore.instance.collection('class').orderBy('clsName').snapshots();
+      Firestore.instance.collection('class').orderBy('clsName').snapshots(); //DEFAULT QUERY TO LIST ALL CLASSES IN DATABASE
 
+//QUERY FOR CLASS NAME SEARCH
   Stream<QuerySnapshot> _nameSearch() {
-    if (_classNameController.text.length > 0) {
+    if (_classNameController.text.length > 0) { //CHECK IF THERE IS INPUT IN CLASS NAME SEARCH
       stream = Firestore.instance
           .collection('class')
-          .where('clsName', isEqualTo: _classNameController.text.toUpperCase())
+          .where('clsName', isEqualTo: _classNameController.text.toUpperCase()) //WHERE CLASS NAME IS EQUAL TO THE INPUT
           .snapshots();
       return stream;
     } else {
       return stream =
-          Firestore.instance.collection('class').orderBy('clsName').snapshots();
+          Firestore.instance.collection('class').orderBy('clsName').snapshots(); //ELSE DEFAULT QUERY
     }
   }
 
   Stream<QuerySnapshot> _codeSearch() {
-    if (_classCodeController.text.length > 0) {
+    if (_classCodeController.text.length > 0) { //CHECK IF THERE IS INPUT IN CLASS CODE SEARCH
       stream = Firestore.instance
           .collection('class')
-          .where('code', isEqualTo: int.parse(_classCodeController.text))
+          .where('code', isEqualTo: int.parse(_classCodeController.text)) //WHERE CLASS CODE IS EQUAL TO THE INPUT
           .snapshots();
       return stream;
     } else {
       return stream =
-          Firestore.instance.collection('class').orderBy('clsName').snapshots();
+          Firestore.instance.collection('class').orderBy('clsName').snapshots(); //ELSE DEFAULT QUERY
     }
   }
 
+//CLEAR BUTTON CLEARS INPUTS AND SETS QUERY BACK TO DEFAULT TO LIST ALL CLASSES
   Stream<QuerySnapshot> _clear() {
     _selected = _dropitems[0];
     _classNameController.text = '';
@@ -50,6 +54,7 @@ class _AddClassesPage extends State<AddClassesPage> {
     return stream;
   }
 
+//DROPDOWN LIST QUERY --> WHERE CLASS IS EQUAL TO SELECTED DROPWDOWN ITEM
   Stream<QuerySnapshot> _ddlClassSearch() {
     if (_selected == 'Class Name') {
       stream = Firestore.instance.collection('class').snapshots();
@@ -62,14 +67,11 @@ class _AddClassesPage extends State<AddClassesPage> {
     return stream;
   }
 
+//SET DEFAULT DROPDOWN LIST ARRAY WITH ONLY 'Class Name' AND SET _selected ITEM TO 'Class Name'
   List<String> _dropitems = ['Class Name'];
   String _selected = 'Class Name';
 
-  // var classList = Firestore.instance
-  //     .collection('class')
-  //     .snapshots()
-  //     .listen((data) => data.documents.forEach((doc) => _dropitems.add(doc["clsName"])));
-
+//INITIALIZE STATE AND ADD EACH ITEM TO THE DROPDOWN LIST ARRAY
   @override
   void initState() {
     Firestore.instance
@@ -80,15 +82,6 @@ class _AddClassesPage extends State<AddClassesPage> {
             data.documents.forEach((doc) => _dropitems.add(doc["clsName"])));
     super.initState();
   }
-
-  // @override
-  // void setState(fn) {
-  //   Firestore.instance
-  //     .collection('class')
-  //     .snapshots()
-  //     .listen((data) => data.documents.forEach((doc) => _dropitems.add(doc["clsName"])));
-  //   super.setState(fn);
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +96,7 @@ class _AddClassesPage extends State<AddClassesPage> {
             color: Colors.lightBlue[50],
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-            child: Column(
+            child: Column( //SEARCH AREA BEGINS
               children: <Widget>[
                 TextFormField(
                   decoration: InputDecoration(
@@ -132,7 +125,6 @@ class _AddClassesPage extends State<AddClassesPage> {
                         _ddlClassSearch();
                         setState(() {});
                       }),
-                  //leading: Text('Class Name'),
                   onTap: () {
                     setState(() {});
                   },
@@ -141,7 +133,6 @@ class _AddClassesPage extends State<AddClassesPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     RaisedButton(
-                      //color: Colors.redAccent,
                       child: Text(
                         'Clear',
                         style: TextStyle(color: Colors.redAccent),
@@ -174,7 +165,7 @@ class _AddClassesPage extends State<AddClassesPage> {
             color: Color(0xFF1ca5e5),
           ),
           Expanded(
-            child: _buildBody(context, stream),
+            child: _buildBody(context, stream), //SEARCH RESULTS AREA IS BUILT PASSING DYNAMIC QUERY(stream)
           ),
         ],
       ),
@@ -185,7 +176,7 @@ class _AddClassesPage extends State<AddClassesPage> {
 //Search querey dynamic based on search criteria
 Widget _buildBody(BuildContext context, var stream) {
   return StreamBuilder<QuerySnapshot>(
-    stream: stream,
+    stream: stream, //QUERY (stream) WILL BE DEPENDENT ON SEARCH FIELDS
     builder: (context, snapshot) {
       if (!snapshot.hasData) return LinearProgressIndicator();
       return _buildList(context, snapshot.data.documents);
@@ -193,7 +184,7 @@ Widget _buildBody(BuildContext context, var stream) {
   );
 }
 
-//Build ListView for queried items
+//Build ListView for queried items based on above query
 Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
   return ListView(
     padding: const EdgeInsets.only(top: 20.0),
@@ -201,7 +192,7 @@ Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
   );
 }
 
-//Username needed to add classes to that parent
+//WIDGET TO BUILD WACH CLASS ITEM --> Username needed to add classes to that usres class list on their home screen (currently hardcoded as "lj@gmail.com")
 Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
   final classes = Classes.fromSnapshot(data);
   List<String> user = ['lj@gmail.com'];
@@ -235,10 +226,10 @@ Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
                         },
                       ),
                       FlatButton(
-                        child: Text("Accept"),
+                        child: Text("Add Class"),
                         onPressed: () {
                           classes.reference.updateData({
-                            "parents": FieldValue.arrayUnion(user),
+                            "parents": FieldValue.arrayUnion(user), //UPDATE CLASS FIELD ADDING USER TO PARENTS ARRAY
                           });
                           Navigator.of(context).pushNamed('/');
                         },
@@ -253,6 +244,7 @@ Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
   );
 }
 
+//class used for mapping of classes query --> essentially has fields initialized and then mapped to their field in the database
 class Classes {
   final String clsName;
   final String location;
@@ -280,274 +272,4 @@ class Classes {
   String toString() => "Record<$clsName:$code>";
 }
 
-// class MyClassList extends StatelessWidget {
-// @override
-// String searchText;
-// String username = 'lj@gmail.com';
-// List<String> user = ['lj@gmail.com'];
 
-// CollectionReference collectionReference =
-//       Firestore.instance.collection('class');
-
-//   Widget build(BuildContext context) {
-//     return
-
-//      StreamBuilder<QuerySnapshot>(
-//       stream: collectionReference
-//           .where("section", isEqualTo: searchText)
-//           .orderBy("clsName")
-//           .snapshots(),
-//       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-//         if (snapshot.hasError) return Text('Error: ${snapshot.error}');
-//         switch (snapshot.connectionState) {
-//           case ConnectionState.waiting:
-//             return Text('Loading...');
-//           default:
-//             return ListView(
-//               children:
-//                   snapshot.data.documents.map((DocumentSnapshot document) {
-//                 return Card(
-//                   color: Colors.lightGreen[100],
-//                   child: ListTile(
-//                     title: Text(document['clsName']),
-//                     subtitle: Text(
-//                         'Section: ${document['section']}\nLocation: ${document['location']}'),
-//                     trailing: RaisedButton(
-//                       child: Text(
-//                         'JOIN',
-//                         style: TextStyle(color: Colors.lightGreen),
-//                       ),
-//                       onPressed: () {
-//                         Firestore.instance.collection('class').document('YbFnaQ8SQd3fRjOmV9Bb').updateData({"parents": FieldValue.arrayUnion(user)});
-//                         Navigator.pop(context);
-//                       },
-//                     ),
-//                   ),
-//                 );
-
-//               }).toList(),
-//             );
-//         }
-//       },
-//     );
-//   }
-// }
-
-class ClassSearch extends StatefulWidget {
-  //ClassSearch({Key key, this.title}) : super(key: key);
-  //final String title;
-
-  @override
-  _ClassSearch createState() => _ClassSearch();
-}
-
-class _ClassSearch extends State<ClassSearch> {
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return TextFormField(
-      decoration: InputDecoration(
-          labelText: 'Search Classes', icon: Icon(Icons.search)),
-    );
-  }
-}
-
-//ListView(
-//   // Important: Remove any padding from the ListView.
-//   padding: EdgeInsets.zero,
-//   children: <Widget>[
-//     TextFormField(
-//       decoration: InputDecoration(labelText: 'Search Classes', icon: Icon(Icons.search)),
-//     ),
-//     ListTile(
-//       trailing: new DropdownButton<String>(
-//         items: <String>[
-//           'Aquatics',
-//           'Sports & Rec',
-//           'Educational',
-//           'Child Care',
-//           'Youth Outreach'
-//         ].map((String value) {
-//           return new DropdownMenuItem<String>(
-//             value: value,
-//             child: new Text(value),
-//           );
-//         }).toList(),
-//         onChanged: (_) {},
-//       ),
-//       leading: Text('Program'),
-//       onTap: () {},
-//     ),
-//     ListTile(
-//       trailing: new DropdownButton<String>(
-//         items: <String>[
-//           'Aquatics 101',
-//           'Gymnastics',
-//           'Jr. Ball Hockey/Soccer',
-//           'Kitchen Creations',
-//           'Teen Zone'
-//         ].map((String value) {
-//           return new DropdownMenuItem<String>(
-//             value: value,
-//             child: new Text(value),
-//           );
-//         }).toList(),
-//         onChanged: (_) {},
-//       ),
-//       leading: Text('Class Name'),
-//       onTap: () {},
-//     ),
-//     ListTile(
-//       trailing: new DropdownButton<String>(
-//         items: <String>[
-//           'Section 1',
-//           'Section 2',
-//           'Section 3',
-//         ].map((String value) {
-//           return new DropdownMenuItem<String>(
-//             value: value,
-//             child: new Text(value),
-//           );
-//         }).toList(),
-//         onChanged: (_) {},
-//       ),
-//       leading: Text('Section'),
-//       onTap: () {},
-//     ),
-
-// Card(
-//   color: Colors.lightGreen[100],
-//   child: ListTile(
-//     title: Text(
-//       'Aqautics 101',
-//       style: TextStyle(fontSize: 14.0),
-//     ),
-//     subtitle: Text(
-//       'Section 2\n\nInstructor: John Smith',
-//       style: TextStyle(fontSize: 12.0),
-//     ),
-//     onTap: () {
-
-//     },
-//     trailing: RaisedButton(
-//           child: Text('LEAVE', style: TextStyle(color: Colors.redAccent),),
-//           onPressed: () {
-//                             // Update the state of the app
-//       // ...
-//       // Then close the drawer
-//       Navigator.pop(context);
-//           },
-//         ),
-//   ),
-
-// ),
-// Card(
-//   color: Colors.lightGreen[100],
-//   child: ListTile(
-//     title: Text(
-//       'Gymnastics',
-//       style: TextStyle(fontSize: 14.0),
-//     ),
-//     subtitle: Text(
-//       'Section 2\n\nInstructor: Laura Smith',
-//       style: TextStyle(fontSize: 12.0),
-//     ),
-//     onTap: () {
-
-//     },
-//     trailing: RaisedButton(
-//           child: Text('LEAVE', style: TextStyle(color: Colors.redAccent),),
-//           onPressed: () {
-//                             // Update the state of the app
-//       // ...
-//       // Then close the drawer
-//       Navigator.pop(context);
-//           },
-//         ),
-//   ),
-
-// ),
-// Card(
-//   color: Colors.lightGreen[100],
-//   child: ListTile(
-//     title: Text(
-//       'Jr. Ball Hockey/Soccer',
-//       style: TextStyle(fontSize: 14.0),
-//     ),
-//     subtitle: Text(
-//       'Section 2\n\nInstructor: Bobby Orr',
-//       style: TextStyle(fontSize: 12.0),
-//     ),
-//     onTap: () {
-
-//     },
-//     trailing: RaisedButton(
-//           child: Text('JOIN', style: TextStyle(color: Colors.lightGreen),),
-//           onPressed: () {
-//                             // Update the state of the app
-//       // ...
-//       // Then close the drawer
-//       Navigator.pop(context);
-//           },
-//         ),
-//   ),
-
-// ),
-// Card(
-//   color: Colors.lightGreen[100],
-//   child: ListTile(
-//     title: Text(
-//       'Kitchen Creations',
-//       style: TextStyle(fontSize: 14.0),
-//     ),
-//     subtitle: Text(
-//       'Section 2\n\nInstructor: Julie Cook',
-//       style: TextStyle(fontSize: 12.0),
-//     ),
-//     onTap: () {
-
-//     },
-//     trailing: RaisedButton(
-//           child: Text('JOIN', style: TextStyle(color: Colors.lightGreen),),
-//           onPressed: () {
-//                             // Update the state of the app
-//       // ...
-//       // Then close the drawer
-//       Navigator.pop(context);
-//           },
-//         ),
-//   ),
-
-// ),
-// Card(
-//   color: Colors.lightGreen[100],
-//   child: ListTile(
-//     title: Text(
-//       'Teen Zone',
-//       style: TextStyle(fontSize: 14.0),
-//     ),
-//     subtitle: Text(
-//       'Section 2\n\nInstructor: Jane Doe',
-//       style: TextStyle(fontSize: 12.0),
-//     ),
-//     onTap: () {
-
-//     },
-//     trailing: RaisedButton(
-//           child: Text('JOIN', style: TextStyle(color: Colors.lightGreen),),
-//           onPressed: () {
-//                             // Update the state of the app
-//       // ...
-//       // Then close the drawer
-//       Navigator.pop(context);
-//           },
-//         ),
-//   ),
-
-// ),
-
-//         ],
-//       ),
-//     );
-//   }
-// }

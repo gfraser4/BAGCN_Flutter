@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import './newMessagePage.dart';
 import 'createAnnouncement.dart';
 
+//ClassPage WIDGET - SHOWS ANNOUNCEMENTS FOR SPECIFIC CLASS --> REQUIRES A title AND code ARGURMENT PASSED TO IT
 class ClassPage extends StatefulWidget {
   final String title;
   final int code;
@@ -14,15 +15,16 @@ class ClassPage extends StatefulWidget {
   }
 }
 
+//HOW PAGE IS BUILT
 class _ClassPage extends State<ClassPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget.title), //PAGE TITLE BASED ON title THAT WAS PASSED TO PAGE
       ),
-      body: _buildBody(context, widget.title, widget.code),
+      body: _buildBody(context, widget.title, widget.code), //HOW BODY IS BUILT PASSING CLASS title AND CLASS code to _buildBody() WIDGET FOR QUERY
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.create),
         onPressed: () {
@@ -30,7 +32,7 @@ class _ClassPage extends State<ClassPage> {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    AnnouncementPage(widget.title, widget.code)),
+                    AnnouncementPage(widget.title, widget.code)), //NAVIGATION TO CREATE ANNOUNCEMENT --> AGAIN PASSING title AND code SO ANNOUNCEMENT IS MADE FOR SPECIFIC CLASS
           );
         },
       ),
@@ -38,6 +40,7 @@ class _ClassPage extends State<ClassPage> {
   }
 }
 
+//QUERY FIRESTORE FOR ALL ANNOUNCEMENTS FOR A CLASS --> WHERE CLAUSE SEARCHES FOR title OF CLASS AND code FOR CLASS
 Widget _buildBody(BuildContext context, String title, int code) {
   return StreamBuilder<QuerySnapshot>(
     stream: Firestore.instance
@@ -54,6 +57,7 @@ Widget _buildBody(BuildContext context, String title, int code) {
   );
 }
 
+//widget to build list of announcements based on class and class code
 Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
   return ListView(
     padding: const EdgeInsets.only(top: 8.0),
@@ -61,10 +65,9 @@ Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
   );
 }
 
+//widget to build individual card item for each announcement from original query
 Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
   final announcements = Announcements.fromSnapshot(data);
-  final _likesCountController = new TextEditingController();
-  int likes = 0;
   return Padding(
     key: ValueKey(announcements.clsName),
     padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 2.0),
@@ -143,6 +146,7 @@ Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
   );
 }
 
+//class used for mapping of announcements query --> essentially has fields initialized and then mapped to their field in the database
 class Announcements {
   final String clsName;
   final String title;
@@ -170,88 +174,3 @@ class Announcements {
   String toString() => "Record<$clsName:$title>";
 }
 
-// class ClassPage extends StatelessWidget {
-//   final String title;
-
-//   ClassPage(this.title);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//           title: Text(
-//         '$title',
-//       )),
-//       body: ListView(
-//         // Important: Remove any padding from the ListView.
-//         padding: EdgeInsets.zero,
-//         children: <Widget>[
-//           Card(
-//             color: Colors.lightGreen[100],
-//             child: ListTile(
-//               trailing: Icon(
-//                 Icons.warning,
-//                 color: Colors.redAccent,
-//               ),
-//               title: Text(
-//                 'Class Cancelled Tomorrow',
-//               ),
-//               subtitle: Text(
-//                 '2019-01-25\n\nDue the continuing issues with the pool, class will be cancelled tomorrow. Please message me if you have any questions. Thanks.',
-//               ),
-//               onTap: () {
-//                 Navigator.push(
-//                   context,
-//                   MaterialPageRoute(builder: (context) => NewMessagePage()),
-//                 );
-//               },
-//             ),
-//           ),
-//           Card(
-//             color: Colors.lightGreen[100],
-//             child: ListTile(
-//               title: Text(
-//                 'Second pair of clothes',
-//               ),
-//               subtitle: Text(
-//                 '2018-11-22\n\nWe will be doing a survival swim tomorrow so please send a second/swimmable pair of clothes tomorrow.',
-//               ),
-//               onTap: () {
-//                 Navigator.push(
-//                   context,
-//                   MaterialPageRoute(builder: (context) => NewMessagePage()),
-//                 );
-//               },
-//             ),
-//           ),
-//           Card(
-//             color: Colors.lightGreen[100],
-//             child: ListTile(
-//               title: Text(
-//                 'Arrive on time!',
-//               ),
-//               subtitle: Text(
-//                 '2018-10-13\n\nPlease arrive on time as we will be starting right away.',
-//               ),
-//               onTap: () {
-//                 Navigator.push(
-//                   context,
-//                   MaterialPageRoute(builder: (context) => NewMessagePage()),
-//                 );
-//               },
-//             ),
-//           ),
-//         ],
-//       ),
-//       floatingActionButton: FloatingActionButton(
-//         child: Icon(Icons.message),
-//         onPressed: () {
-//           Navigator.push(
-//             context,
-//             MaterialPageRoute(builder: (context) => NewMessagePage()),
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }

@@ -5,10 +5,13 @@ class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => new _LoginPageState();
 }
-
+//
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
+  //SCAFFOLD OF PAGE LAYOUT AT BOTTOM --> SEE BELOW
+    
+//HERO/LOGO AREA 
     final logo = Hero(
       tag: 'hero',
       child: Container(
@@ -17,6 +20,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
+//EMAIL INPUT
     final email = TextFormField(
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
@@ -33,6 +37,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
+//PASSWORD INPUT
     final password = TextFormField(
       autofocus: false,
       //initialValue: 'password',
@@ -49,6 +54,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
+//LOGIN BUTTON
     final loginButton = Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0),
       child: RaisedButton(
@@ -64,6 +70,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
+//SIGN UP BUTTON
     final signup = FlatButton(
       child: Text(
         'Sign up',
@@ -74,7 +81,8 @@ class _LoginPageState extends State<LoginPage> {
       },
     );
 
-    return WillPopScope(
+//SCAFFOLD/LAYOUT OF LOGIN PAGE USING ITEMS CREATED ABOVE
+    return WillPopScope( //DISABLES BACK BUTTON ON PHONE WHICH WOULD SEND USER TO MY CLASS LIST BYPASSING LOGIN
       onWillPop: () async => false,
       child: Scaffold(
         backgroundColor: Color(0xFF1ca5e5),
