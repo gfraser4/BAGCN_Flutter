@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import './newMessagePage.dart';
 import 'createAnnouncement.dart';
+import 'Models/AnnouncementsModel.dart';
+
 
 //ClassPage WIDGET - SHOWS ANNOUNCEMENTS FOR SPECIFIC CLASS --> REQUIRES A title AND code ARGURMENT PASSED TO IT
 class ClassPage extends StatefulWidget {
+  final FirebaseUser user;
   final String title;
   final int code;
-  ClassPage(this.title, this.code);
+  ClassPage(this.title, this.code, this.user);
   @override
   _ClassPage createState() {
     return _ClassPage();
@@ -38,6 +42,7 @@ class _ClassPage extends State<ClassPage> {
       ),
     );
   }
+  
 }
 
 //QUERY FIRESTORE FOR ALL ANNOUNCEMENTS FOR A CLASS --> WHERE CLAUSE SEARCHES FOR title OF CLASS AND code FOR CLASS
@@ -146,31 +151,5 @@ Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
   );
 }
 
-//class used for mapping of announcements query --> essentially has fields initialized and then mapped to their field in the database
-class Announcements {
-  final String clsName;
-  final String title;
-  final String description;
-  final DateTime created;
-  final int code;
-  final DocumentReference reference;
 
-  Announcements.fromMap(Map<String, dynamic> map, {this.reference})
-      : assert(map['class'] != null),
-        assert(map['description'] != null),
-        assert(map['title'] != null),
-        assert(map['created'] != null),
-        assert(map['code'] != null),
-        code = map['code'],
-        clsName = map['class'],
-        title = map['title'],
-        created = map['created'],
-        description = map['description'];
-
-  Announcements.fromSnapshot(DocumentSnapshot snapshot)
-      : this.fromMap(snapshot.data, reference: snapshot.reference);
-
-  @override
-  String toString() => "Record<$clsName:$title>";
-}
 

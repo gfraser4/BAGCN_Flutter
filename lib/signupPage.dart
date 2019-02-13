@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import './main.dart';
 
@@ -9,6 +11,11 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPage extends State<SignUpPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String _firstName;
+  String _lastName;
+  String _email;
+  String _password;
   @override
   Widget build(BuildContext context) { //SEE BOTTOM OF PAGE FOR LAYOUT/SCAFFOLD
 
@@ -23,6 +30,11 @@ class _SignUpPage extends State<SignUpPage> {
 
 //FIRST NAME INPUT FIELD
     final firstName = TextFormField(
+      validator: (input){
+        if(input.isEmpty)
+        return 'Please enter your first name.';
+      },
+      onSaved: (input) => _firstName = input,
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
       //initialValue: 'lj@gmail.com',
@@ -40,9 +52,14 @@ class _SignUpPage extends State<SignUpPage> {
 
 //LAST NAME INPUT FIELD
     final lastName = TextFormField(
+       validator: (input){
+        if(input.isEmpty)
+        return 'Please enter your last name.';
+      },
+      onSaved: (input) => _lastName = input,
       autofocus: false,
       //initialValue: 'password',
-      obscureText: true,
+    
       decoration: InputDecoration(
         labelText: 'Last Name',
         icon: Icon(
@@ -57,9 +74,14 @@ class _SignUpPage extends State<SignUpPage> {
 
 //EMAIL INPUT FIELD
     final email = TextFormField(
+      validator: (input){
+        if(input.isEmpty)
+        return 'Please enter a valid email.';
+      },
+      onSaved: (input) => _email = input,
       autofocus: false,
       //initialValue: 'password',
-      obscureText: true,
+      
       decoration: InputDecoration(
         labelText: 'Email',
         icon: Icon(
@@ -74,6 +96,11 @@ class _SignUpPage extends State<SignUpPage> {
 
 //PASSWORD INPUT FIELD
     final password = TextFormField(
+      validator: (input){
+        if(input.length < 6)
+        return 'Your password needs to be at least 6 characters.';
+      },
+      onSaved: (input) => _password = input,
       autofocus: false,
       //initialValue: 'password',
       obscureText: true,
@@ -90,21 +117,21 @@ class _SignUpPage extends State<SignUpPage> {
     );
 
 //CONFIRM PASSWORD INPUT FIELD
-    final confirmPassword = TextFormField(
-      autofocus: false,
-      //initialValue: 'password',
-      obscureText: true,
-      decoration: InputDecoration(
-        labelText: 'Confirm Password',
-        icon: Icon(
-          Icons.check_box,
-          color: Colors.lightGreen,
-        ),
-        //hintText: 'Password',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(6.0)),
-      ),
-    );
+    // final confirmPassword = TextFormField(
+    //   autofocus: false,
+    //   //initialValue: 'password',
+    //   obscureText: true,
+    //   decoration: InputDecoration(
+    //     labelText: 'Confirm Password',
+    //     icon: Icon(
+    //       Icons.check_box,
+    //       color: Colors.lightGreen,
+    //     ),
+    //     //hintText: 'Password',
+    //     contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+    //     border: OutlineInputBorder(borderRadius: BorderRadius.circular(6.0)),
+    //   ),
+    // );
 
 //CHOOSE ROLE TEXT
     final choice = Text(
@@ -138,7 +165,7 @@ class _SignUpPage extends State<SignUpPage> {
               ],
             ),
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/');
+              superSignUp();
             },
           ),
         ),
@@ -162,7 +189,7 @@ class _SignUpPage extends State<SignUpPage> {
               ],
             ),
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/');
+              parentSignUp();
             },
           ),
         ),
@@ -176,7 +203,7 @@ class _SignUpPage extends State<SignUpPage> {
         style: TextStyle(color: Color(0xFF1ca5e5)),
       ),
       onPressed: () {
-        Navigator.pushReplacementNamed(context, '/login');
+        Navigator.pushReplacementNamed(context, '/');
       },
     );
 
@@ -192,7 +219,9 @@ class _SignUpPage extends State<SignUpPage> {
               borderRadius: BorderRadius.circular(20),
               color: Colors.lightBlue[50],
             ),
-            child: ListView(
+            child: Form(
+              key: _formKey,
+              child: ListView(
               shrinkWrap: true,
               padding: EdgeInsets.only(left: 24.0, right: 24.0),
               children: <Widget>[
@@ -205,17 +234,109 @@ class _SignUpPage extends State<SignUpPage> {
                 email,
                 SizedBox(height: 32.0),
                 password,
-                SizedBox(height: 24.0),
-                confirmPassword,
+                //SizedBox(height: 24.0),
+                //confirmPassword,
                 SizedBox(height: 24.0),
                 choice,
                 role,
                 loginPage
               ],
-            ),
+            ),) 
           ),
         ),
       ),
     );
   }
+//future waiting for database response
+  Future<void> parentSignUp() async {
+    final formState = _formKey.currentState;
+    //validate fields
+    if (formState.validate()) {
+      //login to firebase
+      formState.save();
+      try {
+        FirebaseUser user = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password);
+        Firestore.instance
+                      .collection('users')
+                      .document()
+                      .setData({
+                    'firstName': _firstName,
+                    'lastName': _lastName,
+                    'email': _email,
+                    'role': 'parent',});
+        //Navigate to home
+        //Navigator.pushReplacementNamed(context, '/');
+        Navigator.pushReplacement(
+            context,
+            new MaterialPageRoute(
+                builder: (BuildContext context) => new MyClassList(user)));
+        //Navigator.of(context).pop();
+      } catch (ex) {
+        print(ex.message);
+      }
+    }
+  }
+Future<void> superSignUp() async {
+    final formState = _formKey.currentState;
+    //validate fields
+    if (formState.validate()) {
+      //login to firebase
+      formState.save();
+      try {
+        FirebaseUser user = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password);
+        Firestore.instance
+                      .collection('users')
+                      .document()
+                      .setData({
+                        'id': user.uid,
+                        'firstName': _firstName,
+                        'lastName': _lastName,
+                        'email': _email,
+                        'role': 'super',});
+        //Navigate to home
+        //Navigator.pushReplacementNamed(context, '/');
+        Navigator.pushReplacement(
+            context,
+            new MaterialPageRoute(
+                builder: (BuildContext context) => new MyClassList(user)));
+        //Navigator.of(context).pop();
+      } catch (ex) {
+        print(ex.message);
+      }
+    }
+  }
+
+
+  
+}
+
+
+
+//CLASS MAP BASED ON FIRESTORE ANNOUNCEMENT TABLE
+class Users {
+  final String id;
+  final String firstName;
+  final String lastName;
+  final String email;
+  final String role;
+  final DocumentReference reference;
+
+  Users.fromMap(Map<String, dynamic> map, {this.reference})
+      : assert(map['firstName'] != null),
+        assert(map['lastName'] != null),
+        assert(map['lastName'] != null),
+        assert(map['email'] != null),
+        assert(map['role'] != null),
+        assert(map['id'] != null),
+        firstName = map['firstName'],
+        lastName = map['lastName'],
+        id = map['id'],
+        email = map['email'],
+        role = map['role'];
+
+  Users.fromSnapshot(DocumentSnapshot snapshot)
+      : this.fromMap(snapshot.data, reference: snapshot.reference);
+
+  // @override
+  // String toString() => "Record<$clsName:$title>";
 }
