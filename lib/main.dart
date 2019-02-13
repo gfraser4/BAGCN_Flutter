@@ -12,6 +12,7 @@ import './classAnnouncementPage.dart';
 import './loginPage.dart';
 import './signupPage.dart';
 import 'Models/ClassesModel.dart';
+import './parentClassAnnouncementPage.dart';
 
 //MAIN FUNCTION TO LAUNCH APP --> CALLS MyApp() WIDGET
 void main() => runApp(MyApp());
@@ -253,18 +254,11 @@ Widget _buildListItem(
               icon: Icon(Icons.chevron_right),
               color: Color(0xFF1ca5e5),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ClassPage(
-                          classes.clsName,
-                          classes.code,
-                          user)), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE
-                );
+                checkRole(context, user, classes.code, classes.clsName);
               },
             ),
             onTap: () {
-              checkRole(context, user.uid);
+              checkRole(context, user, classes.code, classes.clsName);
             }),
       ),
       Divider(
@@ -277,23 +271,32 @@ Widget _buildListItem(
 }
 
 //future waiting for database response
-Future<void> checkRole(BuildContext context, String userID) async {
+Future<void> checkRole(BuildContext context, FirebaseUser user, int classCode, String className) async {
   Firestore.instance
       .collection('users')
-      .where("id", isEqualTo: userID)
+      .where("id", isEqualTo: user.uid)
       .snapshots()
       .listen((data) => data.documents.forEach((doc) {
             if (doc['role'] == 'super') {
               Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AboutPage()),
-              );
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ClassPage(
+                          className,
+                          classCode,
+                          user)), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE
+                );
             }
-            else{
+            else {
               Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SettingsPage()),
-              );
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ParentClassAnnouncementPage(
+                          className,
+                          classCode,
+                          user)), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE
+                );
+              
             }
           }));
 }

@@ -17,7 +17,8 @@ class _SignUpPage extends State<SignUpPage> {
   String _email;
   String _password;
   @override
-  Widget build(BuildContext context) { //SEE BOTTOM OF PAGE FOR LAYOUT/SCAFFOLD
+  Widget build(BuildContext context) {
+    //SEE BOTTOM OF PAGE FOR LAYOUT/SCAFFOLD
 
 //HERO/LOGO AREA
     final logo = Hero(
@@ -30,9 +31,8 @@ class _SignUpPage extends State<SignUpPage> {
 
 //FIRST NAME INPUT FIELD
     final firstName = TextFormField(
-      validator: (input){
-        if(input.isEmpty)
-        return 'Please enter your first name.';
+      validator: (input) {
+        if (input.isEmpty) return 'Please enter your first name.';
       },
       onSaved: (input) => _firstName = input,
       keyboardType: TextInputType.emailAddress,
@@ -52,14 +52,13 @@ class _SignUpPage extends State<SignUpPage> {
 
 //LAST NAME INPUT FIELD
     final lastName = TextFormField(
-       validator: (input){
-        if(input.isEmpty)
-        return 'Please enter your last name.';
+      validator: (input) {
+        if (input.isEmpty) return 'Please enter your last name.';
       },
       onSaved: (input) => _lastName = input,
       autofocus: false,
       //initialValue: 'password',
-    
+
       decoration: InputDecoration(
         labelText: 'Last Name',
         icon: Icon(
@@ -74,14 +73,13 @@ class _SignUpPage extends State<SignUpPage> {
 
 //EMAIL INPUT FIELD
     final email = TextFormField(
-      validator: (input){
-        if(input.isEmpty)
-        return 'Please enter a valid email.';
+      validator: (input) {
+        if (input.isEmpty) return 'Please enter a valid email.';
       },
       onSaved: (input) => _email = input,
       autofocus: false,
       //initialValue: 'password',
-      
+
       decoration: InputDecoration(
         labelText: 'Email',
         icon: Icon(
@@ -96,9 +94,9 @@ class _SignUpPage extends State<SignUpPage> {
 
 //PASSWORD INPUT FIELD
     final password = TextFormField(
-      validator: (input){
-        if(input.length < 6)
-        return 'Your password needs to be at least 6 characters.';
+      validator: (input) {
+        if (input.length < 6)
+          return 'Your password needs to be at least 6 characters.';
       },
       onSaved: (input) => _password = input,
       autofocus: false,
@@ -214,39 +212,40 @@ class _SignUpPage extends State<SignUpPage> {
         backgroundColor: Color(0xFF1ca5e5),
         body: Center(
           child: Container(
-            margin: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.lightBlue[50],
-            ),
-            child: Form(
-              key: _formKey,
-              child: ListView(
-              shrinkWrap: true,
-              padding: EdgeInsets.only(left: 24.0, right: 24.0),
-              children: <Widget>[
-                logo,
-                SizedBox(height: 48.0),
-                firstName,
-                SizedBox(height: 32.0),
-                lastName,
-                SizedBox(height: 32.0),
-                email,
-                SizedBox(height: 32.0),
-                password,
-                //SizedBox(height: 24.0),
-                //confirmPassword,
-                SizedBox(height: 24.0),
-                choice,
-                role,
-                loginPage
-              ],
-            ),) 
-          ),
+              margin: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.lightBlue[50],
+              ),
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.only(left: 24.0, right: 24.0),
+                  children: <Widget>[
+                    logo,
+                    SizedBox(height: 48.0),
+                    firstName,
+                    SizedBox(height: 32.0),
+                    lastName,
+                    SizedBox(height: 32.0),
+                    email,
+                    SizedBox(height: 32.0),
+                    password,
+                    //SizedBox(height: 24.0),
+                    //confirmPassword,
+                    SizedBox(height: 24.0),
+                    choice,
+                    role,
+                    loginPage
+                  ],
+                ),
+              )),
         ),
       ),
     );
   }
+
 //future waiting for database response
   Future<void> parentSignUp() async {
     final formState = _formKey.currentState;
@@ -255,15 +254,15 @@ class _SignUpPage extends State<SignUpPage> {
       //login to firebase
       formState.save();
       try {
-        FirebaseUser user = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password);
-        Firestore.instance
-                      .collection('users')
-                      .document()
-                      .setData({
-                    'firstName': _firstName,
-                    'lastName': _lastName,
-                    'email': _email,
-                    'role': 'parent',});
+        FirebaseUser user = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: _email, password: _password);
+        Firestore.instance.collection('users').document().setData({
+          'id': user.uid,
+          'firstName': _firstName,
+          'lastName': _lastName,
+          'email': _email,
+          'role': 'parent',
+        });
         //Navigate to home
         //Navigator.pushReplacementNamed(context, '/');
         Navigator.pushReplacement(
@@ -276,23 +275,23 @@ class _SignUpPage extends State<SignUpPage> {
       }
     }
   }
-Future<void> superSignUp() async {
+
+  Future<void> superSignUp() async {
     final formState = _formKey.currentState;
     //validate fields
     if (formState.validate()) {
       //login to firebase
       formState.save();
       try {
-        FirebaseUser user = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password);
-        Firestore.instance
-                      .collection('users')
-                      .document()
-                      .setData({
-                        'id': user.uid,
-                        'firstName': _firstName,
-                        'lastName': _lastName,
-                        'email': _email,
-                        'role': 'super',});
+        FirebaseUser user = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: _email, password: _password);
+        Firestore.instance.collection('users').document().setData({
+          'id': user.uid,
+          'firstName': _firstName,
+          'lastName': _lastName,
+          'email': _email,
+          'role': 'super',
+        });
         //Navigate to home
         //Navigator.pushReplacementNamed(context, '/');
         Navigator.pushReplacement(
@@ -305,12 +304,7 @@ Future<void> superSignUp() async {
       }
     }
   }
-
-
-  
 }
-
-
 
 //CLASS MAP BASED ON FIRESTORE ANNOUNCEMENT TABLE
 class Users {
