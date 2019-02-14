@@ -209,7 +209,7 @@ class _SignUpPage extends State<SignUpPage> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        backgroundColor: Color(0xFF1ca5e5),
+        backgroundColor: Color(0xFFF4F5F7),
         body: Center(          
               child: Form(
                 key: _formKey,
