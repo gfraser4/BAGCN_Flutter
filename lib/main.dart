@@ -11,10 +11,15 @@ import './settingsPage.dart';
 import './classAnnouncementPage.dart';
 import './loginPage.dart';
 import './signupPage.dart';
-import 'Models/ClassesModel.dart';
 import './parentClassAnnouncementPage.dart';
 
-//MAIN FUNCTION TO LAUNCH APP --> CALLS MyApp() WIDGET
+//Imported Models
+import 'Models/ClassesModel.dart';
+
+///////////////////////////////////////////////////////////
+//**MAIN FUNCTION TO LAUNCH APP --> CALLS MyApp() WIDGET**\\
+///////////////////////////////////////////////////////////
+
 void main() => runApp(MyApp());
 
 //MyApp WIDGET - OVERALL APP STYLING AND ROUTES
@@ -50,7 +55,10 @@ class MyApp extends StatelessWidget {
 //STATELESS WIDGET --> CONTENT STAYS THE SAME, DON't NEED TO REBUILD
 //STATEFUL WIDGET --> CONTENT CHANGING, PAGE WILL REBUILD
 
-//MyClassList WIDGET - MY CLASSES PAGE CLASS -- HOW THE MAIN PAGE LOADS AND ITS CONTENT
+////////////////////////////////////////////////////////////////////////////////////////////
+//**MyClassList WIDGET - MY CLASSES PAGE CLASS -- HOW THE MAIN PAGE LOADS AND ITS CONTENT**\\
+////////////////////////////////////////////////////////////////////////////////////////////
+
 class MyClassList extends StatefulWidget {
   const MyClassList(this.user);
   final FirebaseUser user;
@@ -89,8 +97,10 @@ class _MyClassList extends State<MyClassList> {
     );
   }
 }
+///////////////////////////////////
+//**HAMBURGER DRAWER MENU WIDGET**\\
+////////////////////////////////////
 
-//HAMBURGER DRAWER MENU WIDGET
 Widget _navDrawer(BuildContext context, FirebaseUser user) {
   return Drawer(
     child: ListView(
@@ -169,10 +179,24 @@ Widget _navDrawer(BuildContext context, FirebaseUser user) {
         Divider(
           color: Color(0xFF1ca5e5),
         ),
+        ListTile(
+          title: Text('Sign Out'),
+          onTap: () {
+            FirebaseAuth.instance.signOut();
+            Navigator.of(context).pushNamedAndRemoveUntil("/", ModalRoute.withName("/"));
+          },
+        ),
+        Divider(
+          color: Color(0xFF1ca5e5),
+        ),
       ],
     ),
   );
 }
+
+//////////////////////////////////////////////
+/*MAIN PAGE BUSINESS LOGIC */
+/////////////////////////////////////////////
 
 //QUERY FIRESTORE FOR ALL CLASSES FOR A USER --> currently using hardcoded userid 'lj@gmail.com' in where clause, this will need to be dynamic for userid
 Widget _buildBody(BuildContext context, FirebaseUser user) {
@@ -270,6 +294,10 @@ Widget _buildListItem(
   );
 }
 
+////////////////////////
+//**CHECK ROLE METHOD**\\
+////////////////////////
+
 //future waiting for database response --> check role and send to right page depending on it
 Future<void> checkRole(BuildContext context, FirebaseUser user, int classCode, String className) async {
 DocumentSnapshot snapshot = await Firestore.instance.collection('users').document('${user.uid}').get();
@@ -295,31 +323,3 @@ DocumentSnapshot snapshot = await Firestore.instance.collection('users').documen
   }
 }
 
-//CLASS MAP BASED ON FIRESTORE ANNOUNCEMENT TABLE
-class Users {
-  final String id;
-  final String firstName;
-  final String lastName;
-  final String email;
-  final String role;
-  final DocumentReference reference;
-
-  Users.fromMap(Map<String, dynamic> map, {this.reference})
-      : assert(map['firstName'] != null),
-        assert(map['lastName'] != null),
-        assert(map['lastName'] != null),
-        assert(map['email'] != null),
-        assert(map['role'] != null),
-        assert(map['id'] != null),
-        firstName = map['firstName'],
-        lastName = map['lastName'],
-        id = map['id'],
-        email = map['email'],
-        role = map['role'];
-
-  Users.fromSnapshot(DocumentSnapshot snapshot)
-      : this.fromMap(snapshot.data, reference: snapshot.reference);
-
-  // @override
-  // String toString() => "Record<$clsName:$title>";
-}
