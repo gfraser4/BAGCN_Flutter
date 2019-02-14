@@ -210,13 +210,7 @@ class _SignUpPage extends State<SignUpPage> {
       onWillPop: () async => false,
       child: Scaffold(
         backgroundColor: Color(0xFF1ca5e5),
-        body: Center(
-          child: Container(
-              margin: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Colors.lightBlue[50],
-              ),
+        body: Center(          
               child: Form(
                 key: _formKey,
                 child: ListView(
@@ -242,7 +236,6 @@ class _SignUpPage extends State<SignUpPage> {
                 ),
               )),
         ),
-      ),
     );
   }
 
