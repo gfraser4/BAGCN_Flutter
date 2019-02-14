@@ -21,8 +21,8 @@ class _LoginPageState extends State<LoginPage> {
     final logo = Hero(
       tag: 'hero',
       child: Container(
-        padding: EdgeInsets.only(left: 20, top: 20, right: 20),
-        child: Image.asset('assets/BGC_Niagara_logo.png'),
+        padding: EdgeInsets.only(left: 70, top: 70, right: 70),
+        child: Image.asset('assets/BGC_Niagara_Vertical.png'),
       ),
     );
 
@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
       autofocus: false,
       //initialValue: 'lj@gmail.com',
       decoration: InputDecoration(
-        labelText: 'Username',
+        labelText: 'Email',
         // icon: Icon(
         //   Icons.account_circle,
         //   color: Color(0xFF66CC00),
@@ -71,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
 
 //LOGIN BUTTON
     final loginButton = Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.0),
+      padding: EdgeInsets.symmetric(vertical: 16),
       child: RaisedButton(
         // shape: RoundedRectangleBorder(
         //   borderRadius: BorderRadius.circular(24),
@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
         },
         padding: EdgeInsets.all(12),
         color: Color(0xFF66CC00),
-        child: Text('Log In', style: TextStyle(color: Colors.white)),
+        child: Text('Log In', style: TextStyle(fontSize: 18, color: Colors.white)),
         shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
       ),
     );
