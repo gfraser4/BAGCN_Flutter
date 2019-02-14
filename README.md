@@ -2,15 +2,16 @@
 
 A new Flutter project.
 
-## Getting Started
+## NC Lab Setup
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.io/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.io/docs/cookbook)
-
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.io/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+1.) Select NO Hyper-V
+2.) Download Flutter
+3.) Make folder 'src' in C:\ directory
+4.) Extract flutter to src folder
+5.) open flutter folder go run flutter_console.bat
+6.) run: flutter config --android-sdk C:\Android\SDK
+7.) run: flutter doctor --android-licenses (hit y for all)
+8.) in windows search env
+9.) edit environment variables --> user variables --> click path --> edit --> new --> C:\src\flutter\bin
+9.) Open visual studio code and install flutter package --> push reload
+10.) Bottom right of visual studio chood devices pick one with at least API 27
