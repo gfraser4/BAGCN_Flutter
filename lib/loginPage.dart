@@ -51,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
     final password = TextFormField(
       validator: (input) {
         if (input.length < 6)
-          return 'Your password needs to be at least 6 characters.';
+          return 'Your password needs\nto be at least 6 characters.';
       },
       onSaved: (input) => _password = input,
       autofocus: false,
