@@ -270,7 +270,7 @@ Widget _buildListItem(
   );
 }
 
-//future waiting for database response
+//future waiting for database response --> check role and send to right page depending on it
 Future<void> checkRole(BuildContext context, FirebaseUser user, int classCode, String className) async {
 DocumentSnapshot snapshot = await Firestore.instance.collection('users').document('${user.uid}').get();
   if (snapshot['role'] == 'super') {
