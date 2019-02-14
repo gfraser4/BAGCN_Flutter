@@ -21,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
     final logo = Hero(
       tag: 'hero',
       child: Container(
-        padding: EdgeInsets.only(left: 40, top: 40, right: 40),
+        padding: EdgeInsets.only(left: 20, top: 20, right: 20),
         child: Image.asset('assets/BGC_Niagara_logo.png'),
       ),
     );
@@ -37,13 +37,13 @@ class _LoginPageState extends State<LoginPage> {
       //initialValue: 'lj@gmail.com',
       decoration: InputDecoration(
         labelText: 'Username',
-        icon: Icon(
-          Icons.account_circle,
-          color: Colors.lightGreen,
-        ),
+        // icon: Icon(
+        //   Icons.account_circle,
+        //   color: Color(0xFF66CC00),
+        // ),
         //hintText: 'Email',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(6.0)),
+        contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
       ),
     );
 
@@ -59,13 +59,13 @@ class _LoginPageState extends State<LoginPage> {
       obscureText: true,
       decoration: InputDecoration(
         labelText: 'Password',
-        icon: Icon(
-          Icons.lock,
-          color: Colors.lightGreen,
-        ),
+        // icon: Icon(
+        //   Icons.lock,
+        //   color: Color(0xFF66CC00),
+        // ),
         //hintText: 'Password',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(6.0)),
+        contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
       ),
     );
 
@@ -80,8 +80,9 @@ class _LoginPageState extends State<LoginPage> {
           signIn();
         },
         padding: EdgeInsets.all(12),
-        color: Color(0xFF1ca5e5),
+        color: Color(0xFF66CC00),
         child: Text('Log In', style: TextStyle(color: Colors.white)),
+        shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
       ),
     );
 
@@ -101,14 +102,8 @@ class _LoginPageState extends State<LoginPage> {
       //DISABLES BACK BUTTON ON PHONE WHICH WOULD SEND USER TO MY CLASS LIST BYPASSING LOGIN
       onWillPop: () async => false,
       child: Scaffold(
-        backgroundColor: Color(0xFF1ca5e5),
-        body: Center(
-          child: Container(
-            margin: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.lightBlue[50],
-            ),
+        backgroundColor: Color(0xFFF4F5F7),
+        body: Center(      
             child: Form(
               key: _formKey,
               child: ListView(
@@ -118,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                   logo,
                   SizedBox(height: 48.0),
                   email,
-                  SizedBox(height: 32.0),
+                  SizedBox(height: 15.0),
                   password,
                   SizedBox(height: 24.0),
                   loginButton,
@@ -128,8 +123,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 
 //future waiting for database response
