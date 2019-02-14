@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
+import './main.dart';
+import 'Models/ClassesModel.dart';
 
 //SEARCH AND ADD CLASSES PAGE
 class AddClassesPage extends StatefulWidget {
+
+  const AddClassesPage(this.user);
+  final FirebaseUser user;
+
   @override
   _AddClassesPage createState() {
     return _AddClassesPage();
@@ -165,7 +172,7 @@ class _AddClassesPage extends State<AddClassesPage> {
             color: Color(0xFF1ca5e5),
           ),
           Expanded(
-            child: _buildBody(context, stream), //SEARCH RESULTS AREA IS BUILT PASSING DYNAMIC QUERY(stream)
+            child: _buildBody(context, stream, widget.user), //SEARCH RESULTS AREA IS BUILT PASSING DYNAMIC QUERY(stream)
           ),
         ],
       ),
@@ -174,28 +181,28 @@ class _AddClassesPage extends State<AddClassesPage> {
 }
 
 //Search querey dynamic based on search criteria
-Widget _buildBody(BuildContext context, var stream) {
+Widget _buildBody(BuildContext context, var stream, FirebaseUser user) {
   return StreamBuilder<QuerySnapshot>(
     stream: stream, //QUERY (stream) WILL BE DEPENDENT ON SEARCH FIELDS
     builder: (context, snapshot) {
       if (!snapshot.hasData) return LinearProgressIndicator();
-      return _buildList(context, snapshot.data.documents);
+      return _buildList(context, snapshot.data.documents, user);
     },
   );
 }
 
 //Build ListView for queried items based on above query
-Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
+Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot, FirebaseUser user) {
   return ListView(
     padding: const EdgeInsets.only(top: 20.0),
-    children: snapshot.map((data) => _buildListItem(context, data)).toList(),
+    children: snapshot.map((data) => _buildListItem(context, data, user)).toList(),
   );
 }
 
 //WIDGET TO BUILD WACH CLASS ITEM --> Username needed to add classes to that usres class list on their home screen (currently hardcoded as "lj@gmail.com")
-Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
+Widget _buildListItem(BuildContext context, DocumentSnapshot data, FirebaseUser user) {
   final classes = Classes.fromSnapshot(data);
-  List<String> user = ['lj@gmail.com'];
+  List<String> userID = ['${user.uid}'];
   return Padding(
     key: ValueKey(classes.clsName),
     padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
@@ -229,9 +236,12 @@ Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
                         child: Text("Add Class"),
                         onPressed: () {
                           classes.reference.updateData({
-                            "parents": FieldValue.arrayUnion(user), //UPDATE CLASS FIELD ADDING USER TO PARENTS ARRAY
+                            "enrolledUsers": FieldValue.arrayUnion(userID), //UPDATE CLASS FIELD ADDING USER TO enrolledUsers ARRAY
                           });
-                          Navigator.of(context).pushNamed('/');
+                            Navigator.pushReplacement(
+            context,
+            new MaterialPageRoute(
+                builder: (BuildContext context) => new MyClassList(user)));
                         },
                       ),
                     ],
@@ -244,32 +254,5 @@ Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
   );
 }
 
-//class used for mapping of classes query --> essentially has fields initialized and then mapped to their field in the database
-class Classes {
-  final String clsName;
-  final String location;
-  final String dates;
-  final String times;
-  final int code;
-  final DocumentReference reference;
-
-  Classes.fromMap(Map<String, dynamic> map, {this.reference})
-      : assert(map['clsName'] != null),
-        assert(map['code'] != null),
-        assert(map['dates'] != null),
-        assert(map['times'] != null),
-        assert(map['location'] != null),
-        clsName = map['clsName'],
-        location = map['location'],
-        dates = map['dates'],
-        times = map['times'],
-        code = map['code'];
-
-  Classes.fromSnapshot(DocumentSnapshot snapshot)
-      : this.fromMap(snapshot.data, reference: snapshot.reference);
-
-  @override
-  String toString() => "Record<$clsName:$code>";
-}
 
 

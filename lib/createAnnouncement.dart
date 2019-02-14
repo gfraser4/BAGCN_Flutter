@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'Models/AnnouncementsModel.dart';
 
 //CREATE ANNOUNCEMENT PAGE --> REQUIRES title and code PASSED TO IT AS ARGUMENTS
 class AnnouncementPage extends StatefulWidget {
@@ -116,30 +117,4 @@ Widget _buildBody(BuildContext context, String title, int code) {
   );
 }
 
-//CLASS MAP BASED ON FIRESTORE ANNOUNCEMENT TABLE
-class Announcements {
-  final String clsName;
-  final String title;
-  final String description;
-  final DateTime created;
-  final int code;
-  final DocumentReference reference;
 
-  Announcements.fromMap(Map<String, dynamic> map, {this.reference})
-      : assert(map['class'] != null),
-        assert(map['description'] != null),
-        assert(map['title'] != null),
-        assert(map['created'] != null),
-        assert(map['code'] != null),
-        code = map['code'],
-        clsName = map['class'],
-        title = map['title'],
-        created = map['created'],
-        description = map['description'];
-
-  Announcements.fromSnapshot(DocumentSnapshot snapshot)
-      : this.fromMap(snapshot.data, reference: snapshot.reference);
-
-  @override
-  String toString() => "Record<$clsName:$title>";
-}

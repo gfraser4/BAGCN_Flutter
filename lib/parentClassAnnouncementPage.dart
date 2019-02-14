@@ -3,24 +3,23 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import './newMessagePage.dart';
-import 'createAnnouncement.dart';
 import 'Models/AnnouncementsModel.dart';
 
 
-//ClassPage WIDGET - SHOWS ANNOUNCEMENTS FOR SPECIFIC CLASS --> REQUIRES A title AND code ARGURMENT PASSED TO IT
-class ClassPage extends StatefulWidget {
+//ParentClassAnnouncementPage WIDGET - SHOWS ANNOUNCEMENTS FOR SPECIFIC CLASS --> REQUIRES A title AND code ARGURMENT PASSED TO IT
+class ParentClassAnnouncementPage extends StatefulWidget {
   final FirebaseUser user;
   final String title;
   final int code;
-  ClassPage(this.title, this.code, this.user);
+  ParentClassAnnouncementPage(this.title, this.code, this.user);
   @override
-  _ClassPage createState() {
-    return _ClassPage();
+  _ParentClassAnnouncementPage createState() {
+    return _ParentClassAnnouncementPage();
   }
 }
 
 //HOW PAGE IS BUILT
-class _ClassPage extends State<ClassPage> {
+class _ParentClassAnnouncementPage extends State<ParentClassAnnouncementPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,17 +28,6 @@ class _ClassPage extends State<ClassPage> {
         title: Text(widget.title), //PAGE TITLE BASED ON title THAT WAS PASSED TO PAGE
       ),
       body: _buildBody(context, widget.title, widget.code), //HOW BODY IS BUILT PASSING CLASS title AND CLASS code to _buildBody() WIDGET FOR QUERY
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.create),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    AnnouncementPage(widget.title, widget.code)), //NAVIGATION TO CREATE ANNOUNCEMENT --> AGAIN PASSING title AND code SO ANNOUNCEMENT IS MADE FOR SPECIFIC CLASS
-          );
-        },
-      ),
     );
   }
   
