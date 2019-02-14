@@ -256,7 +256,7 @@ class _SignUpPage extends State<SignUpPage> {
       try {
         FirebaseUser user = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: _email, password: _password);
-        Firestore.instance.collection('users').document().setData({
+        Firestore.instance.collection('users').document('${user.uid}').setData({
           'id': user.uid,
           'firstName': _firstName,
           'lastName': _lastName,

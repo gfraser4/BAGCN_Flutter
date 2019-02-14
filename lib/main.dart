@@ -272,23 +272,19 @@ Widget _buildListItem(
 
 //future waiting for database response
 Future<void> checkRole(BuildContext context, FirebaseUser user, int classCode, String className) async {
-  Firestore.instance
-      .collection('users')
-      .where("id", isEqualTo: user.uid)
-      .snapshots()
-      .listen((data) => data.documents.forEach((doc) {
-            if (doc['role'] == 'super') {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ClassPage(
-                          className,
-                          classCode,
-                          user)), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE
-                );
-            }
-            else {
-              Navigator.push(
+DocumentSnapshot snapshot = await Firestore.instance.collection('users').document('${user.uid}').get();
+  if (snapshot['role'] == 'super') {
+    Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ClassPage(
+                            className,
+                            classCode,
+                            user)), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE
+                  );
+  }
+  else {
+    Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => ParentClassAnnouncementPage(
@@ -296,9 +292,7 @@ Future<void> checkRole(BuildContext context, FirebaseUser user, int classCode, S
                           classCode,
                           user)), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE
                 );
-              
-            }
-          }));
+  }
 }
 
 //CLASS MAP BASED ON FIRESTORE ANNOUNCEMENT TABLE
