@@ -13,6 +13,7 @@ class _LoginPageState extends State<LoginPage> {
   String _email;
   String _password;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     //SCAFFOLD OF PAGE LAYOUT AT BOTTOM --> SEE BELOW
@@ -125,6 +126,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
   }
+
 
 //future waiting for database response
   Future<void> signIn() async {

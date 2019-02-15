@@ -16,6 +16,7 @@ class _SignUpPage extends State<SignUpPage> {
   String _lastName;
   String _email;
   String _password;
+
   @override
   Widget build(BuildContext context) {
     //SEE BOTTOM OF PAGE FOR LAYOUT/SCAFFOLD
@@ -248,6 +249,7 @@ class _SignUpPage extends State<SignUpPage> {
 
 //future waiting for database response
   Future<void> parentSignUp() async {
+    FirebaseUser user;
     final formState = _formKey.currentState;
     //validate fields
     if (formState.validate()) {
@@ -272,11 +274,24 @@ class _SignUpPage extends State<SignUpPage> {
         //Navigator.of(context).pop();
       } catch (ex) {
         print(ex.message);
+      } finally {
+        if (user != null) {
+          //Sign in Successful: Navigate to home
+
+          Navigator.pushReplacement(
+              context,
+              new MaterialPageRoute(
+                  builder: (BuildContext context) => new MyClassList(user)));
+        } else {
+          //Sign in Failed:
+          //...Prompt User
+        }
       }
     }
   }
 
   Future<void> superSignUp() async {
+    FirebaseUser user;
     final formState = _formKey.currentState;
     //validate fields
     if (formState.validate()) {
@@ -294,13 +309,22 @@ class _SignUpPage extends State<SignUpPage> {
         });
         //Navigate to home
         //Navigator.pushReplacementNamed(context, '/');
-        Navigator.pushReplacement(
-            context,
-            new MaterialPageRoute(
-                builder: (BuildContext context) => new MyClassList(user)));
+
         //Navigator.of(context).pop();
       } catch (ex) {
         print(ex.message);
+      } finally {
+        if (user != null) {
+          //Sign in Successful: Navigate to home
+
+          Navigator.pushReplacement(
+              context,
+              new MaterialPageRoute(
+                  builder: (BuildContext context) => new MyClassList(user)));
+        } else {
+          //Sign in Failed:
+          //...Prompt User
+        }
       }
     }
   }
