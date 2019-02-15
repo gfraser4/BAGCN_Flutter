@@ -37,12 +37,12 @@ class _LoginPageState extends State<LoginPage> {
       //initialValue: 'lj@gmail.com',
       decoration: InputDecoration(
         labelText: 'Email',
-        // icon: Icon(
-        //   Icons.account_circle,
-        //   color: Color(0xFF66CC00),
-        // ),
+        prefixIcon: Icon(
+          Icons.account_circle,
+          color: Color(0xFF66CC00),
+        ),
         //hintText: 'Email',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
       ),
     );
@@ -59,12 +59,12 @@ class _LoginPageState extends State<LoginPage> {
       obscureText: true,
       decoration: InputDecoration(
         labelText: 'Password',
-        // icon: Icon(
-        //   Icons.lock,
-        //   color: Color(0xFF66CC00),
-        // ),
+        prefixIcon: Icon(
+          Icons.lock,
+          color: Color(0xFF66CC00),
+        ),
         //hintText: 'Password',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
       ),
     );
