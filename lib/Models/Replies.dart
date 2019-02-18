@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 //CLASS MAP BASED ON FIRESTORE ANNOUNCEMENT TABLE
-class Comments {
-  final String commentID;
-  final String announcementID;
+class Replies {
+  final String parentCommentID;
+  final String replyID;
   final String firstName;
   final String lastName;
   final String content;
@@ -11,23 +11,23 @@ class Comments {
   final bool visible;
   final DocumentReference reference;
 
-  Comments.fromMap(Map<String, dynamic> map, {this.reference})
+  Replies.fromMap(Map<String, dynamic> map, {this.reference})
       : assert(map['firstName'] != null),
         assert(map['lastName'] != null),
-        assert(map['commentID'] != null),
-        assert(map['announcementID'] != null),
+        assert(map['parentCommentID'] != null),
+        assert(map['replyID'] != null),
         assert(map['content'] != null),
         assert(map['created'] != null),
         assert(map['visible'] != null),
         firstName = map['firstName'],
         lastName = map['lastName'],
-        commentID = map['commentID'],
-        announcementID = map['announcementID'],
+        parentCommentID = map['parentCommentID'],
+        replyID = map['replyID'],
         content = map['content'],
         visible = map['visible'],
         created = map['created'];
 
-  Comments.fromSnapshot(DocumentSnapshot snapshot)
+  Replies.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data, reference: snapshot.reference);
 
   // @override
