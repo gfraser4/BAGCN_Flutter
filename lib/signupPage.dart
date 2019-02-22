@@ -41,13 +41,13 @@ class _SignUpPage extends State<SignUpPage> {
       //initialValue: 'lj@gmail.com',
       decoration: InputDecoration(
         labelText: 'First Name',
-        icon: Icon(
+        prefixIcon: Icon(
           Icons.account_circle,
-          color: Colors.lightGreen,
+          color: Color(0xFF66CC00),
         ),
         //hintText: 'Email',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(6.0)),
+        contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
       ),
     );
 
@@ -62,13 +62,13 @@ class _SignUpPage extends State<SignUpPage> {
 
       decoration: InputDecoration(
         labelText: 'Last Name',
-        icon: Icon(
+        prefixIcon: Icon(
           Icons.account_circle,
-          color: Colors.lightGreen,
+          color: Color(0xFF66CC00),
         ),
         //hintText: 'Password',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(6.0)),
+        contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
       ),
     );
 
@@ -83,13 +83,13 @@ class _SignUpPage extends State<SignUpPage> {
 
       decoration: InputDecoration(
         labelText: 'Email',
-        icon: Icon(
+        prefixIcon: Icon(
           Icons.email,
-          color: Colors.lightGreen,
+          color: Color(0xFF66CC00),
         ),
         //hintText: 'Password',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(6.0)),
+        contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
       ),
     );
 
@@ -105,13 +105,13 @@ class _SignUpPage extends State<SignUpPage> {
       obscureText: true,
       decoration: InputDecoration(
         labelText: 'Password',
-        icon: Icon(
+        prefixIcon: Icon(
           Icons.lock,
-          color: Colors.lightGreen,
+          color: Color(0xFF66CC00),
         ),
         //hintText: 'Password',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(6.0)),
+        contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
       ),
     );
 
@@ -137,7 +137,7 @@ class _SignUpPage extends State<SignUpPage> {
       'Choose your Role:',
       textAlign: TextAlign.center,
       style: TextStyle(
-          color: Color(0xFF1ca5e5), fontWeight: FontWeight.w600, fontSize: 18),
+          color: Color(0xFF66CC00), fontWeight: FontWeight.w600, fontSize: 18),
     );
 
 //SUPERVISOR AND PARENT BUTTONS
@@ -145,21 +145,22 @@ class _SignUpPage extends State<SignUpPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Container(
+          width: 130,
           margin: EdgeInsets.only(top: 10, right: 10),
           child: RaisedButton(
-            //color: Colors.lightGreen,
+            color: Color(0xFF66CC00),
             child: Row(
               children: <Widget>[
                 Container(
                   margin: EdgeInsets.only(right: 5),
                   child: Icon(
                     Icons.assignment_ind,
-                    color: Color(0xFF1ca5e5),
+                    color: Colors.white,
                   ),
                 ),
                 Text(
                   'Supervisor',
-                  style: TextStyle(color: Color(0xFF1ca5e5)),
+                  style: TextStyle(color: Colors.white),
                 ),
               ],
             ),
@@ -169,21 +170,23 @@ class _SignUpPage extends State<SignUpPage> {
           ),
         ),
         Container(
+          width: 130,
           margin: EdgeInsets.only(top: 10, right: 10),
           child: RaisedButton(
-            color: Color(0xFF1ca5e5),
+            color: Color(0xFF66CC00),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
                   margin: EdgeInsets.only(right: 5),
                   child: Icon(
                     Icons.child_care,
-                    color: Colors.lightBlue[50],
+                    color: Colors.white,
                   ),
                 ),
                 Text(
                   'Parent',
-                  style: TextStyle(color: Colors.lightBlue[50]),
+                  style: TextStyle(color: Colors.white),
                 ),
               ],
             ),
@@ -210,14 +213,8 @@ class _SignUpPage extends State<SignUpPage> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        backgroundColor: Color(0xFF1ca5e5),
-        body: Center(
-          child: Container(
-              margin: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Colors.lightBlue[50],
-              ),
+        backgroundColor: Color(0xFFF4F5F7),
+        body: Center(          
               child: Form(
                 key: _formKey,
                 child: ListView(
@@ -243,7 +240,6 @@ class _SignUpPage extends State<SignUpPage> {
                 ),
               )),
         ),
-      ),
     );
   }
 
