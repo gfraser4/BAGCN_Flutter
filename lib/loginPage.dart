@@ -13,7 +13,6 @@ class _LoginPageState extends State<LoginPage> {
   String _email;
   String _password;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
     //SCAFFOLD OF PAGE LAYOUT AT BOTTOM --> SEE BELOW
@@ -40,10 +39,16 @@ class _LoginPageState extends State<LoginPage> {
         labelText: 'Email',
         prefixIcon: Icon(
           Icons.account_circle,
-          color: Color(0xFF66CC00),
+          color: Colors.bagcGreen,
         ),
         //hintText: 'Email',
         contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), 
+          borderSide: BorderSide(
+              color: Colors.bagcGreen,
+              width: 2,
+            ) 
+          ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
       ),
     );
@@ -62,10 +67,16 @@ class _LoginPageState extends State<LoginPage> {
         labelText: 'Password',
         prefixIcon: Icon(
           Icons.lock,
-          color: Color(0xFF66CC00),
+          color: Colors.bagcGreen,
         ),
         //hintText: 'Password',
         contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), 
+          borderSide: BorderSide(
+              color: Colors.bagcGreen,
+              width: 2,
+            ) 
+          ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
       ),
     );
@@ -81,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
           signIn();
         },
         padding: EdgeInsets.all(12),
-        color: Color(0xFF66CC00),
+        color: Colors.bagcGreen,
         child: Text('Log In', style: TextStyle(fontSize: 18, color: Colors.white)),
         shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
       ),

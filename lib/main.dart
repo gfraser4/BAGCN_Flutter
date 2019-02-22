@@ -39,9 +39,10 @@ class MyApp extends StatelessWidget {
       //Theme data for app *FONT NOT CURRENTLY WORKING*
       theme: ThemeData(
         brightness: Brightness.light,
-        primaryColor: Color(0xFF66CC00),
-        accentColor: Color(0xFF1ca5e5),
-        hintColor: Colors.grey,
+        primaryColor: Colors.bagcGreen,
+        accentColor: Colors.bagcLightBlue,
+        hintColor: Colors.bagcDarkBlue.withOpacity(0.7),
+        errorColor: Colors.bagcRed,
         textTheme: TextTheme(
           headline: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
           title: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
