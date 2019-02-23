@@ -9,6 +9,8 @@ class Announcements {
   final DateTime created;
   final int code;
   final int likes;
+  final int commentCount;
+  final List<dynamic> notifyUsers;
   final List<dynamic> likedUsers;
   final DocumentReference reference;
 
@@ -23,6 +25,8 @@ class Announcements {
         code = map['code'],
         likedUsers = map['likedUsers'],
         likes = map['likes'],
+        commentCount = map['commentCount'],
+        notifyUsers = map['notifyUsers'],
         clsName = map['class'],
         title = map['title'],
         created = map['created'],

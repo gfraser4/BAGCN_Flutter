@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
 import 'Models/AnnouncementsModel.dart';
 import 'Models/Users.dart';
@@ -27,7 +28,7 @@ class _ParentsCommentsPage extends State<ParentsCommentsPage> {
       appBar: AppBar(
         title: Text(widget.announcement.title),
       ),
-      body: _buildCommentsBody(context, widget.announcement, widget.user), 
+      body: _buildCommentsBody(context, widget.announcement, widget.user),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.comment),
         onPressed: () {
@@ -112,10 +113,25 @@ Future<void> createComment(BuildContext context, FirebaseUser user,
     'created': nowTime,
     'visible': true,
   });
+
+  DocumentSnapshot announcementSnapshot = await Firestore.instance
+      .collection('announcements')
+      .document(announcementID)
+      .get();
+
+//Increases comment count by one for specific announcement
+  Firestore.instance.runTransaction((transaction) async {
+    final freshSnapshot = await transaction.get(announcementSnapshot.reference);
+    final fresh = Announcements.fromSnapshot(freshSnapshot);
+
+    await transaction.update(announcementSnapshot.reference, {
+      'commentCount': fresh.commentCount + 1,
+    });
+  });
 }
 
 Future<void> createReply(BuildContext context, FirebaseUser user,
-    String content, String commentID) async {
+    String content, String commentID, String announcementID) async {
   DateTime nowTime = new DateTime.now().toUtc();
   DocumentSnapshot snapshot = await Firestore.instance
       .collection('users')
@@ -131,6 +147,21 @@ Future<void> createReply(BuildContext context, FirebaseUser user,
     'lastName': userInfo.lastName,
     'created': nowTime,
     'visible': true,
+  });
+
+  DocumentSnapshot announcementSnapshot = await Firestore.instance
+      .collection('announcements')
+      .document(announcementID)
+      .get();
+
+  //Increases comment count by one for specific announcement
+  Firestore.instance.runTransaction((transaction) async {
+    final freshSnapshot = await transaction.get(announcementSnapshot.reference);
+    final fresh = Announcements.fromSnapshot(freshSnapshot);
+
+    await transaction.update(announcementSnapshot.reference, {
+      'commentCount': fresh.commentCount + 1,
+    });
   });
 }
 
@@ -155,7 +186,9 @@ Widget _buildCommentsBody(
 Widget _buildCommentsList(
     BuildContext context, List<DocumentSnapshot> snapshot, FirebaseUser user) {
   return ListView(
-    padding: const EdgeInsets.only(top: 8.0,),
+    padding: const EdgeInsets.only(
+      top: 8.0,
+    ),
     children: snapshot
         .map((data) => _buildCommentsListItem(context, data, user))
         .toList(),
@@ -167,6 +200,8 @@ Widget _buildCommentsListItem(
     BuildContext context, DocumentSnapshot data, FirebaseUser user) {
   final _replyController = new TextEditingController();
   final comments = Comments.fromSnapshot(data);
+  var formatter = new DateFormat.yMd().add_jm();
+  String formattedDate = formatter.format(comments.created);
   return Padding(
     key: ValueKey(comments.announcementID),
     padding: const EdgeInsets.symmetric(horizontal: 2.0, vertical: 2),
@@ -177,7 +212,9 @@ Widget _buildCommentsListItem(
         child: Column(
           children: <Widget>[
             ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 10.0,),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 10.0,
+              ),
               title: Text(
                 '${comments.firstName} ${comments.lastName}',
                 style: TextStyle(fontWeight: FontWeight.w600),
@@ -192,13 +229,23 @@ Widget _buildCommentsListItem(
                   padding: const EdgeInsets.only(left: 10.0, bottom: 2.0),
                   child: Row(
                     children: <Widget>[
-                      Text('${comments.created}'),
+                      Text('$formattedDate'),
                     ],
                   ),
                 ),
-                IconButton(
-                  icon: Icon(Icons.reply),
-                  color: Color(0xFF1ca5e5),
+                FlatButton(
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.reply,
+                        color: Color(0xFF1ca5e5),
+                      ),
+                      Text(
+                        'Reply',
+                        style: TextStyle(color: Color(0xFF1ca5e5)),
+                      )
+                    ],
+                  ),
                   onPressed: () {
                     showDialog(
                       context: context,
@@ -226,8 +273,12 @@ Widget _buildCommentsListItem(
                             FlatButton(
                               child: Text("Reply"),
                               onPressed: () {
-                                createReply(context, user,
-                                    _replyController.text, comments.commentID);
+                                createReply(
+                                    context,
+                                    user,
+                                    _replyController.text,
+                                    comments.commentID,
+                                    comments.announcementID);
                                 _replyController.text = "";
                                 Navigator.of(context).pop();
                               },
@@ -241,7 +292,7 @@ Widget _buildCommentsListItem(
               ],
             ),
             Divider(color: Color(0xFF1ca5e5)),
-                _buildRepliesBody(context, comments, user),
+            _buildRepliesBody(context, comments, user),
           ],
         ),
       ),
@@ -280,6 +331,8 @@ Widget _buildRepliesList(
 Widget _buildRepliesListItem(
     BuildContext context, DocumentSnapshot data, FirebaseUser user) {
   final replies = Replies.fromSnapshot(data);
+  var formatter = new DateFormat.yMd().add_jm();
+  String formattedDate = formatter.format(replies.created);
   return Padding(
     //key: ValueKey(replies.parentCommentID),
     padding: const EdgeInsets.only(left: 20.0),
@@ -305,7 +358,8 @@ Widget _buildRepliesListItem(
                   padding: const EdgeInsets.only(left: 10.0, bottom: 2.0),
                   child: Row(
                     children: <Widget>[
-                      Text('${replies.created}'),
+                      Text('$formattedDate'),
+                      
                     ],
                   ),
                 ),

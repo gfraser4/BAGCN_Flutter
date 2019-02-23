@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
 import './parentCommentsPage.dart';
 import 'Models/AnnouncementsModel.dart';
@@ -8,6 +9,7 @@ import 'Models/AnnouncementsModel.dart';
 
 
 Color likeButtonColor = Colors.grey;
+Color notifyButtonColor = Colors.grey;
 
 //ParentClassAnnouncementPage WIDGET - SHOWS ANNOUNCEMENTS FOR SPECIFIC CLASS --> REQUIRES A title AND code ARGURMENT PASSED TO IT
 class ParentClassAnnouncementPage extends StatefulWidget {
@@ -27,15 +29,14 @@ class _ParentClassAnnouncementPage extends State<ParentClassAnnouncementPage> {
 @override
   void initState() {
 likeButtonColor = likeButtonColor;
-
+notifyButtonColor = notifyButtonColor;
   }
-
 
 @override
   void setState(fn) {
     likeButtonColor = likeButtonColor;
+    notifyButtonColor = notifyButtonColor;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -88,15 +89,22 @@ Widget _buildListItem(
     BuildContext context, DocumentSnapshot data, FirebaseUser user) {
   List<String> userID = ['${user.uid}'];
   final announcements = Announcements.fromSnapshot(data);
-
+var formatter = new DateFormat.yMd().add_jm();
+  String formattedDate = formatter.format(announcements.created);
   //Check if user has liked the announcement already and set color of button accordingly
   if (announcements.likedUsers.contains(user.uid) == true){
-    print('user in list');
     likeButtonColor = Color(0xFF1ca5e5);
   }
   else{
-    print('user not in list');
     likeButtonColor = Colors.grey;
+  }
+
+//check if users has subscribed to notifications and set button color accordingly
+  if (announcements.notifyUsers.contains(user.uid) == true){
+    notifyButtonColor = Color(0xFF1ca5e5);
+  }
+  else{
+    notifyButtonColor = Colors.grey;
   }
 
 //add user to liked l ist and increase count like by one or decrease by one
@@ -106,9 +114,6 @@ Widget _buildListItem(
       final fresh = Announcements.fromSnapshot(freshSnapshot);
       if (fresh.likedUsers.contains(user.uid) == false) {
         likeButtonColor = Color(0xFF1ca5e5);
-        print(likeButtonColor);
-
-
         await transaction.update(announcements.reference, {
           'likes': fresh.likes + 1,
           "likedUsers": FieldValue.arrayUnion(userID)
@@ -119,7 +124,28 @@ Widget _buildListItem(
           "likedUsers": FieldValue.arrayRemove(userID)
         });
         likeButtonColor = Colors.grey;
-        print(likeButtonColor);
+      }
+    });
+  }
+
+
+  //keep track of who has subrscribed to announcement-comments notifications
+  void _notifyClick() {
+    Firestore.instance.runTransaction((transaction) async {
+      final freshSnapshot = await transaction.get(announcements.reference);
+      final fresh = Announcements.fromSnapshot(freshSnapshot);
+      if (fresh.notifyUsers.contains(user.uid) == false) {
+        notifyButtonColor = Color(0xFF1ca5e5);
+        await transaction.update(announcements.reference, {
+          "notifyUsers": FieldValue.arrayUnion(userID)
+        });
+        print('added');
+      } else {
+        await transaction.update(announcements.reference, {
+          "notifyUsers": FieldValue.arrayRemove(userID)
+        });
+        notifyButtonColor = Colors.grey;
+        print('removed');
       }
     });
   }
@@ -141,7 +167,7 @@ Widget _buildListItem(
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
               subtitle: Text(
-                  'Posted to: ${announcements.clsName}\nPosted on: ${announcements.created}\n\n${announcements.description}'),
+                  'Posted to: ${announcements.clsName}\nPosted on: $formattedDate\n\n${announcements.description}'),
             ),
             Divider(
               color: Color(0xFF1ca5e5),
@@ -182,7 +208,7 @@ Widget _buildListItem(
                           );
                         },
                       ),
-                      Text('0',
+                      Text(announcements.commentCount.toString(),
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             color: Color(0xFF1ca5e5),
@@ -191,9 +217,11 @@ Widget _buildListItem(
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.more_horiz),
-                  color: Color(0xFF1ca5e5),
-                  onPressed: () {},
+                  icon: Icon(Icons.notifications_active),
+                  color: notifyButtonColor,
+                  onPressed: () {
+                    _notifyClick();
+                  },
                 ),
               ],
             )
