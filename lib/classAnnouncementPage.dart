@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import './newMessagePage.dart';
+import './parentCommentsPage.dart';
 import 'createAnnouncement.dart';
 import 'Models/AnnouncementsModel.dart';
 
@@ -121,11 +121,11 @@ Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
                           icon: Icon(Icons.forum),
                           color: Color(0xFF1ca5e5),
                           onPressed: () {
-                            Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => NewMessagePage()),
-                      );
+                      //       Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //       builder: (context) => ParentsCommentsPage(announcements)),
+                      // );
                           },
                         ),
                         Text('0',

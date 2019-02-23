@@ -133,7 +133,7 @@ Widget _navDrawer(BuildContext context, FirebaseUser user) {
             Icons.announcement,
             color: Color(0xFF1ca5e5),
           ),
-          title: Text('Messages'),
+          title: Text('Messages (Not used right now)'),
           onTap: () {
             Navigator.push(
               context,
@@ -184,7 +184,8 @@ Widget _navDrawer(BuildContext context, FirebaseUser user) {
           title: Text('Sign Out'),
           onTap: () {
             FirebaseAuth.instance.signOut();
-            Navigator.of(context).pushNamedAndRemoveUntil("/", ModalRoute.withName("/"));
+            Navigator.of(context)
+                .pushNamedAndRemoveUntil("/", ModalRoute.withName("/"));
           },
         ),
         Divider(
@@ -235,56 +236,77 @@ Widget _buildListItem(
     children: <Widget>[
       Container(
         decoration: new BoxDecoration(color: Colors.lightBlue[50]),
-        child: ListTile(
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 3.0, vertical: 8.0),
-            title: Text('${classes.clsName} - ${classes.code}',
-                style: TextStyle(fontWeight: FontWeight.w600)),
-            subtitle: Text(
-                '\nDates: ${classes.dates}\nTimes: ${classes.times}\nLocation: ${classes.location}'),
-            leading: IconButton(
-              icon: Icon(Icons.settings),
-              color: Colors.grey,
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text('Remove Class?'),
-                      content: Text(
-                          'Are you sure you want to remove ${classes.clsName} - ${classes.code} from your class list?'),
-                      actions: <Widget>[
-                        FlatButton(
-                          child: Text("Cancel"),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        FlatButton(
-                          child: Text("Accept"),
-                          onPressed: () {
-                            classes.reference.updateData({
-                              "enrolledUsers": FieldValue.arrayRemove(userID)
-                            });
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
-                    );
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Container(
+                  child: Row(
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(Icons.notifications_active),
+                        color: Color(0xFF1ca5e5),
+                        onPressed: () {},
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        color: Colors.grey,
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Remove Class?'),
+                                content: Text(
+                                    'Are you sure you want to remove ${classes.clsName} - ${classes.code} from your class list?'),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    child: Text("Cancel"),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  FlatButton(
+                                    child: Text("Accept"),
+                                    onPressed: () {
+                                      classes.reference.updateData({
+                                        "enrolledUsers":
+                                            FieldValue.arrayRemove(userID)
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            ListTile(
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 1.0),
+                title: Text('${classes.clsName} - ${classes.code}',
+                    style: TextStyle(fontWeight: FontWeight.w600)),
+                subtitle: Text(
+                    '\nDates: ${classes.dates}\nTimes: ${classes.times}\nLocation: ${classes.location}'),
+                trailing: IconButton(
+                  icon: Icon(Icons.chevron_right),
+                  color: Color(0xFF1ca5e5),
+                  onPressed: () {
+                    checkRole(context, user, classes.code, classes.clsName);
                   },
-                );
-              },
-            ),
-            trailing: IconButton(
-              icon: Icon(Icons.chevron_right),
-              color: Color(0xFF1ca5e5),
-              onPressed: () {
-                checkRole(context, user, classes.code, classes.clsName);
-              },
-            ),
-            onTap: () {
-              checkRole(context, user, classes.code, classes.clsName);
-            }),
+                ),
+                onTap: () {
+                  checkRole(context, user, classes.code, classes.clsName);
+                }),
+          ],
+        ),
       ),
       Divider(
         color: Colors.lightBlue,
@@ -300,27 +322,26 @@ Widget _buildListItem(
 ////////////////////////
 
 //future waiting for database response --> check role and send to right page depending on it
-Future<void> checkRole(BuildContext context, FirebaseUser user, int classCode, String className) async {
-DocumentSnapshot snapshot = await Firestore.instance.collection('users').document('${user.uid}').get();
+Future<void> checkRole(BuildContext context, FirebaseUser user, int classCode,
+    String className) async {
+  DocumentSnapshot snapshot = await Firestore.instance
+      .collection('users')
+      .document('${user.uid}')
+      .get();
   if (snapshot['role'] == 'super') {
     Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ClassPage(
-                            className,
-                            classCode,
-                            user)), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE
-                  );
-  }
-  else {
+      context,
+      MaterialPageRoute(
+        builder: (context) => ClassPage(className, classCode, user),
+      ), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE
+    );
+  } else {
     Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ParentClassAnnouncementPage(
-                          className,
-                          classCode,
-                          user)), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE
-                );
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            ParentClassAnnouncementPage(className, classCode, user),
+      ), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE
+    );
   }
 }
-

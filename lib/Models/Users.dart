@@ -12,7 +12,6 @@ class Users {
   Users.fromMap(Map<String, dynamic> map, {this.reference})
       : assert(map['firstName'] != null),
         assert(map['lastName'] != null),
-        assert(map['lastName'] != null),
         assert(map['email'] != null),
         assert(map['role'] != null),
         assert(map['id'] != null),
