@@ -12,6 +12,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String _email;
   String _password;
+  String _validation = '';
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -117,6 +118,11 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: 15.0),
                   password,
                   SizedBox(height: 24.0),
+                  Text(
+                '$_validation',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.red),
+              ),
                   loginButton,
                   signup
                 ],
@@ -146,7 +152,10 @@ class _LoginPageState extends State<LoginPage> {
                 builder: (BuildContext context) => new MyClassList(user)));
         //Navigator.of(context).pop();
       } catch (ex) {
-        print(ex.message);
+        setState(() {
+          _validation = ex.message.toString();
+        });
+        
       }
     }
   }

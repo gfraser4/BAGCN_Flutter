@@ -8,6 +8,8 @@ class Announcements {
   final String description;
   final DateTime created;
   final int code;
+  final int likes;
+  final List<dynamic> likedUsers;
   final DocumentReference reference;
 
   Announcements.fromMap(Map<String, dynamic> map, {this.reference})
@@ -19,6 +21,8 @@ class Announcements {
         assert(map['code'] != null),
         id = reference.documentID,
         code = map['code'],
+        likedUsers = map['likedUsers'],
+        likes = map['likes'],
         clsName = map['class'],
         title = map['title'],
         created = map['created'],

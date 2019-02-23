@@ -19,6 +19,7 @@ class ParentClassAnnouncementPage extends StatefulWidget {
 
 //HOW PAGE IS BUILT
 class _ParentClassAnnouncementPage extends State<ParentClassAnnouncementPage> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,11 +29,11 @@ class _ParentClassAnnouncementPage extends State<ParentClassAnnouncementPage> {
             widget.title), //PAGE TITLE BASED ON title THAT WAS PASSED TO PAGE
       ),
       body: _buildBody(
-          context,
-          widget.title,
-          widget.code,
-          widget
-              .user), //HOW BODY IS BUILT PASSING CLASS title AND CLASS code to _buildBody() WIDGET FOR QUERY
+        context,
+        widget.title,
+        widget.code,
+        widget.user,
+      ), //HOW BODY IS BUILT PASSING CLASS title AND CLASS code to _buildBody() WIDGET FOR QUERY
     );
   }
 }
@@ -52,6 +53,7 @@ Widget _buildBody(
 
       return _buildList(context, snapshot.data.documents, user);
     },
+    
   );
 }
 
@@ -65,10 +67,39 @@ Widget _buildList(
   );
 }
 
+
 //widget to build individual card item for each announcement from original query
 Widget _buildListItem(
     BuildContext context, DocumentSnapshot data, FirebaseUser user) {
+  List<String> userID = ['${user.uid}'];
+  Color _likeButtonColor = Color(0xFF1ca5e5);
   final announcements = Announcements.fromSnapshot(data);
+  
+  
+  void _likeButtonClick() {
+    Firestore.instance.runTransaction((transaction) async {
+      final freshSnapshot = await transaction.get(announcements.reference);
+      final fresh = Announcements.fromSnapshot(freshSnapshot);
+      if (fresh.likedUsers.contains(user.uid) == false) {
+          //_likeButtonColor = Colors.yellow;
+        print(_likeButtonColor);
+        await transaction.update(announcements.reference, {
+          'likes': fresh.likes + 1,
+          "likedUsers": FieldValue.arrayUnion(userID)
+        });
+        
+      } else {
+        await transaction.update(announcements.reference, {
+          'likes': fresh.likes - 1,
+          "likedUsers": FieldValue.arrayRemove(userID)
+        });
+        print(_likeButtonColor);
+
+      }
+    });
+    
+  }
+
   return Padding(
     key: ValueKey(announcements.clsName),
     padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 2.0),
@@ -98,11 +129,12 @@ Widget _buildListItem(
                   child: Row(
                     children: <Widget>[
                       IconButton(
-                        icon: Icon(Icons.thumb_up),
-                        color: Color(0xFF1ca5e5),
-                        onPressed: () {},
-                      ),
-                      Text('0',
+                          icon: Icon(Icons.thumb_up),
+                          color: _likeButtonColor,
+                          onPressed: () {
+                            _likeButtonClick();
+                          },),
+                      Text(announcements.likes.toString(),
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             color: Color(0xFF1ca5e5),

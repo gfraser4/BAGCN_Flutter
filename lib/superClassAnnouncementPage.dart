@@ -8,19 +8,19 @@ import 'Models/AnnouncementsModel.dart';
 
 
 //ClassPage WIDGET - SHOWS ANNOUNCEMENTS FOR SPECIFIC CLASS --> REQUIRES A title AND code ARGURMENT PASSED TO IT
-class ClassPage extends StatefulWidget {
+class SuperClassAnnouncementPage extends StatefulWidget {
   final FirebaseUser user;
   final String title;
   final int code;
-  ClassPage(this.title, this.code, this.user);
+  SuperClassAnnouncementPage(this.title, this.code, this.user);
   @override
-  _ClassPage createState() {
-    return _ClassPage();
+  _SuperClassAnnouncementPage createState() {
+    return _SuperClassAnnouncementPage();
   }
 }
 
 //HOW PAGE IS BUILT
-class _ClassPage extends State<ClassPage> {
+class _SuperClassAnnouncementPage extends State<SuperClassAnnouncementPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

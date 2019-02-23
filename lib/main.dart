@@ -8,7 +8,7 @@ import './aboutPage.dart';
 import './addClassesPage.dart';
 import './messagesPage.dart';
 import './settingsPage.dart';
-import './classAnnouncementPage.dart';
+import './superClassAnnouncementPage.dart';
 import './loginPage.dart';
 import './signupPage.dart';
 import './parentClassAnnouncementPage.dart';
@@ -332,7 +332,7 @@ Future<void> checkRole(BuildContext context, FirebaseUser user, int classCode,
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ClassPage(className, classCode, user),
+        builder: (context) => SuperClassAnnouncementPage(className, classCode, user),
       ), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE
     );
   } else {

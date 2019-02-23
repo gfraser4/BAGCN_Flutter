@@ -109,6 +109,7 @@ Widget _buildBody(BuildContext context, String title, int code) {
                     'title': _titleController.text,
                     'description': _descriptionController.text,
                     'created': nowTime,
+                    'likes': 0,
                   });
                 }),
             SizedBox(height: 36.0),
