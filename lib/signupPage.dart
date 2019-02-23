@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:validators/validators.dart';
 
 import './main.dart';
 
@@ -16,6 +17,8 @@ class _SignUpPage extends State<SignUpPage> {
   String _lastName;
   String _email;
   String _password;
+  TextEditingController _emailInput = TextEditingController();
+  String _validation = '';
 
   @override
   Widget build(BuildContext context) {
@@ -75,12 +78,13 @@ class _SignUpPage extends State<SignUpPage> {
 //EMAIL INPUT FIELD
     final email = TextFormField(
       validator: (input) {
-        if (input.isEmpty) return 'Please enter a valid email.';
+        if (input.isEmpty || isEmail(input) == false)
+          return 'Please enter a valid email address.';
       },
       onSaved: (input) => _email = input,
       autofocus: false,
       //initialValue: 'password',
-
+      controller: _emailInput,
       decoration: InputDecoration(
         labelText: 'Email',
         prefixIcon: Icon(
@@ -148,26 +152,40 @@ class _SignUpPage extends State<SignUpPage> {
           width: 130,
           margin: EdgeInsets.only(top: 10, right: 10),
           child: RaisedButton(
-            color: Color(0xFF66CC00),
-            child: Row(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(right: 5),
-                  child: Icon(
-                    Icons.assignment_ind,
-                    color: Colors.white,
+              color: Color(0xFF66CC00),
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(right: 5),
+                    child: Icon(
+                      Icons.assignment_ind,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-                Text(
-                  'Supervisor',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
-            onPressed: () {
-              superSignUp();
-            },
-          ),
+                  Text(
+                    'Supervisor',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+              onPressed: () {
+                final formState = _formKey.currentState;
+                formState.validate();
+                if (matches(_emailInput.text, '@bagcn.com')) {
+                  superSignUp();
+                  setState(() {
+                    _validation = "";
+                  });
+                } else {
+                  print(_emailInput.text);
+                  print('wrong email');
+                  setState(() {
+                    _validation =
+                        'Only valid supervisor email addresses can be used to create a supervisor account.';
+                  });
+                }
+              }
+              ),
         ),
         Container(
           width: 130,
@@ -214,32 +232,39 @@ class _SignUpPage extends State<SignUpPage> {
       onWillPop: () async => false,
       child: Scaffold(
         backgroundColor: Color(0xFFF4F5F7),
-        body: Center(          
-              child: Form(
-                key: _formKey,
-                child: ListView(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.only(left: 24.0, right: 24.0),
-                  children: <Widget>[
-                    logo,
-                    SizedBox(height: 48.0),
-                    firstName,
-                    SizedBox(height: 32.0),
-                    lastName,
-                    SizedBox(height: 32.0),
-                    email,
-                    SizedBox(height: 32.0),
-                    password,
-                    //SizedBox(height: 24.0),
-                    //confirmPassword,
-                    SizedBox(height: 24.0),
-                    choice,
-                    role,
-                    loginPage
-                  ],
-                ),
-              )),
-        ),
+        body: Center(
+            child: Form(
+          key: _formKey,
+          child: ListView(
+            shrinkWrap: true,
+            padding: EdgeInsets.only(left: 24.0, right: 24.0),
+            children: <Widget>[
+              logo,
+              SizedBox(height: 48.0),
+              firstName,
+              SizedBox(height: 22.0),
+              lastName,
+              SizedBox(height: 22.0),
+              email,
+              SizedBox(height: 22.0),
+              password,
+              //SizedBox(height: 24.0),
+              //confirmPassword,
+              SizedBox(height: 22.0),
+              choice,
+              role,
+              SizedBox(height: 12.0),
+              Text(
+                '$_validation',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.red),
+              ),
+              //SizedBox(height: 12.0),
+              loginPage,
+            ],
+          ),
+        )),
+      ),
     );
   }
 
@@ -261,16 +286,6 @@ class _SignUpPage extends State<SignUpPage> {
           'email': _email,
           'role': 'parent',
         });
-        //Navigate to home
-        //Navigator.pushReplacementNamed(context, '/');
-        Navigator.pushReplacement(
-            context,
-            new MaterialPageRoute(
-                builder: (BuildContext context) => new MyClassList(user)));
-        //Navigator.of(context).pop();
-      } catch (ex) {
-        print(ex.message);
-      } finally {
         if (user != null) {
           //Sign in Successful: Navigate to home
 
@@ -282,6 +297,10 @@ class _SignUpPage extends State<SignUpPage> {
           //Sign in Failed:
           //...Prompt User
         }
+      } catch (ex) {
+        setState(() {
+          _validation = ex.message.toString();
+        });
       }
     }
   }
@@ -303,13 +322,6 @@ class _SignUpPage extends State<SignUpPage> {
           'email': _email,
           'role': 'super',
         });
-        //Navigate to home
-        //Navigator.pushReplacementNamed(context, '/');
-
-        //Navigator.of(context).pop();
-      } catch (ex) {
-        print(ex.message);
-      } finally {
         if (user != null) {
           //Sign in Successful: Navigate to home
 
@@ -321,6 +333,8 @@ class _SignUpPage extends State<SignUpPage> {
           //Sign in Failed:
           //...Prompt User
         }
+      } catch (ex) {
+        _validation = ex.message.toString();
       }
     }
   }
