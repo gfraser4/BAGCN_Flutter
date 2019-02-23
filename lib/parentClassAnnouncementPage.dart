@@ -5,6 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import './parentCommentsPage.dart';
 import 'Models/AnnouncementsModel.dart';
 
+
+
+Color likeButtonColor = Colors.grey;
+
 //ParentClassAnnouncementPage WIDGET - SHOWS ANNOUNCEMENTS FOR SPECIFIC CLASS --> REQUIRES A title AND code ARGURMENT PASSED TO IT
 class ParentClassAnnouncementPage extends StatefulWidget {
   final FirebaseUser user;
@@ -19,6 +23,19 @@ class ParentClassAnnouncementPage extends StatefulWidget {
 
 //HOW PAGE IS BUILT
 class _ParentClassAnnouncementPage extends State<ParentClassAnnouncementPage> {
+
+@override
+  void initState() {
+likeButtonColor = likeButtonColor;
+
+  }
+
+
+@override
+  void setState(fn) {
+    likeButtonColor = likeButtonColor;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +70,6 @@ Widget _buildBody(
 
       return _buildList(context, snapshot.data.documents, user);
     },
-    
   );
 }
 
@@ -67,37 +83,45 @@ Widget _buildList(
   );
 }
 
-
 //widget to build individual card item for each announcement from original query
 Widget _buildListItem(
     BuildContext context, DocumentSnapshot data, FirebaseUser user) {
   List<String> userID = ['${user.uid}'];
-  Color _likeButtonColor = Color(0xFF1ca5e5);
   final announcements = Announcements.fromSnapshot(data);
-  
-  
+
+  //Check if user has liked the announcement already and set color of button accordingly
+  if (announcements.likedUsers.contains(user.uid) == true){
+    print('user in list');
+    likeButtonColor = Color(0xFF1ca5e5);
+  }
+  else{
+    print('user not in list');
+    likeButtonColor = Colors.grey;
+  }
+
+//add user to liked l ist and increase count like by one or decrease by one
   void _likeButtonClick() {
     Firestore.instance.runTransaction((transaction) async {
       final freshSnapshot = await transaction.get(announcements.reference);
       final fresh = Announcements.fromSnapshot(freshSnapshot);
       if (fresh.likedUsers.contains(user.uid) == false) {
-          //_likeButtonColor = Colors.yellow;
-        print(_likeButtonColor);
+        likeButtonColor = Color(0xFF1ca5e5);
+        print(likeButtonColor);
+
+
         await transaction.update(announcements.reference, {
           'likes': fresh.likes + 1,
           "likedUsers": FieldValue.arrayUnion(userID)
         });
-        
       } else {
         await transaction.update(announcements.reference, {
           'likes': fresh.likes - 1,
           "likedUsers": FieldValue.arrayRemove(userID)
         });
-        print(_likeButtonColor);
-
+        likeButtonColor = Colors.grey;
+        print(likeButtonColor);
       }
     });
-    
   }
 
   return Padding(
@@ -129,15 +153,16 @@ Widget _buildListItem(
                   child: Row(
                     children: <Widget>[
                       IconButton(
-                          icon: Icon(Icons.thumb_up),
-                          color: _likeButtonColor,
-                          onPressed: () {
-                            _likeButtonClick();
-                          },),
+                        icon: Icon(Icons.thumb_up),
+                        color: likeButtonColor,
+                        onPressed: () {
+                          _likeButtonClick();
+                        },
+                      ),
                       Text(announcements.likes.toString(),
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF1ca5e5),
+                            color: likeButtonColor,
                           )),
                     ],
                   ),
