@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import './main.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'dart:convert';
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -12,8 +15,50 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String _email;
   String _password;
+  bool isRemember = false;
   String _validation = '';
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  File jsonFile;
+  Directory dir;
+  String fileName = 'localUser.json';
+  bool fileExist = false;
+  Map<String,dynamic> fileContent;
+  TextEditingController keyInputController = new TextEditingController();
+  TextEditingController valueInputController = new TextEditingController();
+
+@override
+  void initState(){
+    super.initState();
+    getApplicationDocumentsDirectory().then((Directory directory){
+      dir = directory;
+      jsonFile = new File(dir.path + "/" + fileName);
+      fileExist =jsonFile.existsSync();
+      if(!fileExist){
+        jsonFile = new File(dir.path+'/'+fileName);
+        jsonFile.createSync();
+        fileExist = true;
+        jsonFile.writeAsStringSync(json.encode({'isRemember':false,'_email':'','_password':''}));
+      }
+      setState(() {
+        fileContent = json.decode(jsonFile.readAsStringSync());
+        _email = fileContent['_email'];
+        _password = fileContent['_password'];
+        isRemember = fileContent['isRemember'];
+      });
+    });
+  }
+
+  void writeToFile(String email, String paw,bool isRemember){
+    jsonFile.writeAsStringSync(json.encode({'isRemember':isRemember,'_email':email,'_password':paw}));
+  }
+
+  @override
+  void dispose(){
+    keyInputController.dispose();
+    valueInputController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +78,7 @@ class _LoginPageState extends State<LoginPage> {
       validator: (input) {
         if (input.isEmpty) return 'Please enter a valid email.';
       },
+      initialValue:_email,
       onSaved: (input) => _email = input,
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
@@ -55,6 +101,7 @@ class _LoginPageState extends State<LoginPage> {
         if (input.length < 6)
           return 'Your password needs\nto be at least 6 characters.';
       },
+      initialValue:_password,
       onSaved: (input) => _password = input,
       autofocus: false,
       //initialValue: 'password',
@@ -69,6 +116,14 @@ class _LoginPageState extends State<LoginPage> {
         contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
       ),
+    );
+
+//CHECKBOX REMEMBER THE USER
+    Checkbox checkButton = Checkbox(
+      value: isRemember,activeColor: Color(0xFF66CC00),onChanged: (bool){
+        setState(() {
+          isRemember = bool;
+        });},
     );
 
 //LOGIN BUTTON
@@ -118,6 +173,16 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: 15.0),
                   password,
                   SizedBox(height: 24.0),
+                  Container(
+                    height: 20,
+                    child: ListView (
+                    scrollDirection: Axis.horizontal,
+                    children:<Widget>[
+                      checkButton,
+                      Center(child: Text('Remember me'))
+                    ],
+                  ),
+                  ),
                   Text(
                 '$_validation',
                 textAlign: TextAlign.center,
@@ -158,5 +223,7 @@ class _LoginPageState extends State<LoginPage> {
         
       }
     }
+    if(isRemember) writeToFile(_email,_password,true);
+    else writeToFile('','',false);
   }
 }
