@@ -46,13 +46,13 @@ class _SignUpPage extends State<SignUpPage> {
         labelText: 'First Name',
         prefixIcon: Icon(
           Icons.account_circle,
-          color: Colors.bagcGreen,
+          color: Color.fromRGBO(123, 193, 67, 1),
         ),
         //hintText: 'Email',
         contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), 
           borderSide: BorderSide(
-              color: Colors.bagcGreen,
+              color: Color.fromRGBO(123, 193, 67, 1),
               width: 2,
             ) 
           ),
@@ -73,13 +73,13 @@ class _SignUpPage extends State<SignUpPage> {
         labelText: 'Last Name',
         prefixIcon: Icon(
           Icons.account_circle,
-          color: Colors.bagcGreen,
+          color: Color.fromRGBO(123, 193, 67, 1),
         ),
         //hintText: 'Password',
         contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), 
           borderSide: BorderSide(
-              color: Colors.bagcGreen,
+              color: Color.fromRGBO(123, 193, 67, 1),
               width: 2,
             ) 
           ),
@@ -101,13 +101,13 @@ class _SignUpPage extends State<SignUpPage> {
         labelText: 'Email',
         prefixIcon: Icon(
           Icons.email,
-          color: Colors.bagcGreen,
+          color: Color.fromRGBO(123, 193, 67, 1),
         ),
         //hintText: 'Password',
         contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), 
           borderSide: BorderSide(
-              color: Colors.bagcGreen,
+              color: Color.fromRGBO(123, 193, 67, 1),
               width: 2,
             ) 
           ),
@@ -129,13 +129,13 @@ class _SignUpPage extends State<SignUpPage> {
         labelText: 'Password',
         prefixIcon: Icon(
           Icons.lock,
-          color: Colors.bagcGreen,
+          color: Color.fromRGBO(123, 193, 67, 1),
         ),
         //hintText: 'Password',
         contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), 
           borderSide: BorderSide(
-              color: Colors.bagcGreen,
+              color: Color.fromRGBO(123, 193, 67, 1),
               width: 2,
             ) 
           ),
@@ -165,7 +165,7 @@ class _SignUpPage extends State<SignUpPage> {
       'Choose your Role:',
       textAlign: TextAlign.center,
       style: TextStyle(
-          color: Colors.bagcGreen, fontWeight: FontWeight.w600, fontSize: 18),
+          color: Color.fromRGBO(123, 193, 67, 1), fontWeight: FontWeight.w600, fontSize: 18),
     );
 
 //SUPERVISOR AND PARENT BUTTONS
@@ -176,8 +176,7 @@ class _SignUpPage extends State<SignUpPage> {
           width: 130,
           margin: EdgeInsets.only(top: 10, right: 10),
           child: RaisedButton(
-   HomePageDesign
-            color: Colors.bagcGreen,
+            color: Color.fromRGBO(123, 193, 67, 1),
             child: Row(
               children: <Widget>[
                 Container(
@@ -186,11 +185,13 @@ class _SignUpPage extends State<SignUpPage> {
                     Icons.assignment_ind,
                     color: Colors.white,
                   ),
+                  ),
                   Text(
                     'Supervisor',
                     style: TextStyle(color: Colors.white),
                   ),
                 ],
+                
               ),
               onPressed: () {
                 final formState = _formKey.currentState;
@@ -215,7 +216,7 @@ class _SignUpPage extends State<SignUpPage> {
           width: 130,
           margin: EdgeInsets.only(top: 10, right: 10),
           child: RaisedButton(
-            color: Colors.bagcGreen,
+            color: Color.fromRGBO(123, 193, 67, 1),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[

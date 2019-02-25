@@ -18,7 +18,6 @@ class _LoginPageState extends State<LoginPage> {
   bool isRemember = false;
   String _validation = '';
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-HomePageDesign
 
 
   File jsonFile;
@@ -90,13 +89,13 @@ HomePageDesign
         labelText: 'Email',
         prefixIcon: Icon(
           Icons.account_circle,
-          color: Colors.bagcGreen,
+          color: Color.fromRGBO(123, 193, 67, 1),
         ),
         //hintText: 'Email',
         contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
         enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), 
           borderSide: BorderSide(
-              color: Colors.bagcGreen,
+              color: Color.fromRGBO(123, 193, 67, 1),
               width: 2,
             ) 
           ),
@@ -119,13 +118,13 @@ HomePageDesign
         labelText: 'Password',
         prefixIcon: Icon(
           Icons.lock,
-          color: Colors.bagcGreen,
+          color: Color.fromRGBO(123, 193, 67, 1),
         ),
         //hintText: 'Password',
         contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
         enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), 
           borderSide: BorderSide(
-              color: Colors.bagcGreen,
+              color: Color.fromRGBO(123, 193, 67, 1),
               width: 2,
             ) 
           ),
@@ -152,7 +151,7 @@ HomePageDesign
           signIn();
         },
         padding: EdgeInsets.all(12),
-        color: Colors.bagcGreen,
+        color: Color.fromRGBO(123, 193, 67, 1),
         child: Text('Log In', style: TextStyle(fontSize: 18, color: Colors.white)),
         shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
       ),
