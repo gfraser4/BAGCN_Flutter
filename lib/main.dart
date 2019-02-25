@@ -39,10 +39,10 @@ class MyApp extends StatelessWidget {
       //Theme data for app *FONT NOT CURRENTLY WORKING*
       theme: ThemeData(
         brightness: Brightness.light,
-        primaryColor: Colors.bagcGreen,
-        accentColor: Colors.bagcTeal,
-        hintColor: Colors.bagcDarkBlue.withOpacity(0.7),
-        errorColor: Colors.bagcRed,
+        primaryColor: Color.fromRGBO(123, 193, 67, 1),
+        accentColor: Color.fromRGBO(0, 162, 162, 1),
+        hintColor: Color.fromRGBO(41, 60, 62 , 0.7),
+        errorColor: Color.fromRGBO(183, 33, 38, 1),
         textTheme: TextTheme(
           headline: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
           title: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
@@ -236,7 +236,6 @@ Widget _buildListItem(
   return Column(
     children: <Widget>[
       Container(
- HomePageDesign
         margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
         decoration: new BoxDecoration(color: Colors.white, boxShadow: [
             new BoxShadow(
@@ -250,14 +249,14 @@ Widget _buildListItem(
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 3.0, vertical: 8.0),
             title: Text('${classes.clsName} - ${classes.code}',
-                style: TextStyle(fontWeight: FontWeight.w600, color: Colors.bagcTeal)),
+                style: TextStyle(fontWeight: FontWeight.w600, color: Color.fromRGBO(0, 162, 162, 1))),
                 subtitle: RichText(
                 text: new TextSpan(
                   // Note: Styles for TextSpans must be explicitly defined.
                   // Child text spans will inherit styles from parent
                   style: new TextStyle(
                     fontSize: 14.0,
-                    color: Colors.bagcDarkBlue.withAlpha(180),
+                    color: Color.fromRGBO(41, 60, 62, 1).withAlpha(180),
                   ),
                   children: <TextSpan>[
                     new TextSpan(text: 'Dates: ', style: new TextStyle(fontWeight: FontWeight.bold)),
