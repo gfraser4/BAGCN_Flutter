@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import './newMessagePage.dart';
+import './parentCommentsPage.dart';
 
 class MessagesPage extends StatelessWidget {
   @override
@@ -19,10 +19,10 @@ class MessagesPage extends StatelessWidget {
               title: Text('John Smith - Aquatics 101'),
               subtitle: Text('Yes, class is cancelled tomorrow.'),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => NewMessagePage()),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => ParentsCommentsPage()),
+                // );
               }),
           ListTile(
             title: Text('Jane Doe - Teen Zone'),

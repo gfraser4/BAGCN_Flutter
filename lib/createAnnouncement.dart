@@ -98,15 +98,18 @@ Widget _buildBody(BuildContext context, String title, int code) {
                 ),
                 onPressed: () { //FIRESTORE CREATE ANNOUNCEMENT STATEMENT USING title, code, _titleController.text, _descriptionController.text, nowTime
                   Navigator.pop(context);
-                  Firestore.instance
-                      .collection('announcements')
-                      .document()
-                      .setData({
+                  var newAnnouncement = Firestore.instance
+                      .collection('announcements').document();
+                      
+                  newAnnouncement
+                    .setData({ 
+                    'id': newAnnouncement.documentID,  
                     'code': code,
                     'class': title,
                     'title': _titleController.text,
                     'description': _descriptionController.text,
                     'created': nowTime,
+                    'likes': 0,
                   });
                 }),
             SizedBox(height: 36.0),

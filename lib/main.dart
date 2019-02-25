@@ -8,7 +8,7 @@ import './aboutPage.dart';
 import './addClassesPage.dart';
 import './messagesPage.dart';
 import './settingsPage.dart';
-import './classAnnouncementPage.dart';
+import './superClassAnnouncementPage.dart';
 import './loginPage.dart';
 import './signupPage.dart';
 import './parentClassAnnouncementPage.dart';
@@ -134,7 +134,7 @@ Widget _navDrawer(BuildContext context, FirebaseUser user) {
             Icons.announcement,
             color: Color(0xFF1ca5e5),
           ),
-          title: Text('Messages'),
+          title: Text('Messages (Not used right now)'),
           onTap: () {
             Navigator.push(
               context,
@@ -185,7 +185,8 @@ Widget _navDrawer(BuildContext context, FirebaseUser user) {
           title: Text('Sign Out'),
           onTap: () {
             FirebaseAuth.instance.signOut();
-            Navigator.of(context).pushNamedAndRemoveUntil("/", ModalRoute.withName("/"));
+            Navigator.of(context)
+                .pushNamedAndRemoveUntil("/", ModalRoute.withName("/"));
           },
         ),
         Divider(
@@ -235,6 +236,7 @@ Widget _buildListItem(
   return Column(
     children: <Widget>[
       Container(
+ HomePageDesign
         margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
         decoration: new BoxDecoration(color: Colors.white, boxShadow: [
             new BoxShadow(
@@ -310,9 +312,25 @@ Widget _buildListItem(
                 checkRole(context, user, classes.code, classes.clsName);
               },
             ),
-            onTap: () {
-              checkRole(context, user, classes.code, classes.clsName);
-            }),
+            ListTile(
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 1.0),
+                title: Text('${classes.clsName} - ${classes.code}',
+                    style: TextStyle(fontWeight: FontWeight.w600)),
+                subtitle: Text(
+                    '\nDates: ${classes.dates}\nTimes: ${classes.times}\nLocation: ${classes.location}'),
+                trailing: IconButton(
+                  icon: Icon(Icons.chevron_right),
+                  color: Color(0xFF1ca5e5),
+                  onPressed: () {
+                    checkRole(context, user, classes.code, classes.clsName);
+                  },
+                ),
+                onTap: () {
+                  checkRole(context, user, classes.code, classes.clsName);
+                }),
+          ],
+        ),
       ),
       // Divider(
       //   color: Colors.lightBlue,
@@ -328,27 +346,26 @@ Widget _buildListItem(
 ////////////////////////
 
 //future waiting for database response --> check role and send to right page depending on it
-Future<void> checkRole(BuildContext context, FirebaseUser user, int classCode, String className) async {
-DocumentSnapshot snapshot = await Firestore.instance.collection('users').document('${user.uid}').get();
+Future<void> checkRole(BuildContext context, FirebaseUser user, int classCode,
+    String className) async {
+  DocumentSnapshot snapshot = await Firestore.instance
+      .collection('users')
+      .document('${user.uid}')
+      .get();
   if (snapshot['role'] == 'super') {
     Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ClassPage(
-                            className,
-                            classCode,
-                            user)), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE
-                  );
-  }
-  else {
+      context,
+      MaterialPageRoute(
+        builder: (context) => SuperClassAnnouncementPage(className, classCode, user),
+      ), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE
+    );
+  } else {
     Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ParentClassAnnouncementPage(
-                          className,
-                          classCode,
-                          user)), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE
-                );
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            ParentClassAnnouncementPage(className, classCode, user),
+      ), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE
+    );
   }
 }
-

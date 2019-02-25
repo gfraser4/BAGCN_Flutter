@@ -2,25 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import './newMessagePage.dart';
+import './parentCommentsPage.dart';
 import 'createAnnouncement.dart';
 import 'Models/AnnouncementsModel.dart';
 
 
 //ClassPage WIDGET - SHOWS ANNOUNCEMENTS FOR SPECIFIC CLASS --> REQUIRES A title AND code ARGURMENT PASSED TO IT
-class ClassPage extends StatefulWidget {
+class SuperClassAnnouncementPage extends StatefulWidget {
   final FirebaseUser user;
   final String title;
   final int code;
-  ClassPage(this.title, this.code, this.user);
+  SuperClassAnnouncementPage(this.title, this.code, this.user);
   @override
-  _ClassPage createState() {
-    return _ClassPage();
+  _SuperClassAnnouncementPage createState() {
+    return _SuperClassAnnouncementPage();
   }
 }
 
 //HOW PAGE IS BUILT
-class _ClassPage extends State<ClassPage> {
+class _SuperClassAnnouncementPage extends State<SuperClassAnnouncementPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -121,11 +121,11 @@ Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
                           icon: Icon(Icons.forum),
                           color: Color(0xFF1ca5e5),
                           onPressed: () {
-                            Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => NewMessagePage()),
-                      );
+                      //       Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //       builder: (context) => ParentsCommentsPage(announcements)),
+                      // );
                           },
                         ),
                         Text('0',
