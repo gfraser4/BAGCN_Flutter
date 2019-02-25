@@ -229,6 +229,7 @@ Widget _buildList(
 }
 
 //widget to build individual item for each class from original query
+
 Widget _buildListItem(
     BuildContext context, DocumentSnapshot data, FirebaseUser user) {
   final classes = Classes.fromSnapshot(data);
@@ -245,11 +246,63 @@ Widget _buildListItem(
             )],
             borderRadius: new BorderRadius.all(Radius.circular(10.0)),  
         ),
-        child: ListTile(
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 3.0, vertical: 8.0),
-            title: Text('${classes.clsName} - ${classes.code}',
-                style: TextStyle(fontWeight: FontWeight.w600, color: Color.fromRGBO(0, 162, 162, 1))),
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Container(
+                  child: Row(
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(Icons.notifications_active),
+                        color: Color(0xFF1ca5e5),
+                        onPressed: () {},
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        color: Colors.grey,
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Remove Class?'),
+                                content: Text(
+                                    'Are you sure you want to remove ${classes.clsName} - ${classes.code} from your class list?'),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    child: Text("Cancel"),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  FlatButton(
+                                    child: Text("Accept"),
+                                    onPressed: () {
+                                      classes.reference.updateData({
+                                        "enrolledUsers":
+                                            FieldValue.arrayRemove(userID)
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            ListTile(
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 1.0),
+                title: Text('${classes.clsName} - ${classes.code}',
+                    style: TextStyle(fontWeight: FontWeight.w600)),
                 subtitle: RichText(
                 text: new TextSpan(
                   // Note: Styles for TextSpans must be explicitly defined.
@@ -269,55 +322,6 @@ Widget _buildListItem(
                   ],
                 ),
               ),
-            // subtitle: Text(
-            //     '\nDates: ${classes.dates}\nTimes: ${classes.times}\nLocation: ${classes.location}'),
-            leading: IconButton(
-              icon: Icon(Icons.settings),
-              color: Colors.grey,
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text('Remove Class?'),
-                      content: Text(
-                          'Are you sure you want to remove ${classes.clsName} - ${classes.code} from your class list?'),
-                      actions: <Widget>[
-                        FlatButton(
-                          child: Text("Cancel"),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        FlatButton(
-                          child: Text("Accept"),
-                          onPressed: () {
-                            classes.reference.updateData({
-                              "enrolledUsers": FieldValue.arrayRemove(userID)
-                            });
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-            trailing: IconButton(
-              icon: Icon(Icons.chevron_right),
-              color: Color(0xFF1ca5e5),
-              onPressed: () {
-                checkRole(context, user, classes.code, classes.clsName);
-              },
-            ),
-            ListTile(
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 1.0),
-                title: Text('${classes.clsName} - ${classes.code}',
-                    style: TextStyle(fontWeight: FontWeight.w600)),
-                subtitle: Text(
-                    '\nDates: ${classes.dates}\nTimes: ${classes.times}\nLocation: ${classes.location}'),
                 trailing: IconButton(
                   icon: Icon(Icons.chevron_right),
                   color: Color(0xFF1ca5e5),
@@ -331,15 +335,14 @@ Widget _buildListItem(
           ],
         ),
       ),
-      // Divider(
-      //   color: Colors.lightBlue,
-      // ),
+      Divider(
+        color: Colors.lightBlue,
+      ),
     ],
     key: ValueKey(classes.clsName),
     // padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
   );
 }
-
 ////////////////////////
 //**CHECK ROLE METHOD**\\
 ////////////////////////
