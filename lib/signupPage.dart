@@ -185,11 +185,13 @@ class _SignUpPage extends State<SignUpPage> {
                     Icons.assignment_ind,
                     color: Colors.white,
                   ),
+                  ),
                   Text(
                     'Supervisor',
                     style: TextStyle(color: Colors.white),
                   ),
                 ],
+                
               ),
               onPressed: () {
                 final formState = _formKey.currentState;
