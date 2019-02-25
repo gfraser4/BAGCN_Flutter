@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.light,
         primaryColor: Color.fromRGBO(123, 193, 67, 1),
-        accentColor: Color.fromRGBO(0, 162, 162, 1),
+        accentColor: Color.fromRGBO(28, 165, 229, 1),
         hintColor: Color.fromRGBO(41, 60, 62 , 0.7),
         errorColor: Color.fromRGBO(183, 33, 38, 1),
         textTheme: TextTheme(
@@ -302,7 +302,7 @@ Widget _buildListItem(
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
                 title: Text('${classes.clsName} - ${classes.code}',
-                    style: TextStyle(fontWeight: FontWeight.w700, color: Color.fromRGBO(0, 162, 162, 1))),
+                    style: TextStyle(fontWeight: FontWeight.w700, color: Color.fromRGBO( 41, 60, 62, 1))),
                 subtitle: RichText(
                 text: new TextSpan(
                   // Note: Styles for TextSpans must be explicitly defined.

@@ -165,7 +165,7 @@ class _SignUpPage extends State<SignUpPage> {
       'Choose your Role:',
       textAlign: TextAlign.center,
       style: TextStyle(
-          color: Color.fromRGBO(123, 193, 67, 1), fontWeight: FontWeight.w600, fontSize: 18),
+          color: Color.fromRGBO(41, 60, 62 , 1), fontWeight: FontWeight.w600, fontSize: 18),
     );
 
 //SUPERVISOR AND PARENT BUTTONS
@@ -176,7 +176,7 @@ class _SignUpPage extends State<SignUpPage> {
           width: 130,
           margin: EdgeInsets.only(top: 10, right: 10),
           child: RaisedButton(
-            color: Color.fromRGBO(123, 193, 67, 1),
+            color: Color.fromRGBO(28, 165, 229, 1),
             child: Row(
               children: <Widget>[
                 Container(
@@ -216,7 +216,7 @@ class _SignUpPage extends State<SignUpPage> {
           width: 130,
           margin: EdgeInsets.only(top: 10, right: 10),
           child: RaisedButton(
-            color: Color.fromRGBO(123, 193, 67, 1),
+            color: Color.fromRGBO(28, 165, 229, 1),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
