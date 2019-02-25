@@ -39,9 +39,10 @@ class MyApp extends StatelessWidget {
       //Theme data for app *FONT NOT CURRENTLY WORKING*
       theme: ThemeData(
         brightness: Brightness.light,
-        primaryColor: Color(0xFF66CC00),
-        accentColor: Color(0xFF1ca5e5),
-        hintColor: Colors.grey,
+        primaryColor: Colors.bagcGreen,
+        accentColor: Colors.bagcTeal,
+        hintColor: Colors.bagcDarkBlue.withOpacity(0.7),
+        errorColor: Colors.bagcRed,
         textTheme: TextTheme(
           headline: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
           title: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
@@ -75,7 +76,7 @@ class _MyClassList extends State<MyClassList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100], //PAGE BACKGROUND COLOUR
+      backgroundColor: Color(0xFFF4F5F7), //PAGE BACKGROUND COLOUR
       appBar: AppBar(
           title:
               Text('My Classes ${widget.user.email}')), //PAGE APP BAR AND TITLE
@@ -125,7 +126,7 @@ Widget _navDrawer(BuildContext context, FirebaseUser user) {
                 ),
               ),
             ],
-            color: Colors.lightGreen[100],
+            color: Colors.white,
           ),
         ),
         ListTile(
@@ -235,58 +236,81 @@ Widget _buildListItem(
   return Column(
     children: <Widget>[
       Container(
-        decoration: new BoxDecoration(color: Colors.lightBlue[50]),
-        child: Column(
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Container(
-                  child: Row(
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(Icons.notifications_active),
-                        color: Color(0xFF1ca5e5),
-                        onPressed: () {},
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete),
-                        color: Colors.grey,
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('Remove Class?'),
-                                content: Text(
-                                    'Are you sure you want to remove ${classes.clsName} - ${classes.code} from your class list?'),
-                                actions: <Widget>[
-                                  FlatButton(
-                                    child: Text("Cancel"),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                  FlatButton(
-                                    child: Text("Accept"),
-                                    onPressed: () {
-                                      classes.reference.updateData({
-                                        "enrolledUsers":
-                                            FieldValue.arrayRemove(userID)
-                                      });
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ],
+ HomePageDesign
+        margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+        decoration: new BoxDecoration(color: Colors.white, boxShadow: [
+            new BoxShadow(
+              color: Colors.grey,
+              offset: new Offset(4.0, 4.0),
+              blurRadius: 3.0,
+            )],
+            borderRadius: new BorderRadius.all(Radius.circular(10.0)),  
+        ),
+        child: ListTile(
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 3.0, vertical: 8.0),
+            title: Text('${classes.clsName} - ${classes.code}',
+                style: TextStyle(fontWeight: FontWeight.w600, color: Colors.bagcTeal)),
+                subtitle: RichText(
+                text: new TextSpan(
+                  // Note: Styles for TextSpans must be explicitly defined.
+                  // Child text spans will inherit styles from parent
+                  style: new TextStyle(
+                    fontSize: 14.0,
+                    color: Colors.bagcDarkBlue.withAlpha(180),
                   ),
+                  children: <TextSpan>[
+                    new TextSpan(text: 'Dates: ', style: new TextStyle(fontWeight: FontWeight.bold)),
+                    new TextSpan(text: '${classes.dates}'),
+                    new TextSpan(text: '\nTimes: ', style: new TextStyle(fontWeight: FontWeight.bold)),
+                    new TextSpan(text: '${classes.times}'),
+                    new TextSpan(text: '\nLocation: ', style: new TextStyle(fontWeight: FontWeight.bold)),
+                    new TextSpan(text: '${classes.location}'),
+                    
+                  ],
                 ),
-              ],
+              ),
+            // subtitle: Text(
+            //     '\nDates: ${classes.dates}\nTimes: ${classes.times}\nLocation: ${classes.location}'),
+            leading: IconButton(
+              icon: Icon(Icons.settings),
+              color: Colors.grey,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Remove Class?'),
+                      content: Text(
+                          'Are you sure you want to remove ${classes.clsName} - ${classes.code} from your class list?'),
+                      actions: <Widget>[
+                        FlatButton(
+                          child: Text("Cancel"),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        FlatButton(
+                          child: Text("Accept"),
+                          onPressed: () {
+                            classes.reference.updateData({
+                              "enrolledUsers": FieldValue.arrayRemove(userID)
+                            });
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+            trailing: IconButton(
+              icon: Icon(Icons.chevron_right),
+              color: Color(0xFF1ca5e5),
+              onPressed: () {
+                checkRole(context, user, classes.code, classes.clsName);
+              },
             ),
             ListTile(
                 contentPadding:
@@ -308,9 +332,9 @@ Widget _buildListItem(
           ],
         ),
       ),
-      Divider(
-        color: Colors.lightBlue,
-      ),
+      // Divider(
+      //   color: Colors.lightBlue,
+      // ),
     ],
     key: ValueKey(classes.clsName),
     // padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
