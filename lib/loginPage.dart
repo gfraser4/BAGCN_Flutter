@@ -134,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
 
 //CHECKBOX REMEMBER THE USER
     Checkbox checkButton = Checkbox(
-      value: isRemember,activeColor: Color(0xFF66CC00),onChanged: (bool){
+      value: isRemember,activeColor: Color.fromRGBO(123, 193, 67, 1),onChanged: (bool){
         setState(() {
           isRemember = bool;
         });},
@@ -142,7 +142,7 @@ class _LoginPageState extends State<LoginPage> {
 
 //LOGIN BUTTON
     final loginButton = Padding(
-      padding: EdgeInsets.symmetric(vertical: 16),
+      padding: EdgeInsets.symmetric(vertical: 14),
       child: RaisedButton(
         // shape: RoundedRectangleBorder(
         //   borderRadius: BorderRadius.circular(24),
@@ -151,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
           signIn();
         },
         padding: EdgeInsets.all(12),
-        color: Color.fromRGBO(123, 193, 67, 1),
+        color: Color.fromRGBO(28, 165, 229, 1),
         child: Text('Log In', style: TextStyle(fontSize: 18, color: Colors.white)),
         shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
       ),

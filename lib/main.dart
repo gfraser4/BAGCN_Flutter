@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.light,
         primaryColor: Color.fromRGBO(123, 193, 67, 1),
-        accentColor: Color.fromRGBO(0, 162, 162, 1),
+        accentColor: Color.fromRGBO(28, 165, 229, 1),
         hintColor: Color.fromRGBO(41, 60, 62 , 0.7),
         errorColor: Color.fromRGBO(183, 33, 38, 1),
         textTheme: TextTheme(
@@ -248,11 +248,86 @@ Widget _buildListItem(
         ),
         child: Column(
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.end,
+            //   children: <Widget>[
+            //     Container(
+            //       child: Row(
+            //         children: <Widget>[
+            //           IconButton(
+            //             icon: Icon(Icons.notifications_active),
+            //             color: Color(0xFF1ca5e5),
+            //             onPressed: () {},
+            //           ),
+            //           IconButton(
+            //             icon: Icon(Icons.delete),
+            //             color: Colors.grey,
+            //             onPressed: () {
+            //               showDialog(
+            //                 context: context,
+            //                 builder: (BuildContext context) {
+            //                   return AlertDialog(
+            //                     title: Text('Remove Class?'),
+            //                     content: Text(
+            //                         'Are you sure you want to remove ${classes.clsName} - ${classes.code} from your class list?'),
+            //                     actions: <Widget>[
+            //                       FlatButton(
+            //                         child: Text("Cancel"),
+            //                         onPressed: () {
+            //                           Navigator.of(context).pop();
+            //                         },
+            //                       ),
+            //                       FlatButton(
+            //                         child: Text("Accept"),
+            //                         onPressed: () {
+            //                           classes.reference.updateData({
+            //                             "enrolledUsers":
+            //                                 FieldValue.arrayRemove(userID)
+            //                           });
+            //                           Navigator.of(context).pop();
+            //                         },
+            //                       ),
+            //                     ],
+            //                   );
+            //                 },
+            //               );
+            //             },
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ],
+            // ),
+            ListTile(
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
+                title: Text('${classes.clsName} - ${classes.code}',
+                    style: TextStyle(fontWeight: FontWeight.w700, color: Color.fromRGBO( 41, 60, 62, 1))),
+                subtitle: RichText(
+                text: new TextSpan(
+                  // Note: Styles for TextSpans must be explicitly defined.
+                  // Child text spans will inherit styles from parent
+                  style: new TextStyle(
+                    fontSize: 14.0,
+                    color: Color.fromRGBO(41, 60, 62, 1).withAlpha(180),
+                  ),
+                  children: <TextSpan>[
+                    new TextSpan(text: 'Dates: ', style: new TextStyle(fontWeight: FontWeight.bold)),
+                    new TextSpan(text: '${classes.dates}'),
+                    new TextSpan(text: '\nTimes: ', style: new TextStyle(fontWeight: FontWeight.bold)),
+                    new TextSpan(text: '${classes.times}'),
+                    new TextSpan(text: '\nLocation: ', style: new TextStyle(fontWeight: FontWeight.bold)),
+                    new TextSpan(text: '${classes.location}'),
+                    
+                  ],
+                ),
+              ),
+              leading: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       IconButton(
                         icon: Icon(Icons.notifications_active),
@@ -267,7 +342,7 @@ Widget _buildListItem(
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text('Remove Class?'),
+                                title: Text('Remove Class?', style: TextStyle(fontSize: 30, fontStyle: FontStyle.normal, color: Color.fromRGBO(0, 162, 162, 1)),),
                                 content: Text(
                                     'Are you sure you want to remove ${classes.clsName} - ${classes.code} from your class list?'),
                                 actions: <Widget>[
@@ -298,30 +373,6 @@ Widget _buildListItem(
                 ),
               ],
             ),
-            ListTile(
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 1.0),
-                title: Text('${classes.clsName} - ${classes.code}',
-                    style: TextStyle(fontWeight: FontWeight.w600)),
-                subtitle: RichText(
-                text: new TextSpan(
-                  // Note: Styles for TextSpans must be explicitly defined.
-                  // Child text spans will inherit styles from parent
-                  style: new TextStyle(
-                    fontSize: 14.0,
-                    color: Color.fromRGBO(41, 60, 62, 1).withAlpha(180),
-                  ),
-                  children: <TextSpan>[
-                    new TextSpan(text: 'Dates: ', style: new TextStyle(fontWeight: FontWeight.bold)),
-                    new TextSpan(text: '${classes.dates}'),
-                    new TextSpan(text: '\nTimes: ', style: new TextStyle(fontWeight: FontWeight.bold)),
-                    new TextSpan(text: '${classes.times}'),
-                    new TextSpan(text: '\nLocation: ', style: new TextStyle(fontWeight: FontWeight.bold)),
-                    new TextSpan(text: '${classes.location}'),
-                    
-                  ],
-                ),
-              ),
                 trailing: IconButton(
                   icon: Icon(Icons.chevron_right),
                   color: Color(0xFF1ca5e5),
@@ -334,9 +385,6 @@ Widget _buildListItem(
                 }),
           ],
         ),
-      ),
-      Divider(
-        color: Colors.lightBlue,
       ),
     ],
     key: ValueKey(classes.clsName),
