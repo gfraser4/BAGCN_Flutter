@@ -5,6 +5,10 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'dart:convert';
 
+//FOCUSING
+final FocusNode _passwordFocus = FocusNode();
+
+
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
   @override
@@ -66,6 +70,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     //SCAFFOLD OF PAGE LAYOUT AT BOTTOM --> SEE BELOW
 
+
 //HERO/LOGO AREA
     final logo = Hero(
       tag: 'hero',
@@ -80,6 +85,10 @@ class _LoginPageState extends State<LoginPage> {
       validator: (input) {
         if (input.isEmpty) return 'Please enter a valid email.';
       },
+      textInputAction: TextInputAction.next,
+      onFieldSubmitted: (String value) {
+        FocusScope.of(context).requestFocus(_passwordFocus);
+      },  
       initialValue:_email,
       onSaved: (input) => _email = input,
       keyboardType: TextInputType.emailAddress,
@@ -109,6 +118,8 @@ class _LoginPageState extends State<LoginPage> {
         if (input.length < 6)
           return 'Your password needs\nto be at least 6 characters.';
       },
+      textInputAction: TextInputAction.done,
+      focusNode: _passwordFocus,
       initialValue:_password,
       onSaved: (input) => _password = input,
       autofocus: false,
