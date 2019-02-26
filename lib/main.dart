@@ -105,6 +105,9 @@ class _MyClassList extends State<MyClassList> {
 
 Widget _navDrawer(BuildContext context, FirebaseUser user) {
   return Drawer(
+    elevation: 50,
+    child: Container(
+      color: Color(0xFFF4F5F7),
     child: ListView(
       // Important: Remove any padding from the ListView.
       padding: EdgeInsets.zero,
@@ -130,9 +133,13 @@ Widget _navDrawer(BuildContext context, FirebaseUser user) {
           ),
         ),
         ListTile(
+          leading: Icon(
+            Icons.message,
+            color: Color.fromRGBO(28, 165, 229, 1),           
+          ),
           trailing: Icon(
-            Icons.announcement,
-            color: Color(0xFF1ca5e5),
+            Icons.notification_important,
+            color: Color.fromRGBO(183, 33, 38, 1),
           ),
           title: Text('Messages (Not used right now)'),
           onTap: () {
@@ -143,9 +150,13 @@ Widget _navDrawer(BuildContext context, FirebaseUser user) {
           },
         ),
         Divider(
-          color: Color(0xFF1ca5e5),
+          color: Color.fromRGBO(123, 193, 67, 1),
         ),
         ListTile(
+          leading: Icon(
+            Icons.settings,
+            color: Color.fromRGBO(28, 165, 229, 1)
+          ),
           title: Text('Manage Classes'),
           onTap: () {
             Navigator.push(
@@ -155,9 +166,13 @@ Widget _navDrawer(BuildContext context, FirebaseUser user) {
           },
         ),
         Divider(
-          color: Color(0xFF1ca5e5),
+          color: Color.fromRGBO(123, 193, 67, 1),
         ),
         ListTile(
+          leading: Icon(
+            Icons.account_circle,
+            color: Color.fromRGBO(28, 165, 229, 1)
+            ),
           title: Text('Profile Settings'),
           onTap: () {
             Navigator.push(
@@ -167,9 +182,13 @@ Widget _navDrawer(BuildContext context, FirebaseUser user) {
           },
         ),
         Divider(
-          color: Color(0xFF1ca5e5),
+          color: Color.fromRGBO(123, 193, 67, 1),
         ),
         ListTile(
+          leading:Icon(
+            Icons.info,
+            color: Color.fromRGBO(28, 165, 229, 1)
+            ),
           title: Text('About'),
           onTap: () {
             Navigator.push(
@@ -179,9 +198,13 @@ Widget _navDrawer(BuildContext context, FirebaseUser user) {
           },
         ),
         Divider(
-          color: Color(0xFF1ca5e5),
+          color: Color.fromRGBO(123, 193, 67, 1),
         ),
         ListTile(
+          leading: Icon(
+            Icons.exit_to_app,
+            color: Color.fromRGBO(28, 165, 229, 1)
+            ),
           title: Text('Sign Out'),
           onTap: () {
             FirebaseAuth.instance.signOut();
@@ -190,9 +213,10 @@ Widget _navDrawer(BuildContext context, FirebaseUser user) {
           },
         ),
         Divider(
-          color: Color(0xFF1ca5e5),
+          color: Color.fromRGBO(123, 193, 67, 1),
         ),
       ],
+    ),
     ),
   );
 }
@@ -248,59 +272,9 @@ Widget _buildListItem(
         ),
         child: Column(
           children: <Widget>[
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.end,
-            //   children: <Widget>[
-            //     Container(
-            //       child: Row(
-            //         children: <Widget>[
-            //           IconButton(
-            //             icon: Icon(Icons.notifications_active),
-            //             color: Color(0xFF1ca5e5),
-            //             onPressed: () {},
-            //           ),
-            //           IconButton(
-            //             icon: Icon(Icons.delete),
-            //             color: Colors.grey,
-            //             onPressed: () {
-            //               showDialog(
-            //                 context: context,
-            //                 builder: (BuildContext context) {
-            //                   return AlertDialog(
-            //                     title: Text('Remove Class?'),
-            //                     content: Text(
-            //                         'Are you sure you want to remove ${classes.clsName} - ${classes.code} from your class list?'),
-            //                     actions: <Widget>[
-            //                       FlatButton(
-            //                         child: Text("Cancel"),
-            //                         onPressed: () {
-            //                           Navigator.of(context).pop();
-            //                         },
-            //                       ),
-            //                       FlatButton(
-            //                         child: Text("Accept"),
-            //                         onPressed: () {
-            //                           classes.reference.updateData({
-            //                             "enrolledUsers":
-            //                                 FieldValue.arrayRemove(userID)
-            //                           });
-            //                           Navigator.of(context).pop();
-            //                         },
-            //                       ),
-            //                     ],
-            //                   );
-            //                 },
-            //               );
-            //             },
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //   ],
-            // ),
             ListTile(
                 contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
+                    const EdgeInsets.fromLTRB(5, 5, 2, 5),
                 title: Text('${classes.clsName} - ${classes.code}',
                     style: TextStyle(fontWeight: FontWeight.w700, color: Color.fromRGBO( 41, 60, 62, 1))),
                 subtitle: RichText(
@@ -374,6 +348,7 @@ Widget _buildListItem(
               ],
             ),
                 trailing: IconButton(
+                  padding: EdgeInsets.all(0),
                   icon: Icon(Icons.chevron_right),
                   color: Color(0xFF1ca5e5),
                   onPressed: () {
