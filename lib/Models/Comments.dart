@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 //CLASS MAP BASED ON FIRESTORE ANNOUNCEMENT TABLE
 class Comments {
+  final String userID;
   final String commentID;
   final String announcementID;
   final String firstName;
@@ -14,12 +15,14 @@ class Comments {
   Comments.fromMap(Map<String, dynamic> map, {this.reference})
       : assert(map['firstName'] != null),
         assert(map['lastName'] != null),
+        assert(map['userID'] != null),
         assert(map['commentID'] != null),
         assert(map['announcementID'] != null),
         assert(map['content'] != null),
         assert(map['created'] != null),
         assert(map['visible'] != null),
         firstName = map['firstName'],
+        userID = map['userID'],
         lastName = map['lastName'],
         commentID = map['commentID'],
         announcementID = map['announcementID'],
