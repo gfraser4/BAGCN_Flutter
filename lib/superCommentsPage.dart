@@ -344,7 +344,7 @@ Widget _buildRepliesListItem(
             ),
             Divider(color: Color(0xFF1ca5e5)),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 Container(
                   padding: const EdgeInsets.all(10),
