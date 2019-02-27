@@ -64,7 +64,7 @@ Widget _buildBody(
         .collection('announcements')
         .where('class', isEqualTo: title)
         .where('code', isEqualTo: code)
-        //.orderBy('created', descending: true )
+        .orderBy('created', descending: true )
         .snapshots(),
     builder: (context, snapshot) {
       if (!snapshot.hasData) return LinearProgressIndicator();
