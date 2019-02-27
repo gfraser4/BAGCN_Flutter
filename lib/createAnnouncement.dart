@@ -105,11 +105,14 @@ Widget _buildBody(BuildContext context, String title, int code) {
                     .setData({ 
                     'id': newAnnouncement.documentID,  
                     'code': code,
+                    'commentCount': 0,
                     'class': title,
                     'title': _titleController.text,
                     'description': _descriptionController.text,
                     'created': nowTime,
                     'likes': 0,
+                    'likedUsers':[],
+                    'notifyUsers': [],
                   });
                 }),
             SizedBox(height: 36.0),
