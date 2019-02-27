@@ -3,24 +3,45 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
-import 'package:bagcndemo/Controllers/CommentLogic/commentsLogic.dart';
 
+import 'package:bagcndemo/Controllers/CommentLogic/commentsLogic.dart';
 import 'Models/AnnouncementsModel.dart';
 import 'Models/Comments.dart';
 import 'Models/Replies.dart';
 
-class ParentsCommentsPage extends StatefulWidget {
+//visible icon
+
+bool visible = true;
+Icon visibleIcon;
+Icon notHiddenIcon =
+    Icon(Icons.visibility, color: Color.fromRGBO(28, 165, 229, 1));
+Icon hiddenIcon = Icon(Icons.visibility_off, color: Colors.grey);
+
+class SuperCommentsPage extends StatefulWidget {
   final FirebaseUser user;
   final Announcements announcement;
-  ParentsCommentsPage(this.announcement, this.user);
+  SuperCommentsPage(this.announcement, this.user);
   @override
-  _ParentsCommentsPage createState() {
-    return _ParentsCommentsPage();
+  _SuperCommentsPage createState() {
+    return _SuperCommentsPage();
   }
 }
 
-class _ParentsCommentsPage extends State<ParentsCommentsPage> {
+class _SuperCommentsPage extends State<SuperCommentsPage> {
   final _commentController = new TextEditingController();
+
+  @override
+  void initState() {
+    visibleIcon = notHiddenIcon;
+  }
+
+  @override
+  void setState(fn) {
+    if (visible == true)
+    visibleIcon = notHiddenIcon;
+    else
+    visibleIcon = hiddenIcon;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,80 +117,6 @@ class _ParentsCommentsPage extends State<ParentsCommentsPage> {
   }
 }
 
-// Future<void> createComment(BuildContext context, FirebaseUser user,
-//     String content, String announcementID) async {
-//   DateTime nowTime = new DateTime.now().toUtc();
-//   DocumentSnapshot snapshot = await Firestore.instance
-//       .collection('users')
-//       .document('${user.uid}')
-//       .get();
-//   final userInfo = Users.fromSnapshot(snapshot);
-//   var newComment = Firestore.instance.collection('comments').document();
-//   newComment.setData({
-//     'userID' :user.uid,
-//     'commentID': newComment.documentID,
-//     'announcementID': announcementID,
-//     'content': content,
-//     'firstName': userInfo.firstName,
-//     'lastName': userInfo.lastName,
-//     'created': nowTime,
-//     'visible': true,
-//   });
-
-//   DocumentSnapshot announcementSnapshot = await Firestore.instance
-//       .collection('announcements')
-//       .document(announcementID)
-//       .get();
-
-// //Increases comment count by one for specific announcement
-//   Firestore.instance.runTransaction((transaction) async {
-//     final freshSnapshot = await transaction.get(announcementSnapshot.reference);
-//     final fresh = Announcements.fromSnapshot(freshSnapshot);
-
-//     await transaction.update(announcementSnapshot.reference, {
-//       'commentCount': fresh.commentCount + 1,
-//     });
-//   });
-// }
-
-// Future<void> createReply(BuildContext context, FirebaseUser user,
-//     String content, String commentID, String announcementID) async {
-//   DateTime nowTime = new DateTime.now().toUtc();
-//   DocumentSnapshot snapshot = await Firestore.instance
-//       .collection('users')
-//       .document('${user.uid}')
-//       .get();
-//   final userInfo = Users.fromSnapshot(snapshot);
-//   var newReply = Firestore.instance.collection('replies').document();
-//   newReply.setData({
-//     'userID' :user.uid,
-//     'replyID': newReply.documentID,
-//     'parentCommentID': commentID,
-//     'content': content,
-//     'firstName': userInfo.firstName,
-//     'lastName': userInfo.lastName,
-//     'created': nowTime,
-//     'visible': true,
-//   });
-
-//   DocumentSnapshot announcementSnapshot = await Firestore.instance
-//       .collection('announcements')
-//       .document(announcementID)
-//       .get();
-
-//   //Increases comment count by one for specific announcement
-//   Firestore.instance.runTransaction((transaction) async {
-//     final freshSnapshot = await transaction.get(announcementSnapshot.reference);
-//     final fresh = Announcements.fromSnapshot(freshSnapshot);
-
-//     await transaction.update(announcementSnapshot.reference, {
-//       'commentCount': fresh.commentCount + 1,
-//     });
-//   });
-// }
-
-
-
 // ? /////////////////////////////////////////////////////
               // ***BUILD Comments*** \\
 // ? ////////////////////////////////////////////////////
@@ -181,7 +128,7 @@ Widget _buildCommentsBody(
     stream: Firestore.instance
         .collection('comments')
         .where('announcementID', isEqualTo: announcement.id)
-        .where('visible', isEqualTo: true)
+        //.where('visible', isEqualTo: true)
         .snapshots(),
     builder: (context, snapshot) {
       if (!snapshot.hasData) return LinearProgressIndicator();
@@ -212,6 +159,14 @@ Widget _buildCommentsListItem(
   var formatter = new DateFormat.yMd().add_jm();
   String formattedDate = formatter.format(comments.created);
 
+
+//check if comment is toggled visible or not and set color accordingly
+  if (comments.visible == true) {
+    visibleIcon = notHiddenIcon;
+  } else {
+    visibleIcon = hiddenIcon;
+  }
+
   return Padding(
     key: ValueKey(comments.announcementID),
     padding: const EdgeInsets.symmetric(horizontal: 2.0, vertical: 2),
@@ -230,6 +185,12 @@ Widget _buildCommentsListItem(
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
               subtitle: Text('${comments.content}'),
+              trailing: IconButton(
+                  //color: Colors.red,
+                  icon: visibleIcon,
+                  onPressed: () {
+                    toggleVisibility(data, comments.commentID);
+                  }),
             ),
             Divider(color: Color(0xFF1ca5e5)),
             Row(
@@ -312,9 +273,8 @@ Widget _buildCommentsListItem(
   );
 }
 
-
 // ? /////////////////////////////////////////////////////
-              // ***BUILD Replies*** \\
+// ***BUILD REPLIES*** \\
 // ? ////////////////////////////////////////////////////
 
 //QUERY FIRESTORE FOR ALL ANNOUNCEMENTS FOR A CLASS --> WHERE CLAUSE SEARCHES FOR title OF CLASS AND code FOR CLASS
@@ -324,7 +284,7 @@ Widget _buildRepliesBody(
     stream: Firestore.instance
         .collection('replies')
         .where('parentCommentID', isEqualTo: comment.commentID)
-        .where('visible', isEqualTo: true)
+        //.where('visible', isEqualTo: true)
         .snapshots(),
     builder: (context, snapshot) {
       if (!snapshot.hasData) return LinearProgressIndicator();
@@ -350,6 +310,15 @@ Widget _buildRepliesListItem(
   final replies = Replies.fromSnapshot(data);
   var formatter = new DateFormat.yMd().add_jm();
   String formattedDate = formatter.format(replies.created);
+
+//check if reply is toggled visible or not and set color accordingly
+ if (replies.visible == true) {
+    visibleIcon = notHiddenIcon;
+  } else {
+    visibleIcon = hiddenIcon;
+  }
+
+
   return Padding(
     //key: ValueKey(replies.parentCommentID),
     padding: const EdgeInsets.only(left: 20.0),
@@ -366,10 +335,16 @@ Widget _buildRepliesListItem(
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
               subtitle: Text('${replies.content}'),
+              trailing: IconButton(
+                  //color: Colors.red,
+                  icon: visibleIcon,
+                  onPressed: () {
+                    toggleReplyVisibility(data, replies.replyID);
+                  }),
             ),
             Divider(color: Color(0xFF1ca5e5)),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Container(
                   padding: const EdgeInsets.all(10),
