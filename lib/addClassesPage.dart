@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import './main.dart';
 import 'Models/ClassesModel.dart';
 
@@ -20,7 +19,7 @@ class AddClassesPage extends StatefulWidget {
 class _AddClassesPage extends State<AddClassesPage> {
   final _classNameController = new TextEditingController(); //VAR TO HOLD CLASSNAME INPUT
   final _classCodeController = new TextEditingController(); //VAR TO HOLD CLASSCODE INPUT
-  String className;
+  String className;  
   var stream =
       Firestore.instance.collection('class').orderBy('clsName').snapshots(); //DEFAULT QUERY TO LIST ALL CLASSES IN DATABASE
 
@@ -93,14 +92,14 @@ class _AddClassesPage extends State<AddClassesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF1ca5e5),
+      backgroundColor: Color.fromRGBO(123, 193, 67, 1),
       appBar: AppBar(
         title: Text('Manage Classes'),
       ),
       body: Column(
         children: <Widget>[
           Container(
-            color: Colors.lightBlue[50],
+            color: Color(0xFFF4F5F7),
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
             child: Column( //SEARCH AREA BEGINS
@@ -168,9 +167,6 @@ class _AddClassesPage extends State<AddClassesPage> {
               ],
             ),
           ),
-          Divider(
-            color: Color(0xFF1ca5e5),
-          ),
           Expanded(
             child: _buildBody(context, stream, widget.user), //SEARCH RESULTS AREA IS BUILT PASSING DYNAMIC QUERY(stream)
           ),
@@ -207,15 +203,16 @@ Widget _buildListItem(BuildContext context, DocumentSnapshot data, FirebaseUser 
     key: ValueKey(classes.clsName),
     padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
     child: Card(
-      color: Colors.lightBlue[50],
+      color: Color(0xFFF4F5F7),
       elevation: 5.0,
       child: ListTile(
         title: Text(classes.clsName),
         subtitle: Text('Course Code: ${classes.code}'),
         trailing: RaisedButton(
+          color: Color.fromRGBO(28, 165, 229, 1),
             child: Text(
               'JOIN',
-              style: TextStyle(color: Color(0xFF1ca5e5)),
+              style: TextStyle(color: Colors.white),
             ),
             onPressed: () {
               showDialog(
