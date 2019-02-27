@@ -3,36 +3,36 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
-import './parentCommentsPage.dart';
+import 'createAnnouncement.dart';
+import './CommentsPage.dart';
 import 'Models/AnnouncementsModel.dart';
-
-
 
 Color likeButtonColor = Colors.grey;
 Color notifyButtonColor = Colors.grey;
+bool role;
 
 //ParentClassAnnouncementPage WIDGET - SHOWS ANNOUNCEMENTS FOR SPECIFIC CLASS --> REQUIRES A title AND code ARGURMENT PASSED TO IT
-class ParentClassAnnouncementPage extends StatefulWidget {
+class ClassAnnouncementPage extends StatefulWidget {
   final FirebaseUser user;
   final String title;
   final int code;
-  ParentClassAnnouncementPage(this.title, this.code, this.user);
+  final bool isSuper;
+  ClassAnnouncementPage(this.title, this.code, this.user, this.isSuper);
   @override
-  _ParentClassAnnouncementPage createState() {
-    return _ParentClassAnnouncementPage();
+  _ClassAnnouncementPage createState() {
+    return _ClassAnnouncementPage();
   }
 }
 
 //HOW PAGE IS BUILT
-class _ParentClassAnnouncementPage extends State<ParentClassAnnouncementPage> {
-
-@override
+class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
+  @override
   void initState() {
-likeButtonColor = likeButtonColor;
-notifyButtonColor = notifyButtonColor;
+    likeButtonColor = likeButtonColor;
+    notifyButtonColor = notifyButtonColor;
   }
 
-@override
+  @override
   void setState(fn) {
     likeButtonColor = likeButtonColor;
     notifyButtonColor = notifyButtonColor;
@@ -40,19 +40,35 @@ notifyButtonColor = notifyButtonColor;
 
   @override
   Widget build(BuildContext context) {
+    role = widget.isSuper;
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        title: Text(
-            widget.title), //PAGE TITLE BASED ON title THAT WAS PASSED TO PAGE
-      ),
-      body: _buildBody(
-        context,
-        widget.title,
-        widget.code,
-        widget.user,
-      ), //HOW BODY IS BUILT PASSING CLASS title AND CLASS code to _buildBody() WIDGET FOR QUERY
-    );
+        backgroundColor: Colors.grey[100],
+        appBar: AppBar(
+          title: Text(
+              widget.title), //PAGE TITLE BASED ON title THAT WAS PASSED TO PAGE
+        ),
+        body: _buildBody(
+          context,
+          widget.title,
+          widget.code,
+          widget.user,
+        ),
+        floatingActionButton: role == true
+            ? FloatingActionButton(
+                child: Icon(Icons.create),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AnnouncementPage(
+                            widget.title,
+                            widget
+                                .code)), //NAVIGATION TO CREATE ANNOUNCEMENT --> AGAIN PASSING title AND code SO ANNOUNCEMENT IS MADE FOR SPECIFIC CLASS
+                  );
+                },
+              )
+            : null //HOW BODY IS BUILT PASSING CLASS title AND CLASS code to _buildBody() WIDGET FOR QUERY
+        );
   }
 }
 
@@ -64,7 +80,7 @@ Widget _buildBody(
         .collection('announcements')
         .where('class', isEqualTo: title)
         .where('code', isEqualTo: code)
-        .orderBy('created', descending: true )
+        .orderBy('created', descending: true)
         .snapshots(),
     builder: (context, snapshot) {
       if (!snapshot.hasData) return LinearProgressIndicator();
@@ -89,21 +105,19 @@ Widget _buildListItem(
     BuildContext context, DocumentSnapshot data, FirebaseUser user) {
   List<String> userID = ['${user.uid}'];
   final announcements = Announcements.fromSnapshot(data);
-var formatter = new DateFormat.yMd().add_jm();
+  var formatter = new DateFormat.yMd().add_jm();
   String formattedDate = formatter.format(announcements.created);
   //Check if user has liked the announcement already and set color of button accordingly
-  if (announcements.likedUsers.contains(user.uid) == true){
+  if (announcements.likedUsers.contains(user.uid) == true) {
     likeButtonColor = Color(0xFF1ca5e5);
-  }
-  else{
+  } else {
     likeButtonColor = Colors.grey;
   }
 
 //check if users has subscribed to notifications and set button color accordingly
-  if (announcements.notifyUsers.contains(user.uid) == true){
+  if (announcements.notifyUsers.contains(user.uid) == true) {
     notifyButtonColor = Color(0xFF1ca5e5);
-  }
-  else{
+  } else {
     notifyButtonColor = Colors.grey;
   }
 
@@ -128,7 +142,6 @@ var formatter = new DateFormat.yMd().add_jm();
     });
   }
 
-
   //keep track of who has subrscribed to announcement-comments notifications
   void _notifyClick() {
     Firestore.instance.runTransaction((transaction) async {
@@ -136,14 +149,12 @@ var formatter = new DateFormat.yMd().add_jm();
       final fresh = Announcements.fromSnapshot(freshSnapshot);
       if (fresh.notifyUsers.contains(user.uid) == false) {
         notifyButtonColor = Color(0xFF1ca5e5);
-        await transaction.update(announcements.reference, {
-          "notifyUsers": FieldValue.arrayUnion(userID)
-        });
+        await transaction.update(announcements.reference,
+            {"notifyUsers": FieldValue.arrayUnion(userID)});
         print('added');
       } else {
-        await transaction.update(announcements.reference, {
-          "notifyUsers": FieldValue.arrayRemove(userID)
-        });
+        await transaction.update(announcements.reference,
+            {"notifyUsers": FieldValue.arrayRemove(userID)});
         notifyButtonColor = Colors.grey;
         print('removed');
       }
@@ -204,7 +215,7 @@ var formatter = new DateFormat.yMd().add_jm();
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    ParentsCommentsPage(announcements, user)),
+                                    CommentsPage(announcements, user, role)),
                           );
                         },
                       ),
@@ -216,13 +227,82 @@ var formatter = new DateFormat.yMd().add_jm();
                     ],
                   ),
                 ),
-                IconButton(
-                  icon: Icon(Icons.notifications_active),
-                  color: notifyButtonColor,
-                  onPressed: () {
-                    _notifyClick();
-                  },
-                ),
+                role == true
+                    ? IconButton(
+                        icon: Icon(Icons.more_horiz),
+                        color: notifyButtonColor,
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                actions: <Widget>[
+                                  Column(
+                                    children: <Widget>[
+                                      FlatButton(
+                                        child: Row(
+                                          children: <Widget>[
+                                            Icon(
+                                              Icons.edit,
+                                              color: Color(0xFF1ca5e5),
+                                            ),
+                                            Text(
+                                              'Edit',
+                                              style: TextStyle(
+                                                  color: Color(0xFF1ca5e5)),
+                                            )
+                                          ],
+                                        ),
+                                        onPressed: () {},
+                                      ),
+                                      FlatButton(
+                                        child: Row(
+                                          children: <Widget>[
+                                            Icon(
+                                              Icons.notifications_active,
+                                              color: Color(0xFF1ca5e5),
+                                            ),
+                                            Text(
+                                              'Alerts',
+                                              style: TextStyle(
+                                                  color: Color(0xFF1ca5e5)),
+                                            )
+                                          ],
+                                        ),
+                                        onPressed: () {},
+                                      ),
+                                      
+                                      FlatButton(
+                                        child: Row(
+                                          children: <Widget>[
+                                            Icon(
+                                              Icons.delete,
+                                              color: Color(0xFF1ca5e5),
+                                            ),
+                                            Text(
+                                              'Delete',
+                                              style: TextStyle(
+                                                  color: Color(0xFF1ca5e5)),
+                                            )
+                                          ],
+                                        ),
+                                        onPressed: () {},
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      )
+                    : IconButton(
+                        icon: Icon(Icons.notifications_active),
+                        color: notifyButtonColor,
+                        onPressed: () {
+                          _notifyClick();
+                        },
+                      ),
               ],
             )
           ],

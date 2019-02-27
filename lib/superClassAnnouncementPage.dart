@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
-import './superCommentsPage.dart';
+import './CommentsPage.dart';
 import 'createAnnouncement.dart';
 import 'Models/AnnouncementsModel.dart';
 
@@ -124,11 +124,11 @@ Widget _buildListItem(BuildContext context, DocumentSnapshot data, FirebaseUser 
                           icon: Icon(Icons.forum),
                           color: Color(0xFF1ca5e5),
                           onPressed: () {
-                            Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SuperCommentsPage(announcements, user)),
-                      );
+                      //       Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //       //builder: (context) => SuperCommentsPage(announcements, user)),
+                      // );
                           },
                         ),
                         Text('${announcements.commentCount}',

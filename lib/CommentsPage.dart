@@ -3,48 +3,51 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
-
 import 'package:bagcndemo/Controllers/CommentLogic/commentsLogic.dart';
 import 'Models/AnnouncementsModel.dart';
 import 'Models/Comments.dart';
 import 'Models/Replies.dart';
 
 //visible icon
-
+bool role;
 bool visible = true;
 Icon visibleIcon;
 Icon notHiddenIcon =
     Icon(Icons.visibility, color: Color.fromRGBO(28, 165, 229, 1));
 Icon hiddenIcon = Icon(Icons.visibility_off, color: Colors.grey);
 
-class SuperCommentsPage extends StatefulWidget {
+class CommentsPage extends StatefulWidget {
   final FirebaseUser user;
   final Announcements announcement;
-  SuperCommentsPage(this.announcement, this.user);
+  final bool isSuper;
+  CommentsPage(this.announcement, this.user, this.isSuper);
   @override
-  _SuperCommentsPage createState() {
-    return _SuperCommentsPage();
+  _CommentsPage createState() {
+    return _CommentsPage();
   }
 }
 
-class _SuperCommentsPage extends State<SuperCommentsPage> {
+class _CommentsPage extends State<CommentsPage> {
   final _commentController = new TextEditingController();
 
   @override
   void initState() {
     visibleIcon = notHiddenIcon;
+
+    super.initState();
   }
 
   @override
   void setState(fn) {
     if (visible == true)
-    visibleIcon = notHiddenIcon;
+      visibleIcon = notHiddenIcon;
     else
-    visibleIcon = hiddenIcon;
+      visibleIcon = hiddenIcon;
   }
 
   @override
   Widget build(BuildContext context) {
+    role = widget.isSuper;
     return Scaffold(
       resizeToAvoidBottomPadding: true,
       appBar: AppBar(
@@ -91,34 +94,12 @@ class _SuperCommentsPage extends State<SuperCommentsPage> {
           );
         },
       ),
-      // bottomNavigationBar: Container(
-      //   color: Colors.lightGreen[50],
-      //   margin: EdgeInsets.all(10),
-      //   child: TextFormField(
-      //     autofocus: false,
-      //     controller: _commentController,
-      //     decoration: InputDecoration(
-      //       hintText: 'New Message...',
-      //       filled: true,
-      //       suffixIcon: IconButton(
-      //           icon: Icon(
-      //             Icons.send,
-      //             color: Colors.lightGreen,
-      //           ),
-      //           onPressed: () {
-      //             createComment(context, widget.user, _commentController.text,
-      //                 widget.announcement.id);
-      //             _commentController.text = "";
-      //           }),
-      //     ),
-      //   ),
-      // ),
     );
   }
 }
 
 // ? /////////////////////////////////////////////////////
-              // ***BUILD Comments*** \\
+// ***BUILD Comments*** \\
 // ? ////////////////////////////////////////////////////
 
 //QUERY FIRESTORE FOR ALL ANNOUNCEMENTS FOR A CLASS --> WHERE CLAUSE SEARCHES FOR title OF CLASS AND code FOR CLASS
@@ -159,7 +140,6 @@ Widget _buildCommentsListItem(
   var formatter = new DateFormat.yMd().add_jm();
   String formattedDate = formatter.format(comments.created);
 
-
 //check if comment is toggled visible or not and set color accordingly
   if (comments.visible == true) {
     visibleIcon = notHiddenIcon;
@@ -180,17 +160,22 @@ Widget _buildCommentsListItem(
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 10.0,
               ),
-              title: Text(
+              title: comments.visible ? Text(
                 '${comments.firstName} ${comments.lastName}',
                 style: TextStyle(fontWeight: FontWeight.w600),
+              ) : Text(
+                'Hidden',
+                style: TextStyle(fontWeight: FontWeight.w600),
               ),
-              subtitle: Text('${comments.content}'),
-              trailing: IconButton(
-                  //color: Colors.red,
-                  icon: visibleIcon,
-                  onPressed: () {
-                    toggleVisibility(data, comments.commentID);
-                  }),
+              subtitle: comments.visible == true ? Text('${comments.content}') : Text('This comment has been hidden by moderator.'),
+              trailing: role == true
+                  ? IconButton(
+                      //color: Colors.red,
+                      icon: visibleIcon,
+                      onPressed: () {
+                        toggleVisibility(data, comments.commentID);
+                      },)
+                  : null,
             ),
             Divider(color: Color(0xFF1ca5e5)),
             Row(
@@ -204,7 +189,9 @@ Widget _buildCommentsListItem(
                     ],
                   ),
                 ),
-                Expanded(child: Container(),),
+                Expanded(
+                  child: Container(),
+                ),
                 canEditComment(context, comments, user),
                 FlatButton(
                   child: Row(
@@ -312,12 +299,11 @@ Widget _buildRepliesListItem(
   String formattedDate = formatter.format(replies.created);
 
 //check if reply is toggled visible or not and set color accordingly
- if (replies.visible == true) {
+  if (replies.visible == true) {
     visibleIcon = notHiddenIcon;
   } else {
     visibleIcon = hiddenIcon;
   }
-
 
   return Padding(
     //key: ValueKey(replies.parentCommentID),
@@ -330,17 +316,22 @@ Widget _buildRepliesListItem(
           children: <Widget>[
             ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 20.0),
-              title: Text(
+              title: replies.visible ? Text(
                 '${replies.firstName} ${replies.lastName}',
                 style: TextStyle(fontWeight: FontWeight.w600),
+              ) : Text(
+                'Hidden',
+                style: TextStyle(fontWeight: FontWeight.w600),
               ),
-              subtitle: Text('${replies.content}'),
-              trailing: IconButton(
-                  //color: Colors.red,
-                  icon: visibleIcon,
-                  onPressed: () {
-                    toggleReplyVisibility(data, replies.replyID);
-                  }),
+              subtitle: replies.visible == true ? Text('${replies.content}') : Text('This comment has been hidden by moderator.'),
+              trailing: role == true
+                  ? IconButton(
+                      //color: Colors.red,
+                      icon: visibleIcon,
+                      onPressed: () {
+                        toggleReplyVisibility(data, replies.replyID);
+                      })
+                  : null,
             ),
             Divider(color: Color(0xFF1ca5e5)),
             Row(
@@ -363,3 +354,21 @@ Widget _buildRepliesListItem(
     ),
   );
 }
+
+
+
+// Widget toggleVisible(BuildContext context, DocumentSnapshot data,
+//     FirebaseUser user, Replies replies) {
+//   if (checkRole(user) == true) {
+//     print('Test ${checkRole(user)}');
+//     IconButton(
+//         //color: Colors.red,
+//         icon: visibleIcon,
+//         onPressed: () {
+//           toggleReplyVisibility(data, replies.replyID);
+//         });
+//   } else {
+//     print('Else');
+//     Container();
+//   }
+// }
