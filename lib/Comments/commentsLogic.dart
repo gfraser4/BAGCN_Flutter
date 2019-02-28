@@ -7,7 +7,7 @@ import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 import 'package:bagcndemo/Models/Comments.dart';
 import 'package:bagcndemo/Models/Replies.dart';
 
-import 'package:bagcndemo/CommentsPage.dart';
+import 'package:bagcndemo/Comments/CommentsPage.dart';
 
 //Create Comment
 Future<void> createComment(BuildContext context, FirebaseUser user,

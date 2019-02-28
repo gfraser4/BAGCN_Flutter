@@ -3,9 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
-import 'createAnnouncement.dart';
-import './CommentsPage.dart';
-import 'Models/AnnouncementsModel.dart';
+import 'package:bagcndemo/Announcements/announcementLogic.dart';
+import 'package:bagcndemo/CreateAnnouncement/createAnnouncement.dart';
+import 'package:bagcndemo/Comments/CommentsPage.dart';
+import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 
 Color likeButtonColor = Colors.grey;
 Color notifyButtonColor = Colors.grey;
@@ -30,6 +31,7 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
   void initState() {
     likeButtonColor = likeButtonColor;
     notifyButtonColor = notifyButtonColor;
+    
   }
 
   @override
@@ -76,12 +78,7 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
 Widget _buildBody(
     BuildContext context, String title, int code, FirebaseUser user) {
   return StreamBuilder<QuerySnapshot>(
-    stream: Firestore.instance
-        .collection('announcements')
-        .where('class', isEqualTo: title)
-        .where('code', isEqualTo: code)
-        .orderBy('created', descending: true)
-        .snapshots(),
+    stream: AnnouncementLogic.announcementStream(title, code),
     builder: (context, snapshot) {
       if (!snapshot.hasData) return LinearProgressIndicator();
 
@@ -121,46 +118,6 @@ Widget _buildListItem(
     notifyButtonColor = Colors.grey;
   }
 
-//add user to liked l ist and increase count like by one or decrease by one
-  void _likeButtonClick() {
-    Firestore.instance.runTransaction((transaction) async {
-      final freshSnapshot = await transaction.get(announcements.reference);
-      final fresh = Announcements.fromSnapshot(freshSnapshot);
-      if (fresh.likedUsers.contains(user.uid) == false) {
-        likeButtonColor = Color(0xFF1ca5e5);
-        await transaction.update(announcements.reference, {
-          'likes': fresh.likes + 1,
-          "likedUsers": FieldValue.arrayUnion(userID)
-        });
-      } else {
-        await transaction.update(announcements.reference, {
-          'likes': fresh.likes - 1,
-          "likedUsers": FieldValue.arrayRemove(userID)
-        });
-        likeButtonColor = Colors.grey;
-      }
-    });
-  }
-
-  //keep track of who has subrscribed to announcement-comments notifications
-  void _notifyClick() {
-    Firestore.instance.runTransaction((transaction) async {
-      final freshSnapshot = await transaction.get(announcements.reference);
-      final fresh = Announcements.fromSnapshot(freshSnapshot);
-      if (fresh.notifyUsers.contains(user.uid) == false) {
-        notifyButtonColor = Color(0xFF1ca5e5);
-        await transaction.update(announcements.reference,
-            {"notifyUsers": FieldValue.arrayUnion(userID)});
-        print('added');
-      } else {
-        await transaction.update(announcements.reference,
-            {"notifyUsers": FieldValue.arrayRemove(userID)});
-        notifyButtonColor = Colors.grey;
-        print('removed');
-      }
-    });
-  }
-
   return Padding(
     key: ValueKey(announcements.clsName),
     padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 2.0),
@@ -193,7 +150,7 @@ Widget _buildListItem(
                         icon: Icon(Icons.thumb_up),
                         color: likeButtonColor,
                         onPressed: () {
-                          _likeButtonClick();
+                          AnnouncementLogic.likeButtonClick(user, likeButtonColor, announcements);
                         },
                       ),
                       Text(announcements.likes.toString(),
@@ -300,7 +257,7 @@ Widget _buildListItem(
                         icon: Icon(Icons.notifications_active),
                         color: notifyButtonColor,
                         onPressed: () {
-                          _notifyClick();
+                         AnnouncementLogic.notifyClick(user, notifyButtonColor, announcements);
                         },
                       ),
               ],
