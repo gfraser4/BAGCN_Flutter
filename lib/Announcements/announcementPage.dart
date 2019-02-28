@@ -8,6 +8,8 @@ import 'package:bagcndemo/CreateAnnouncement/createAnnouncement.dart';
 import 'package:bagcndemo/Comments/CommentsPage.dart';
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 
+import 'package:bagcndemo/Models/Users.dart';
+
 Color likeButtonColor = Colors.grey;
 Color notifyButtonColor = Colors.grey;
 bool role;
@@ -31,7 +33,6 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
   void initState() {
     likeButtonColor = likeButtonColor;
     notifyButtonColor = notifyButtonColor;
-    
   }
 
   @override
@@ -63,9 +64,10 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => AnnouncementPage(
-                            widget.title,
-                            widget
-                                .code)), //NAVIGATION TO CREATE ANNOUNCEMENT --> AGAIN PASSING title AND code SO ANNOUNCEMENT IS MADE FOR SPECIFIC CLASS
+                              widget.title,
+                              widget.code,
+                              widget.user,
+                            )), //NAVIGATION TO CREATE ANNOUNCEMENT --> AGAIN PASSING title AND code SO ANNOUNCEMENT IS MADE FOR SPECIFIC CLASS
                   );
                 },
               )
@@ -104,6 +106,12 @@ Widget _buildListItem(
   final announcements = Announcements.fromSnapshot(data);
   var formatter = new DateFormat.yMd().add_jm();
   String formattedDate = formatter.format(announcements.created);
+
+// var name =
+//   Firestore.instance.collection('users').document(announcements.postedBy).get().then(
+//       (DocumentSnapshot doc) => print(doc.data['firstName'].toString()));
+// print(name);
+
   //Check if user has liked the announcement already and set color of button accordingly
   if (announcements.likedUsers.contains(user.uid) == true) {
     likeButtonColor = Color(0xFF1ca5e5);
@@ -117,6 +125,150 @@ Widget _buildListItem(
   } else {
     notifyButtonColor = Colors.grey;
   }
+
+  Widget announcementEdit(
+      BuildContext context, Announcements announcements, FirebaseUser user) {
+    final _editAnnouncemntController = new TextEditingController();
+    _editAnnouncemntController.text = announcements.description;
+    if (user.uid == announcements.postedBy) {
+      return AlertDialog(
+        title: Text('Edit announcement...'),
+        content: TextFormField(
+          keyboardType: TextInputType.multiline,
+          maxLines: 8,
+          autofocus: false,
+          controller: _editAnnouncemntController,
+          decoration: InputDecoration(
+            hintText: announcements.description,
+            filled: true,
+          ),
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: Text("Cancel"),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          FlatButton(
+            child: Text("Edit"),
+            onPressed: () {
+
+                AnnouncementLogic.editAnnouncement(context, user,
+                    announcements.description, announcements.id);
+                Navigator.of(context).pop();
+
+
+              //Navigator.popUntil(context, predicate)
+            },
+          ),
+        ],
+      );
+    } else {
+      return Expanded(
+        child: Container(),
+      );
+    }
+  }
+
+//supervisor Popup menu
+  final supervisorMenu = AlertDialog(
+    content: Container(
+      height: 150,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          FlatButton(
+            child: Row(
+              children: <Widget>[
+                Icon(
+                  Icons.edit,
+                  color: Color(0xFF1ca5e5),
+                ),
+                Text(
+                  'Edit',
+                  style: TextStyle(color: Color(0xFF1ca5e5)),
+                )
+              ],
+            ),
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return announcementEdit(context, announcements, user);
+                  });
+            },
+          ),
+          FlatButton(
+            child: Row(
+              children: <Widget>[
+                Icon(
+                  Icons.notifications_active,
+                  color: notifyButtonColor,
+                ),
+                Text(
+                  'Alerts',
+                  style: TextStyle(color: notifyButtonColor),
+                )
+              ],
+            ),
+            onPressed: () {
+              AnnouncementLogic.notifyClick(
+                  user, notifyButtonColor, announcements);
+            },
+          ),
+          FlatButton(
+            child: Row(
+              children: <Widget>[
+                Icon(
+                  Icons.delete,
+                  color: Color(0xFF1ca5e5),
+                ),
+                Text(
+                  'Delete',
+                  style: TextStyle(color: Color(0xFF1ca5e5)),
+                )
+              ],
+            ),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text(
+                      'Delete Announcement?',
+                      style: TextStyle(
+                          fontSize: 30,
+                          fontStyle: FontStyle.normal,
+                          color: Color.fromRGBO(0, 162, 162, 1)),
+                    ),
+                    content: Text(
+                        'Are you sure you want to delete this announcement? This will permanently remove all associated comments.'),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text("Cancel"),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      FlatButton(
+                        child: Text("Delete"),
+                        onPressed: () {
+                          AnnouncementLogic.deleteAnnouncement(
+                              announcements.id);
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      ),
+    ),
+  );
 
   return Padding(
     key: ValueKey(announcements.clsName),
@@ -135,7 +287,7 @@ Widget _buildListItem(
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
               subtitle: Text(
-                  'Posted to: ${announcements.clsName}\nPosted on: $formattedDate\n\n${announcements.description}'),
+                  'Posted on: ${announcements.clsName} \nPosted on: $formattedDate\n\n${announcements.description}'),
             ),
             Divider(
               color: Color(0xFF1ca5e5),
@@ -150,7 +302,8 @@ Widget _buildListItem(
                         icon: Icon(Icons.thumb_up),
                         color: likeButtonColor,
                         onPressed: () {
-                          AnnouncementLogic.likeButtonClick(user, likeButtonColor, announcements);
+                          AnnouncementLogic.likeButtonClick(
+                              user, likeButtonColor, announcements);
                         },
                       ),
                       Text(announcements.likes.toString(),
@@ -190,74 +343,18 @@ Widget _buildListItem(
                         color: notifyButtonColor,
                         onPressed: () {
                           showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                actions: <Widget>[
-                                  Column(
-                                    children: <Widget>[
-                                      FlatButton(
-                                        child: Row(
-                                          children: <Widget>[
-                                            Icon(
-                                              Icons.edit,
-                                              color: Color(0xFF1ca5e5),
-                                            ),
-                                            Text(
-                                              'Edit',
-                                              style: TextStyle(
-                                                  color: Color(0xFF1ca5e5)),
-                                            )
-                                          ],
-                                        ),
-                                        onPressed: () {},
-                                      ),
-                                      FlatButton(
-                                        child: Row(
-                                          children: <Widget>[
-                                            Icon(
-                                              Icons.notifications_active,
-                                              color: Color(0xFF1ca5e5),
-                                            ),
-                                            Text(
-                                              'Alerts',
-                                              style: TextStyle(
-                                                  color: Color(0xFF1ca5e5)),
-                                            )
-                                          ],
-                                        ),
-                                        onPressed: () {},
-                                      ),
-                                      
-                                      FlatButton(
-                                        child: Row(
-                                          children: <Widget>[
-                                            Icon(
-                                              Icons.delete,
-                                              color: Color(0xFF1ca5e5),
-                                            ),
-                                            Text(
-                                              'Delete',
-                                              style: TextStyle(
-                                                  color: Color(0xFF1ca5e5)),
-                                            )
-                                          ],
-                                        ),
-                                        onPressed: () {},
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              );
-                            },
-                          );
+                              context: context,
+                              builder: (BuildContext context) {
+                                return supervisorMenu;
+                              });
                         },
                       )
                     : IconButton(
                         icon: Icon(Icons.notifications_active),
                         color: notifyButtonColor,
                         onPressed: () {
-                         AnnouncementLogic.notifyClick(user, notifyButtonColor, announcements);
+                          AnnouncementLogic.notifyClick(
+                              user, notifyButtonColor, announcements);
                         },
                       ),
               ],

@@ -10,12 +10,14 @@ class Announcements {
   final int code;
   final int likes;
   final int commentCount;
+  final String postedBy;
   final List<dynamic> notifyUsers;
   final List<dynamic> likedUsers;
   final DocumentReference reference;
 
   Announcements.fromMap(Map<String, dynamic> map, {this.reference})
       : assert(map['class'] != null),
+      assert(map['postedBy'] != null),
         assert(map['description'] != null),
         assert(map['id'] != null),
         assert(map['title'] != null),
@@ -23,6 +25,7 @@ class Announcements {
         assert(map['code'] != null),
         id = reference.documentID,
         code = map['code'],
+        postedBy = map['postedBy'],
         likedUsers = map['likedUsers'],
         likes = map['likes'],
         commentCount = map['commentCount'],

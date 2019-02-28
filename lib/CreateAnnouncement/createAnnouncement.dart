@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:bagcndemo/CreateAnnouncement/createLogic.dart';
 
@@ -6,7 +7,8 @@ import 'package:bagcndemo/CreateAnnouncement/createLogic.dart';
 class AnnouncementPage extends StatefulWidget {
   final String title;
   final int code;
-  AnnouncementPage(this.title, this.code);
+  final user;
+  AnnouncementPage(this.title, this.code, this.user);
   @override
   _AnnouncementPage createState() {
     return _AnnouncementPage();
@@ -22,12 +24,12 @@ class _AnnouncementPage extends State<AnnouncementPage> {
         title: Text('Create Announcement'),
       ),
       resizeToAvoidBottomPadding: true,
-      body: _buildBody(context, widget.title, widget.code), //build body of page pasing CLASS TITLE and CLASS CODE to be used for update
+      body: _buildBody(context, widget.title, widget.code, widget.user), //build body of page pasing CLASS TITLE and CLASS CODE to be used for update
     );
   }
 }
 
-Widget _buildBody(BuildContext context, String title, int code) {
+Widget _buildBody(BuildContext context, String title, int code, FirebaseUser user) {
   //AUTO DATE FIELD --> NEEDS TO BE FORMATTED
   DateTime nowTime = new DateTime.now().toUtc();
   //INPUT FIELD FOR TITLE
@@ -85,7 +87,7 @@ Widget _buildBody(BuildContext context, String title, int code) {
               keyboardType: TextInputType.multiline,
               maxLines: 8,
               decoration: InputDecoration(
-                alignLabelWithHint: true,
+                //alignLabelWithHint: true,
                 labelText: 'Description',
                 contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                 enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6.0), 
@@ -106,7 +108,7 @@ Widget _buildBody(BuildContext context, String title, int code) {
                 ),
                 onPressed: () { //FIRESTORE CREATE ANNOUNCEMENT STATEMENT USING title, code, _titleController.text, _descriptionController.text, nowTime
                   Navigator.pop(context);
-                  CreateAnnouncementLogic.createAnnouncement(code, title, _titleController.text, _descriptionController.text, nowTime);
+                  CreateAnnouncementLogic.createAnnouncement(code, title, _titleController.text, _descriptionController.text, nowTime, user);
                 }),
             SizedBox(height: 20.0),
               ]
