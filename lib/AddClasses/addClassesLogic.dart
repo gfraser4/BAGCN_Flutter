@@ -28,7 +28,6 @@ class AddClass {
     }
   }
 
-
 //CLEAR BUTTON CLEARS INPUTS AND SETS QUERY BACK TO DEFAULT TO LIST ALL CLASSES
   static Stream<QuerySnapshot> clear(String _selected, _classNameController, String _classCodeController, Stream<QuerySnapshot> stream, List<String> _dropitems) {
     _selected = _dropitems[0];
