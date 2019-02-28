@@ -7,9 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:bagcndemo/About/aboutPage.dart';
 import 'package:bagcndemo/AddClasses/addClassesPage.dart';
 import 'package:bagcndemo/Settings/settingsPage.dart';
-import 'package:bagcndemo/Login/loginPage.dart';
-import "package:bagcndemo/Signup/signupPage.dart";
-import 'package:bagcndemo/Announcements/ClassAnnouncementPage.dart';
+import 'package:bagcndemo/Announcements/announcementPage.dart';
 
 //Imported Models
 import 'package:bagcndemo/Models/ClassesModel.dart';
