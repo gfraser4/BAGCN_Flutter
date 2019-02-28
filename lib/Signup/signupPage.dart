@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:validators/validators.dart';
 
-import './main.dart';
+import 'package:bagcndemo/Signup/signupLogic.dart';
+import 'package:bagcndemo/MyClasses/myClasses.dart';
 
 class SignUpPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -295,7 +295,6 @@ class _SignUpPage extends State<SignUpPage> {
 
 //future waiting for database response
   Future<void> parentSignUp() async {
-    FirebaseUser user;
     final formState = _formKey.currentState;
     //validate fields
     if (formState.validate()) {
@@ -304,13 +303,7 @@ class _SignUpPage extends State<SignUpPage> {
       try {
         FirebaseUser user = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: _email, password: _password);
-        Firestore.instance.collection('users').document('${user.uid}').setData({
-          'id': user.uid,
-          'firstName': _firstName,
-          'lastName': _lastName,
-          'email': _email,
-          'role': 'parent',
-        });
+        SignupLogic.createParent(user, _email, _password, _firstName, _lastName);
         if (user != null) {
           //Sign in Successful: Navigate to home
 
@@ -331,7 +324,6 @@ class _SignUpPage extends State<SignUpPage> {
   }
 
   Future<void> superSignUp() async {
-    FirebaseUser user;
     final formState = _formKey.currentState;
     //validate fields
     if (formState.validate()) {
@@ -340,13 +332,7 @@ class _SignUpPage extends State<SignUpPage> {
       try {
         FirebaseUser user = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: _email, password: _password);
-        Firestore.instance.collection('users').document('${user.uid}').setData({
-          'id': user.uid,
-          'firstName': _firstName,
-          'lastName': _lastName,
-          'email': _email,
-          'role': 'super',
-        });
+        SignupLogic.createSupervisor(user, _email, _password, _firstName, _lastName);
         if (user != null) {
           //Sign in Successful: Navigate to home
 
@@ -365,31 +351,3 @@ class _SignUpPage extends State<SignUpPage> {
   }
 }
 
-//CLASS MAP BASED ON FIRESTORE ANNOUNCEMENT TABLE
-class Users {
-  final String id;
-  final String firstName;
-  final String lastName;
-  final String email;
-  final String role;
-  final DocumentReference reference;
-
-  Users.fromMap(Map<String, dynamic> map, {this.reference})
-      : assert(map['firstName'] != null),
-        assert(map['lastName'] != null),
-        assert(map['lastName'] != null),
-        assert(map['email'] != null),
-        assert(map['role'] != null),
-        assert(map['id'] != null),
-        firstName = map['firstName'],
-        lastName = map['lastName'],
-        id = map['id'],
-        email = map['email'],
-        role = map['role'];
-
-  Users.fromSnapshot(DocumentSnapshot snapshot)
-      : this.fromMap(snapshot.data, reference: snapshot.reference);
-
-  // @override
-  // String toString() => "Record<$clsName:$title>";
-}

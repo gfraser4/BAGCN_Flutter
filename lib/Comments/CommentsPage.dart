@@ -3,10 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
-import 'package:bagcndemo/Controllers/CommentLogic/commentsLogic.dart';
-import 'Models/AnnouncementsModel.dart';
-import 'Models/Comments.dart';
-import 'Models/Replies.dart';
+import 'package:bagcndemo/Comments/commentsLogic.dart';
+import 'package:bagcndemo/Models/AnnouncementsModel.dart';
+import 'package:bagcndemo/Models/Comments.dart';
+import 'package:bagcndemo/Models/Replies.dart';
 
 //visible icon
 bool role;

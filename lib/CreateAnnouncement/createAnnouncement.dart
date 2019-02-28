@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'Models/AnnouncementsModel.dart';
+import 'package:bagcndemo/CreateAnnouncement/createLogic.dart';
 
 //CREATE ANNOUNCEMENT PAGE --> REQUIRES title and code PASSED TO IT AS ARGUMENTS
 class AnnouncementPage extends StatefulWidget {
@@ -98,22 +97,7 @@ Widget _buildBody(BuildContext context, String title, int code) {
                 ),
                 onPressed: () { //FIRESTORE CREATE ANNOUNCEMENT STATEMENT USING title, code, _titleController.text, _descriptionController.text, nowTime
                   Navigator.pop(context);
-                  var newAnnouncement = Firestore.instance
-                      .collection('announcements').document();
-                      
-                  newAnnouncement
-                    .setData({ 
-                    'id': newAnnouncement.documentID,  
-                    'code': code,
-                    'commentCount': 0,
-                    'class': title,
-                    'title': _titleController.text,
-                    'description': _descriptionController.text,
-                    'created': nowTime,
-                    'likes': 0,
-                    'likedUsers':[],
-                    'notifyUsers': [],
-                  });
+                  CreateAnnouncementLogic.createAnnouncement(code, title, _titleController.text, _descriptionController.text, nowTime);
                 }),
             SizedBox(height: 36.0),
           ],
