@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'package:bagcndemo/Comments/editReply.dart';
+import 'package:bagcndemo/Comments/editComment.dart';
 import 'package:bagcndemo/Models/Users.dart';
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 import 'package:bagcndemo/Models/Comments.dart';
@@ -146,40 +148,12 @@ Widget canEditComment(
           ],
         ),
         onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('Edit comment...'),
-                content: TextFormField(
-                  keyboardType: TextInputType.multiline,
-                  maxLines: 8,
-                  autofocus: false,
-                  controller: _editCommentController,
-                  decoration: InputDecoration(
-                    hintText: comments.content,
-                    filled: true,
-                  ),
-                ),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text("Cancel"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  FlatButton(
-                    child: Text("Edit"),
-                    onPressed: () {
-                      editComment(context, user, _editCommentController.text,
-                          comments.commentID);
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            },
-          );
+          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    EditCommentPage(comments, user)),
+                          );
         });
   } else {
     return Expanded(
@@ -206,40 +180,12 @@ Widget canEditReply(BuildContext context, Replies replies, FirebaseUser user) {
         ],
       ),
       onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Edit reply...'),
-              content: TextFormField(
-                keyboardType: TextInputType.multiline,
-                maxLines: 8,
-                autofocus: false,
-                controller: _editReplyController,
-                decoration: InputDecoration(
-                  hintText: replies.content,
-                  filled: true,
-                ),
-              ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text("Cancel"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                FlatButton(
-                  child: Text("Edit"),
-                  onPressed: () {
-                    editReply(context, user, _editReplyController.text,
-                        replies.replyID);
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
+        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    EditReplyPage(replies, user)),
+                          );
       },
     );
   } else {

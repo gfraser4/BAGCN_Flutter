@@ -3,10 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
+import 'package:bagcndemo/Comments/commentReply.dart';
+import 'package:bagcndemo/Comments/editComment.dart';
 import 'package:bagcndemo/Comments/commentsLogic.dart';
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 import 'package:bagcndemo/Models/Comments.dart';
 import 'package:bagcndemo/Models/Replies.dart';
+
+
 
 //visible icon
 bool role;
@@ -15,6 +19,7 @@ Icon visibleIcon;
 Icon notHiddenIcon =
     Icon(Icons.visibility, color: Color.fromRGBO(28, 165, 229, 1));
 Icon hiddenIcon = Icon(Icons.visibility_off, color: Colors.grey);
+ScrollController _scrollController = new ScrollController();
 
 class CommentsPage extends StatefulWidget {
   final FirebaseUser user;
@@ -29,6 +34,7 @@ class CommentsPage extends StatefulWidget {
 
 class _CommentsPage extends State<CommentsPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   final _commentController = new TextEditingController();
   String _comment;
 
@@ -70,17 +76,34 @@ class _CommentsPage extends State<CommentsPage> {
               },
               keyboardType: TextInputType.multiline,
               maxLines: null,
-              onSaved: (input) => _comment = input,
+              onSaved: (input) => _commentController.text = input,
               textInputAction: TextInputAction.done,
               autofocus: false,
-              // controller:
-              //     _titleController, //set controller for title textfield
+              controller: _commentController,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white,
-                suffixIcon: Icon(
-                  Icons.send,
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.send),
                   color: Color.fromRGBO(123, 193, 67, 1),
+                  onPressed: () {
+
+                    if (_commentController.text.trim().isNotEmpty) {
+
+                      createComment(context, widget.user,
+                          _commentController.text.trim(), widget.announcement.id);
+                      _commentController.text = "";
+                      FocusScope.of(context).requestFocus(new FocusNode());
+
+                      _scrollController.animateTo(
+                        _scrollController.position.maxScrollExtent,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOut,
+                      );
+
+                      print('Send');
+                    }
+                  },
                 ),
                 labelText: 'Type a message...',
                 contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
@@ -194,6 +217,7 @@ Widget _buildCommentsBody(
 Widget _buildCommentsList(
     BuildContext context, List<DocumentSnapshot> snapshot, FirebaseUser user) {
   return ListView(
+    controller: _scrollController,
     padding: const EdgeInsets.only(
       top: 8.0,
     ),
@@ -269,7 +293,7 @@ Widget _buildCommentsListItem(
                   child: Container(),
                 ),
                 canEditComment(context, comments, user),
-                FlatButton(
+               comments.visible == true ? FlatButton(
                   child: Row(
                     children: <Widget>[
                       Icon(
@@ -283,48 +307,14 @@ Widget _buildCommentsListItem(
                     ],
                   ),
                   onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text(
-                              'Reply to ${comments.firstName} ${comments.lastName}'),
-                          content: TextFormField(
-                            keyboardType: TextInputType.multiline,
-                            maxLines: 8,
-                            autofocus: false,
-                            controller: _replyController,
-                            decoration: InputDecoration(
-                              hintText: 'Leave reply...',
-                              filled: true,
-                            ),
-                          ),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text("Cancel"),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                            FlatButton(
-                              child: Text("Reply"),
-                              onPressed: () {
-                                createReply(
-                                    context,
-                                    user,
-                                    _replyController.text,
-                                    comments.commentID,
-                                    comments.announcementID);
-                                _replyController.text = "";
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    );
+                    Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    ReplyPage(comments, user)),
+                          );
                   },
-                ),
+                ) : Text(''),
               ],
             ),
             Divider(color: Color(0xFF1ca5e5)),
