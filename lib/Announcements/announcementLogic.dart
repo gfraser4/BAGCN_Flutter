@@ -89,12 +89,18 @@ class AnnouncementLogic {
   }
 
 //Edit Comment
-  static Future<void> editAnnouncement(BuildContext context, FirebaseUser user,
+  static Future<void> editAnnouncement(FirebaseUser user, String title,
       String description, String announcementID) async {
-    var editAnnouncement =
-        Firestore.instance.collection('announcements').document(announcementID);
-    editAnnouncement.updateData({
+    var editAnnouncement = Firestore.instance.collection('announcements').document(announcementID);
+        try{
+editAnnouncement.updateData({
+      'title': title,
       'description': description,
     });
+        }
+        catch (e){
+          print(e.toString());
+        }
+    
   }
 }

@@ -1,37 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'package:bagcndemo/Models/AnnouncementsModel.dart';
+import 'package:bagcndemo/Announcements/announcementLogic.dart';
 import 'package:bagcndemo/CreateAnnouncement/createLogic.dart';
 
 final FocusNode _descriptionFocus = FocusNode();
 
 //CREATE ANNOUNCEMENT PAGE --> REQUIRES title and code PASSED TO IT AS ARGUMENTS
-class AnnouncementPage extends StatefulWidget {
-  final String title;
-  final int code;
+class EditAnnouncementPage extends StatefulWidget {
+  final Announcements announcements;
   final user;
-  AnnouncementPage(this.title, this.code, this.user);
+  EditAnnouncementPage(this.announcements, this.user);
   @override
-  _AnnouncementPage createState() {
-    return _AnnouncementPage();
+  _EditAnnouncementPage createState() {
+    return _EditAnnouncementPage();
   }
 }
 
-class _AnnouncementPage extends State<AnnouncementPage> {
+class _EditAnnouncementPage extends State<EditAnnouncementPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   DateTime nowTime = new DateTime.now().toUtc();
-//   //INPUT FIELD FOR TITLE
-//   // final _titleController = new TextEditingController();
+// //   //INPUT FIELD FOR TITLE
+//    final _titleController = new TextEditingController();
 //   // //INPUT FIELD FOR DESCRIPTION
-//   // final _descriptionController = new TextEditingController();
+//   final _descriptionController = new TextEditingController();
   String _aTitle;
   String _aDescription;
   @override
   Widget build(BuildContext context) {
+    _aTitle = widget.announcements.title;
     return Scaffold(
       backgroundColor: Color.fromRGBO(28, 165, 229, 1),
       appBar: AppBar(
-        title: Text('Create Announcement'),
+        title: Text('Edit Announcement'),
       ),
       resizeToAvoidBottomPadding: false,
       body: Center(
@@ -43,7 +45,7 @@ class _AnnouncementPage extends State<AnnouncementPage> {
             padding: EdgeInsets.all(0),
             children: <Widget>[
               Text(
-                '${widget.title} - ${widget.code}',
+                '${widget.announcements.title} - ${widget.announcements.code}',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Color(0xFFF4F5F7),
@@ -69,6 +71,7 @@ class _AnnouncementPage extends State<AnnouncementPage> {
                       children: <Widget>[
                         SizedBox(height: 10),
                         TextFormField(
+                          initialValue: widget.announcements.title,
                           validator: (input) {
                             if (input.isEmpty)
                               return 'Please enter a title for the announcement.';
@@ -99,6 +102,7 @@ class _AnnouncementPage extends State<AnnouncementPage> {
                         ),
                         SizedBox(height: 30.0),
                         TextFormField(
+                          initialValue: widget.announcements.description,
                           textInputAction: TextInputAction.done,
                           focusNode: _descriptionFocus,
                           validator: (input) {
@@ -127,32 +131,43 @@ class _AnnouncementPage extends State<AnnouncementPage> {
                           ),
                         ),
                         SizedBox(height: 30.0),
-                        RaisedButton(
-                          color: Color.fromRGBO(123, 193, 67, 1),
-                          child: Text(
-                            'Submit',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          onPressed: () {
-                            //FIRESTORE CREATE ANNOUNCEMENT STATEMENT USING title, code, _titleController.text, _descriptionController.text, nowTime
-                            final formState = _formKey.currentState;
-                            if (formState.validate()) {
-                              //login to firebase
-                              formState.save();
-                              try {
-                                CreateAnnouncementLogic.createAnnouncement(
-                                    widget.code,
-                                    widget.title,
-                                    _aTitle,
-                                    _aDescription,
-                                    nowTime,
-                                    widget.user);
-                              } catch (ex) {
-                                print(ex.toString());
-                              }
-                              Navigator.pop(context);
-                            }
-                          },
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            RaisedButton(
+                              color: Color.fromRGBO(123, 193, 67, 1),
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            RaisedButton(
+                              color: Color.fromRGBO(123, 193, 67, 1),
+                              child: Text(
+                                'Save',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              onPressed: () {
+                                //FIRESTORE CREATE ANNOUNCEMENT STATEMENT USING title, code, _titleController.text, _descriptionController.text, nowTime
+                                final formState = _formKey.currentState;
+                                if (formState.validate()) {
+                                  //login to firebase
+                                  formState.save();
+
+                                  AnnouncementLogic.editAnnouncement(
+                                      widget.user,
+                                      _aTitle,
+                                      _aDescription,
+                                      widget.announcements.id);
+
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                            ),
+                          ],
                         ),
                         SizedBox(height: 20.0),
                       ]),

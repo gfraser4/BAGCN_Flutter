@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
 import 'package:bagcndemo/Announcements/announcementLogic.dart';
+import 'package:bagcndemo/Announcements/editAnnouncementPage.dart';
 import 'package:bagcndemo/CreateAnnouncement/createAnnouncement.dart';
 import 'package:bagcndemo/Comments/CommentsPage.dart';
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
@@ -154,12 +155,17 @@ Widget _buildListItem(
             child: Text("Edit"),
             onPressed: () {
 
-                AnnouncementLogic.editAnnouncement(context, user,
-                    announcements.description, announcements.id);
-                Navigator.of(context).pop();
 
+Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    EditAnnouncementPage(announcements, user)),
+                          );
+                // AnnouncementLogic.editAnnouncement(context, user,
+                //     announcements.description, announcements.id);
+                // Navigator.of(context).pop();
 
-              //Navigator.popUntil(context, predicate)
             },
           ),
         ],
@@ -192,11 +198,14 @@ Widget _buildListItem(
               ],
             ),
             onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return announcementEdit(context, announcements, user);
-                  });
+              if (user.uid == announcements.postedBy){
+              Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    EditAnnouncementPage(announcements, user)),
+                          );
+              }
             },
           ),
           FlatButton(
