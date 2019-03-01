@@ -155,7 +155,7 @@ class _ReplyPage extends State<ReplyPage> {
             ],
           ),
         ),
-      ), //build body of page pasing CLASS TITLE and CLASS CODE to be used for update
+      ), 
     );
   }
 }

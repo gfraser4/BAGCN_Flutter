@@ -28,7 +28,6 @@ class ClassAnnouncementPage extends StatefulWidget {
 
 //HOW PAGE IS BUILT
 class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
-
   @override
   Widget build(BuildContext context) {
     role = widget.isSuper;
@@ -100,50 +99,6 @@ Widget _buildListItem(
 //       (DocumentSnapshot doc) => print(doc.data['firstName'].toString()));
 // print(name);
 
-  Widget announcementEdit(
-      BuildContext context, Announcements announcements, FirebaseUser user) {
-    final _editAnnouncemntController = new TextEditingController();
-    _editAnnouncemntController.text = announcements.description;
-    if (user.uid == announcements.postedBy) {
-      return AlertDialog(
-        title: Text('Edit announcement...'),
-        content: TextFormField(
-          keyboardType: TextInputType.multiline,
-          maxLines: 8,
-          autofocus: false,
-          controller: _editAnnouncemntController,
-          decoration: InputDecoration(
-            hintText: announcements.description,
-            filled: true,
-          ),
-        ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text("Cancel"),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          FlatButton(
-            child: Text("Edit"),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        EditAnnouncementPage(announcements, user)),
-              );
-            },
-          ),
-        ],
-      );
-    } else {
-      return Expanded(
-        child: Container(),
-      );
-    }
-  }
-
 //supervisor Popup menu
   final supervisorMenu = AlertDialog(
     content: Container(
@@ -175,94 +130,49 @@ Widget _buildListItem(
               }
             },
           ),
-         announcements.notifyUsers.contains(user.uid) == true ? FlatButton(
-            child: Row(
-              children: <Widget>[
-                Icon(
-                  Icons.notifications_active,
-                  color: Color(0xFF1ca5e5),
-                ),
-                Text(
-                  'Alerts',
-                  style: TextStyle(color: Color(0xFF1ca5e5)),
-                )
-              ],
-            ),
-            onPressed: () {
-              AnnouncementLogic.notifyClick(
-                  user, announcements);
-            },
-          ) : FlatButton(
-            child: Row(
-              children: <Widget>[
-                Icon(
-                  Icons.notifications_off,
-                  color: Colors.grey,
-                ),
-                Text(
-                  'Alerts',
-                  style: TextStyle(color: Colors.grey),
-                )
-              ],
-            ),
-            onPressed: () {
-              AnnouncementLogic.notifyClick(
-                  user, announcements);
-            },
-          ), 
-          FlatButton(
-            child: Row(
-              children: <Widget>[
-                Icon(
-                  Icons.delete,
-                  color: Color(0xFF1ca5e5),
-                ),
-                Text(
-                  'Delete',
-                  style: TextStyle(color: Color(0xFF1ca5e5)),
-                )
-              ],
-            ),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text(
-                      'Delete Announcement?',
-                      style: TextStyle(
-                          fontSize: 30,
-                          fontStyle: FontStyle.normal,
-                          color: Color.fromRGBO(0, 162, 162, 1)),
-                    ),
-                    content: Text(
-                        'Are you sure you want to delete this announcement? This will permanently remove all associated comments.'),
-                    actions: <Widget>[
-                      FlatButton(
-                        child: Text("Cancel"),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
+          // Notifications on or off
+          announcements.notifyUsers.contains(user.uid) == true
+              ? FlatButton(
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.notifications_active,
+                        color: Color(0xFF1ca5e5),
                       ),
-                      FlatButton(
-                        child: Text("Delete"),
-                        onPressed: () {
-                          AnnouncementLogic.deleteAnnouncement(
-                              announcements.id);
-                          Navigator.of(context).pop();
-                        },
-                      ),
+                      Text(
+                        'Alerts',
+                        style: TextStyle(color: Color(0xFF1ca5e5)),
+                      )
                     ],
-                  );
-                },
-              );
-            },
-          ),
+                  ),
+                  onPressed: () {
+                    AnnouncementLogic.notifyClick(user, announcements);
+                  },
+                )
+              : FlatButton(
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.notifications_off,
+                        color: Colors.grey,
+                      ),
+                      Text(
+                        'Alerts',
+                        style: TextStyle(color: Colors.grey),
+                      )
+                    ],
+                  ),
+                  onPressed: () {
+                    AnnouncementLogic.notifyClick(user, announcements);
+                  },
+                ),
+          new DeleteButton(announcements: announcements),
         ],
       ),
     ),
   );
 
+// Announcement Card
   return Padding(
     key: ValueKey(announcements.clsName),
     padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 2.0),
@@ -288,59 +198,9 @@ Widget _buildListItem(
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                Container(
-                  child: Row(
-                    children: <Widget>[
-                      announcements.likedUsers.contains(user.uid) == true ? IconButton(
-                        icon: Icon(Icons.thumb_up),
-                        color: Color(0xFF1ca5e5),
-                        onPressed: () {
-                          AnnouncementLogic.likeButtonClick(
-                              user, announcements);
-                        },
-                      ) : IconButton(
-                        icon: Icon(Icons.thumb_up),
-                        color: Colors.grey,
-                        onPressed: () {
-                          AnnouncementLogic.likeButtonClick(
-                              user, announcements);
-                        },
-                      ),
-                      announcements.likedUsers.contains(user.uid) == true ? Text(announcements.likes.toString(),
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF1ca5e5),
-                          ),) : Text(announcements.likes.toString(),
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey,
-                          )) 
-                    ],
-                  ),
-                ),
-                Container(
-                  child: Row(
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(Icons.forum),
-                        color: Color(0xFF1ca5e5),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    CommentsPage(announcements, user, role)),
-                          );
-                        },
-                      ),
-                      Text(announcements.commentCount.toString(),
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF1ca5e5),
-                          )),
-                    ],
-                  ),
-                ),
+                new LikeButton(announcements: announcements, user: user),
+                new CommentsButton(announcements: announcements, user: user),
+                //Popup for supervisors or notification for parents
                 role == true
                     ? IconButton(
                         icon: Icon(Icons.more_horiz),
@@ -353,21 +213,23 @@ Widget _buildListItem(
                               });
                         },
                       )
-                    : announcements.notifyUsers.contains(user.uid) == true ? IconButton(
-                        icon: Icon(Icons.notifications_active),
-                        color: Color(0xFF1ca5e5),
-                        onPressed: () {
-                          AnnouncementLogic.notifyClick(
-                              user, announcements);
-                        },
-                      ) : IconButton(
-                        icon: Icon(Icons.notifications_off),
-                        color: Colors.grey,
-                        onPressed: () {
-                          AnnouncementLogic.notifyClick(
-                              user, announcements);
-                        },
-                      )
+                    : announcements.notifyUsers.contains(user.uid) == true
+                        ? IconButton(
+                            icon: Icon(Icons.notifications_active),
+                            color: Color(0xFF1ca5e5),
+                            onPressed: () {
+                              AnnouncementLogic.notifyClick(
+                                  user, announcements);
+                            },
+                          )
+                        : IconButton(
+                            icon: Icon(Icons.notifications_off),
+                            color: Colors.grey,
+                            onPressed: () {
+                              AnnouncementLogic.notifyClick(
+                                  user, announcements);
+                            },
+                          ),
               ],
             )
           ],
@@ -375,4 +237,154 @@ Widget _buildListItem(
       ),
     ),
   );
+}
+
+//Delete Button
+class DeleteButton extends StatelessWidget {
+  const DeleteButton({
+    Key key,
+    @required this.announcements,
+  }) : super(key: key);
+
+  final Announcements announcements;
+
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      child: Row(
+        children: <Widget>[
+          Icon(
+            Icons.delete,
+            color: Color(0xFF1ca5e5),
+          ),
+          Text(
+            'Delete',
+            style: TextStyle(color: Color(0xFF1ca5e5)),
+          )
+        ],
+      ),
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(
+                'Delete Announcement?',
+                style: TextStyle(
+                    fontSize: 30,
+                    fontStyle: FontStyle.normal,
+                    color: Color.fromRGBO(0, 162, 162, 1)),
+              ),
+              content: Text(
+                  'Are you sure you want to delete this announcement? This will permanently remove all associated comments.'),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("Cancel"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                FlatButton(
+                  child: Text("Delete"),
+                  onPressed: () {
+                    AnnouncementLogic.deleteAnnouncement(announcements.id);
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+//Comments Button
+class CommentsButton extends StatelessWidget {
+  const CommentsButton({
+    Key key,
+    @required this.announcements,
+    @required this.user,
+  }) : super(key: key);
+
+  final Announcements announcements;
+  final FirebaseUser user;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Row(
+        children: <Widget>[
+          IconButton(
+            icon: Icon(Icons.forum),
+            color: Color(0xFF1ca5e5),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        CommentsPage(announcements, user, role)),
+              );
+            },
+          ),
+          Text(announcements.commentCount.toString(),
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF1ca5e5),
+              )),
+        ],
+      ),
+    );
+  }
+}
+
+//Like Button
+class LikeButton extends StatelessWidget {
+  const LikeButton({
+    Key key,
+    @required this.announcements,
+    @required this.user,
+  }) : super(key: key);
+
+  final Announcements announcements;
+  final FirebaseUser user;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Row(
+        children: <Widget>[
+          announcements.likedUsers.contains(user.uid) == true
+              ? IconButton(
+                  icon: Icon(Icons.thumb_up),
+                  color: Color(0xFF1ca5e5),
+                  onPressed: () {
+                    AnnouncementLogic.likeButtonClick(user, announcements);
+                  },
+                )
+              : IconButton(
+                  icon: Icon(Icons.thumb_up),
+                  color: Colors.grey,
+                  onPressed: () {
+                    AnnouncementLogic.likeButtonClick(user, announcements);
+                  },
+                ),
+          announcements.likedUsers.contains(user.uid) == true
+              ? Text(
+                  announcements.likes.toString(),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1ca5e5),
+                  ),
+                )
+              : Text(announcements.likes.toString(),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey,
+                  ))
+        ],
+      ),
+    );
+  }
 }
