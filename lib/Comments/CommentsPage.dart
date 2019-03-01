@@ -68,7 +68,8 @@ class _CommentsPage extends State<CommentsPage> {
                 if (input.isEmpty)
                   return 'Please enter a title for the announcement.';
               },
-              keyboardType: TextInputType.text,
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
               onSaved: (input) => _comment = input,
               textInputAction: TextInputAction.done,
               autofocus: false,
