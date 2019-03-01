@@ -4,13 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
 import 'package:bagcndemo/Comments/commentReply.dart';
-import 'package:bagcndemo/Comments/editComment.dart';
 import 'package:bagcndemo/Comments/commentsLogic.dart';
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 import 'package:bagcndemo/Models/Comments.dart';
 import 'package:bagcndemo/Models/Replies.dart';
-
-
 
 //visible icon
 bool role;
@@ -87,11 +84,12 @@ class _CommentsPage extends State<CommentsPage> {
                   icon: Icon(Icons.send),
                   color: Color.fromRGBO(123, 193, 67, 1),
                   onPressed: () {
-
                     if (_commentController.text.trim().isNotEmpty) {
-
-                      createComment(context, widget.user,
-                          _commentController.text.trim(), widget.announcement.id);
+                      createComment(
+                          context,
+                          widget.user,
+                          _commentController.text.trim(),
+                          widget.announcement.id);
                       _commentController.text = "";
                       FocusScope.of(context).requestFocus(new FocusNode());
 
@@ -266,7 +264,7 @@ Widget _buildCommentsListItem(
                     ),
               subtitle: comments.visible == true
                   ? Text('${comments.content}')
-                  : Text('This comment has been hidden by moderator.'),
+                  : Text('This comment has been hidden by a moderator.'),
               trailing: role == true
                   ? IconButton(
                       //color: Colors.red,
@@ -292,29 +290,33 @@ Widget _buildCommentsListItem(
                 Expanded(
                   child: Container(),
                 ),
-                canEditComment(context, comments, user),
-               comments.visible == true ? FlatButton(
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.reply,
-                        color: Color(0xFF1ca5e5),
-                      ),
-                      Text(
-                        'Reply',
-                        style: TextStyle(color: Color(0xFF1ca5e5)),
-                      )
-                    ],
-                  ),
-                  onPressed: () {
-                    Navigator.push(
+                comments.visible == true
+                    ? canEditComment(context, comments, user)
+                    : Text(''),
+                comments.visible == true
+                    ? FlatButton(
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.reply,
+                              color: Color(0xFF1ca5e5),
+                            ),
+                            Text(
+                              'Reply',
+                              style: TextStyle(color: Color(0xFF1ca5e5)),
+                            )
+                          ],
+                        ),
+                        onPressed: () {
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
                                     ReplyPage(comments, user)),
                           );
-                  },
-                ) : Text(''),
+                        },
+                      )
+                    : Text(''),
               ],
             ),
             Divider(color: Color(0xFF1ca5e5)),
@@ -393,7 +395,7 @@ Widget _buildRepliesListItem(
                     ),
               subtitle: replies.visible == true
                   ? Text('${replies.content}')
-                  : Text('This comment has been hidden by moderator.'),
+                  : Text('This reply has been hidden by a moderator.'),
               trailing: role == true
                   ? IconButton(
                       //color: Colors.red,
@@ -412,7 +414,7 @@ Widget _buildRepliesListItem(
                   child: Row(
                     children: <Widget>[
                       Text('$formattedDate'),
-                      canEditReply(context, replies, user),
+                      replies.visible == true ? canEditReply(context, replies, user) :Text(''),
                     ],
                   ),
                 ),

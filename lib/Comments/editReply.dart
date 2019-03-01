@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:bagcndemo/Models/AnnouncementsModel.dart';
-import 'package:bagcndemo/Announcements/announcementLogic.dart';
-import 'package:bagcndemo/CreateAnnouncement/createLogic.dart';
 import 'package:bagcndemo/Comments/commentsLogic.dart';
 import 'package:bagcndemo/Models/Replies.dart';
 
