@@ -28,7 +28,9 @@ class CommentsPage extends StatefulWidget {
 }
 
 class _CommentsPage extends State<CommentsPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _commentController = new TextEditingController();
+  String _comment;
 
   @override
   void initState() {
@@ -49,51 +51,119 @@ class _CommentsPage extends State<CommentsPage> {
   Widget build(BuildContext context) {
     role = widget.isSuper;
     return Scaffold(
-      resizeToAvoidBottomPadding: true,
+      //resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         title: Text(widget.announcement.title),
       ),
-      body: _buildCommentsBody(context, widget.announcement, widget.user),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.comment),
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('Comment on ${widget.announcement.title}'),
-                content: TextFormField(
-                  keyboardType: TextInputType.multiline,
-                  maxLines: 8,
-                  autofocus: false,
-                  controller: _commentController,
-                  decoration: InputDecoration(
-                    hintText: 'Leave comment...',
-                    filled: true,
-                  ),
+      body: Column(children: <Widget>[
+        Expanded(
+          child: _buildCommentsBody(context, widget.announcement, widget.user),
+        ),
+        Form(
+          child: Container(
+            color: Color.fromRGBO(28, 165, 229, 1),
+            padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+            child: TextFormField(
+              validator: (input) {
+                if (input.isEmpty)
+                  return 'Please enter a title for the announcement.';
+              },
+              keyboardType: TextInputType.text,
+              onSaved: (input) => _comment = input,
+              textInputAction: TextInputAction.done,
+              autofocus: false,
+              // controller:
+              //     _titleController, //set controller for title textfield
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                suffixIcon: Icon(
+                  Icons.send,
+                  color: Color.fromRGBO(123, 193, 67, 1),
                 ),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text("Cancel"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  FlatButton(
-                    child: Text("Comment"),
-                    onPressed: () {
-                      createComment(context, widget.user,
-                          _commentController.text, widget.announcement.id);
-                      _commentController.text = "";
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            },
-          );
-        },
-      ),
+                labelText: 'Type a message...',
+                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6.0),
+                    borderSide: BorderSide(
+                      color: Color.fromRGBO(123, 193, 67, 1),
+                      width: 2,
+                    )),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6.0)),
+              ),
+            ),
+          ),
+        ),
+      ]),
+      // floatingActionButton: FloatingActionButton(
+      //   child: Icon(Icons.comment),
+      //   onPressed: () {
+      //     showDialog(
+      //       context: context,
+      //       builder: (BuildContext context) {
+      //         return AlertDialog(
+      //           title: Text('Comment on ${widget.announcement.title}'),
+      //           content: TextFormField(
+      //             keyboardType: TextInputType.multiline,
+      //             maxLines: 8,
+      //             autofocus: false,
+      //             controller: _commentController,
+      //             decoration: InputDecoration(
+      //               hintText: 'Leave comment...',
+      //               filled: true,
+      //             ),
+      //           ),
+      //           actions: <Widget>[
+      //             FlatButton(
+      //               child: Text("Cancel"),
+      //               onPressed: () {
+      //                 Navigator.of(context).pop();
+      //               },
+      //             ),
+      //             FlatButton(
+      //               child: Text("Comment"),
+      //               onPressed: () {
+      //                 createComment(context, widget.user,
+      //                     _commentController.text, widget.announcement.id);
+      //                 _commentController.text = "";
+      //                 Navigator.of(context).pop();
+      //               },
+      //             ),
+      //           ],
+      //         );
+      //       },
+      //     );
+      //   },
+      // ),
+      // bottomNavigationBar: SingleChildScrollView(
+      //   child: Form(
+      //     child: TextFormField(
+      //       validator: (input) {
+      //         if (input.isEmpty)
+      //           return 'Please enter a title for the announcement.';
+      //       },
+      //       keyboardType: TextInputType.text,
+      //       onSaved: (input) => _comment = input,
+      //       textInputAction: TextInputAction.done,
+      //       autofocus: true,
+      //       // controller:
+      //       //     _titleController, //set controller for title textfield
+      //       decoration: InputDecoration(
+      //         labelText: 'Announcement Title',
+      //         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+      //         enabledBorder: OutlineInputBorder(
+      //             borderRadius: BorderRadius.circular(6.0),
+      //             borderSide: BorderSide(
+      //               color: Color.fromRGBO(123, 193, 67, 1),
+      //               width: 2,
+      //             )),
+      //         border:
+      //             OutlineInputBorder(borderRadius: BorderRadius.circular(6.0)),
+      //       ),
+      //     ),
+      //   ),
+      // ),
     );
   }
 }
@@ -160,21 +230,26 @@ Widget _buildCommentsListItem(
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 10.0,
               ),
-              title: comments.visible ? Text(
-                '${comments.firstName} ${comments.lastName}',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ) : Text(
-                'Hidden',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              subtitle: comments.visible == true ? Text('${comments.content}') : Text('This comment has been hidden by moderator.'),
+              title: comments.visible
+                  ? Text(
+                      '${comments.firstName} ${comments.lastName}',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    )
+                  : Text(
+                      'Hidden',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+              subtitle: comments.visible == true
+                  ? Text('${comments.content}')
+                  : Text('This comment has been hidden by moderator.'),
               trailing: role == true
                   ? IconButton(
                       //color: Colors.red,
                       icon: visibleIcon,
                       onPressed: () {
                         toggleVisibility(data, comments.commentID);
-                      },)
+                      },
+                    )
                   : null,
             ),
             Divider(color: Color(0xFF1ca5e5)),
@@ -316,14 +391,18 @@ Widget _buildRepliesListItem(
           children: <Widget>[
             ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 20.0),
-              title: replies.visible ? Text(
-                '${replies.firstName} ${replies.lastName}',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ) : Text(
-                'Hidden',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              subtitle: replies.visible == true ? Text('${replies.content}') : Text('This comment has been hidden by moderator.'),
+              title: replies.visible
+                  ? Text(
+                      '${replies.firstName} ${replies.lastName}',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    )
+                  : Text(
+                      'Hidden',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+              subtitle: replies.visible == true
+                  ? Text('${replies.content}')
+                  : Text('This comment has been hidden by moderator.'),
               trailing: role == true
                   ? IconButton(
                       //color: Colors.red,
@@ -354,8 +433,6 @@ Widget _buildRepliesListItem(
     ),
   );
 }
-
-
 
 // Widget toggleVisible(BuildContext context, DocumentSnapshot data,
 //     FirebaseUser user, Replies replies) {
