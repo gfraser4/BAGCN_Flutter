@@ -89,6 +89,7 @@ class _CommentsPage extends State<CommentsPage> {
                           _commentController.text.trim(),
                           widget.announcement.id);
                       _commentController.text = "";
+                      //takes focus off of search area after submitting comment
                       FocusScope.of(context).requestFocus(new FocusNode());
 
                       _scrollController.animateTo(

@@ -6,6 +6,7 @@ class Classes {
   final String dates;
   final String times;
   final int code;
+  final List<dynamic> enrolledUsers;
   final List<dynamic> notifyUsers;
   final DocumentReference reference;
 
@@ -16,6 +17,7 @@ class Classes {
         assert(map['times'] != null),
         assert(map['location'] != null),
         clsName = map['clsName'],
+        enrolledUsers = map['enrolledUsers'],
         notifyUsers = map['notifyUsers'],
         location = map['location'],
         dates = map['dates'],
