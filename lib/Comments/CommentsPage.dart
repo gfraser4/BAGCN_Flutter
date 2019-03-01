@@ -30,7 +30,6 @@ class CommentsPage extends StatefulWidget {
 }
 
 class _CommentsPage extends State<CommentsPage> {
-
   final _commentController = new TextEditingController();
 
   @override
@@ -61,7 +60,10 @@ class _CommentsPage extends State<CommentsPage> {
           child: _buildCommentsBody(context, widget.announcement, widget.user),
         ),
         Form(
-          child: new MessageInputBar(commentController: _commentController, widget: widget,),
+          child: new MessageInputBar(
+            commentController: _commentController,
+            widget: widget,
+          ),
         ),
       ]),
     );
@@ -74,12 +76,11 @@ class MessageInputBar extends StatelessWidget {
     Key key,
     @required TextEditingController commentController,
     @required this.widget,
-
-  }) : _commentController = commentController, super(key: key);
+  })  : _commentController = commentController,
+        super(key: key);
 
   final TextEditingController _commentController;
   final CommentsPage widget;
-
 
   @override
   Widget build(BuildContext context) {
@@ -105,11 +106,8 @@ class MessageInputBar extends StatelessWidget {
             color: Color.fromRGBO(123, 193, 67, 1),
             onPressed: () {
               if (_commentController.text.trim().isNotEmpty) {
-                createComment(
-                    context,
-                    widget.user,
-                    _commentController.text.trim(),
-                    widget.announcement.id);
+                createComment(context, widget.user,
+                    _commentController.text.trim(), widget.announcement.id);
                 _commentController.text = "";
                 //takes focus off of search area after submitting comment
                 FocusScope.of(context).requestFocus(new FocusNode());
@@ -132,8 +130,7 @@ class MessageInputBar extends StatelessWidget {
                 color: Color.fromRGBO(123, 193, 67, 1),
                 width: 2,
               )),
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(6.0)),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(6.0)),
         ),
       ),
     );
@@ -181,21 +178,16 @@ Widget _buildCommentsListItem(
   final comments = Comments.fromSnapshot(data);
   var formatter = new DateFormat.yMd().add_jm();
   String formattedDate = formatter.format(comments.created);
-
-//check if comment is toggled visible or not and set color accordingly
-  if (comments.visible == true) {
-    visibleIcon = notHiddenIcon;
-  } else {
-    visibleIcon = hiddenIcon;
-  }
-
   return Padding(
     key: ValueKey(comments.announcementID),
     padding: const EdgeInsets.symmetric(horizontal: 2.0, vertical: 2),
-    child: new CommentCard(comments: comments, formattedDate: formattedDate, data: data, user: user),
+    child: new CommentCard(
+        comments: comments,
+        formattedDate: formattedDate,
+        data: data,
+        user: user),
   );
 }
-
 
 //Comment Area Widget - Contains Top comment area and bottom comment ares widgets
 class CommentCard extends StatelessWidget {
@@ -222,7 +214,8 @@ class CommentCard extends StatelessWidget {
           children: <Widget>[
             new TopCommentArea(comments: comments, data: data),
             Divider(color: Color(0xFF1ca5e5)),
-            new BottomCommentArea(formattedDate: formattedDate, comments: comments, user: user),
+            new BottomCommentArea(
+                formattedDate: formattedDate, comments: comments, user: user),
             Divider(color: Color(0xFF1ca5e5)),
             _buildRepliesBody(context, comments, user),
           ],
@@ -282,8 +275,7 @@ class BottomCommentArea extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            ReplyPage(comments, user)),
+                        builder: (context) => ReplyPage(comments, user)),
                   );
                 },
               )
@@ -306,6 +298,12 @@ class TopCommentArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // checkif comment is visible and set icon accordingly
+    if (comments.visible == true) {
+      visibleIcon = notHiddenIcon;
+    } else {
+      visibleIcon = hiddenIcon;
+    }
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(
         horizontal: 10.0,
@@ -373,20 +371,13 @@ Widget _buildRepliesListItem(
   var formatter = new DateFormat.yMd().add_jm();
   String formattedDate = formatter.format(replies.created);
 
-//check if reply is toggled visible or not and set color accordingly
-  if (replies.visible == true) {
-    visibleIcon = notHiddenIcon;
-  } else {
-    visibleIcon = hiddenIcon;
-  }
-
   return Padding(
     //key: ValueKey(replies.parentCommentID),
     padding: const EdgeInsets.only(left: 20.0),
-    child: new ReplyCard(replies: replies, formattedDate: formattedDate, data: data, user: user),
+    child: new ReplyCard(
+        replies: replies, formattedDate: formattedDate, data: data, user: user),
   );
 }
-
 
 //Reply Card Area
 class ReplyCard extends StatelessWidget {
@@ -405,6 +396,13 @@ class ReplyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // check if reply is visible and set icon accordingly
+    if (replies.visible == true) {
+      visibleIcon = notHiddenIcon;
+    } else {
+      visibleIcon = hiddenIcon;
+    }
+
     return Card(
       elevation: 5.0,
       color: Colors.lightBlue[50],
@@ -443,7 +441,9 @@ class ReplyCard extends StatelessWidget {
                   child: Row(
                     children: <Widget>[
                       Text('$formattedDate'),
-                      replies.visible == true ? canEditReply(context, replies, user) :Text(''),
+                      replies.visible == true
+                          ? canEditReply(context, replies, user)
+                          : Text(''),
                     ],
                   ),
                 ),
