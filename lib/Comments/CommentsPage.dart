@@ -61,62 +61,81 @@ class _CommentsPage extends State<CommentsPage> {
           child: _buildCommentsBody(context, widget.announcement, widget.user),
         ),
         Form(
-          child: Container(
-            color: Color.fromRGBO(28, 165, 229, 1),
-            padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-            child: TextFormField(
-              validator: (input) {
-                if (input.isEmpty)
-                  return 'Please enter a title for the announcement.';
-              },
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-              onSaved: (input) => _commentController.text = input,
-              textInputAction: TextInputAction.done,
-              autofocus: false,
-              controller: _commentController,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.send),
-                  color: Color.fromRGBO(123, 193, 67, 1),
-                  onPressed: () {
-                    if (_commentController.text.trim().isNotEmpty) {
-                      createComment(
-                          context,
-                          widget.user,
-                          _commentController.text.trim(),
-                          widget.announcement.id);
-                      _commentController.text = "";
-                      //takes focus off of search area after submitting comment
-                      FocusScope.of(context).requestFocus(new FocusNode());
-
-                      _scrollController.animateTo(
-                        _scrollController.position.maxScrollExtent,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeOut,
-                      );
-
-                      print('Send');
-                    }
-                  },
-                ),
-                labelText: 'Type a message...',
-                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6.0),
-                    borderSide: BorderSide(
-                      color: Color.fromRGBO(123, 193, 67, 1),
-                      width: 2,
-                    )),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6.0)),
-              ),
-            ),
-          ),
+          child: new MessageInputBar(commentController: _commentController, widget: widget,),
         ),
       ]),
+    );
+  }
+}
+
+//Message Input Bar
+class MessageInputBar extends StatelessWidget {
+  const MessageInputBar({
+    Key key,
+    @required TextEditingController commentController,
+    @required this.widget,
+
+  }) : _commentController = commentController, super(key: key);
+
+  final TextEditingController _commentController;
+  final CommentsPage widget;
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Color.fromRGBO(28, 165, 229, 1),
+      padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+      child: TextFormField(
+        validator: (input) {
+          if (input.isEmpty)
+            return 'Please enter a title for the announcement.';
+        },
+        keyboardType: TextInputType.multiline,
+        maxLines: null,
+        onSaved: (input) => _commentController.text = input,
+        textInputAction: TextInputAction.done,
+        autofocus: false,
+        controller: _commentController,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          suffixIcon: IconButton(
+            icon: Icon(Icons.send),
+            color: Color.fromRGBO(123, 193, 67, 1),
+            onPressed: () {
+              if (_commentController.text.trim().isNotEmpty) {
+                createComment(
+                    context,
+                    widget.user,
+                    _commentController.text.trim(),
+                    widget.announcement.id);
+                _commentController.text = "";
+                //takes focus off of search area after submitting comment
+                FocusScope.of(context).requestFocus(new FocusNode());
+
+                _scrollController.animateTo(
+                  _scrollController.position.maxScrollExtent,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                );
+
+                print('Send');
+              }
+            },
+          ),
+          labelText: 'Type a message...',
+          contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6.0),
+              borderSide: BorderSide(
+                color: Color.fromRGBO(123, 193, 67, 1),
+                width: 2,
+              )),
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6.0)),
+        ),
+      ),
     );
   }
 }
@@ -173,89 +192,147 @@ Widget _buildCommentsListItem(
   return Padding(
     key: ValueKey(comments.announcementID),
     padding: const EdgeInsets.symmetric(horizontal: 2.0, vertical: 2),
-    child: Card(
+    child: new CommentCard(comments: comments, formattedDate: formattedDate, data: data, user: user),
+  );
+}
+
+
+//Comment Area Widget - Contains Top comment area and bottom comment ares widgets
+class CommentCard extends StatelessWidget {
+  const CommentCard({
+    Key key,
+    @required this.comments,
+    @required this.formattedDate,
+    @required this.data,
+    @required this.user,
+  }) : super(key: key);
+
+  final Comments comments;
+  final String formattedDate;
+  final DocumentSnapshot data;
+  final FirebaseUser user;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
       elevation: 5.0,
       color: Colors.lightBlue[100],
       child: Container(
         child: Column(
           children: <Widget>[
-            ListTile(
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 10.0,
-              ),
-              title: comments.visible
-                  ? Text(
-                      '${comments.firstName} ${comments.lastName}',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    )
-                  : Text(
-                      'Hidden',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-              subtitle: comments.visible == true
-                  ? Text('${comments.content}')
-                  : Text('This comment has been hidden by a moderator.'),
-              trailing: role == true
-                  ? IconButton(
-                      //color: Colors.red,
-                      icon: visibleIcon,
-                      onPressed: () {
-                        toggleVisibility(data, comments.commentID);
-                      },
-                    )
-                  : null,
-            ),
+            new TopCommentArea(comments: comments, data: data),
             Divider(color: Color(0xFF1ca5e5)),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  padding: const EdgeInsets.only(left: 10.0, bottom: 2.0),
-                  child: Row(
-                    children: <Widget>[
-                      Text('$formattedDate'),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Container(),
-                ),
-                comments.visible == true
-                    ? canEditComment(context, comments, user)
-                    : Text(''),
-                comments.visible == true
-                    ? FlatButton(
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.reply,
-                              color: Color(0xFF1ca5e5),
-                            ),
-                            Text(
-                              'Reply',
-                              style: TextStyle(color: Color(0xFF1ca5e5)),
-                            )
-                          ],
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    ReplyPage(comments, user)),
-                          );
-                        },
-                      )
-                    : Text(''),
-              ],
-            ),
+            new BottomCommentArea(formattedDate: formattedDate, comments: comments, user: user),
             Divider(color: Color(0xFF1ca5e5)),
             _buildRepliesBody(context, comments, user),
           ],
         ),
       ),
-    ),
-  );
+    );
+  }
+}
+
+//Bottom Area Widget - Date/Reply/Edit
+class BottomCommentArea extends StatelessWidget {
+  const BottomCommentArea({
+    Key key,
+    @required this.formattedDate,
+    @required this.comments,
+    @required this.user,
+  }) : super(key: key);
+
+  final String formattedDate;
+  final Comments comments;
+  final FirebaseUser user;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Container(
+          padding: const EdgeInsets.only(left: 10.0, bottom: 2.0),
+          child: Row(
+            children: <Widget>[
+              Text('$formattedDate'),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Container(),
+        ),
+        comments.visible == true
+            ? canEditComment(context, comments, user)
+            : Text(''),
+        comments.visible == true
+            ? FlatButton(
+                child: Row(
+                  children: <Widget>[
+                    Icon(
+                      Icons.reply,
+                      color: Color(0xFF1ca5e5),
+                    ),
+                    Text(
+                      'Reply',
+                      style: TextStyle(color: Color(0xFF1ca5e5)),
+                    )
+                  ],
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ReplyPage(comments, user)),
+                  );
+                },
+              )
+            : Text(''),
+      ],
+    );
+  }
+}
+
+//Top Area of Comment - Name/Content/Visible Icon (for supervisors)
+class TopCommentArea extends StatelessWidget {
+  const TopCommentArea({
+    Key key,
+    @required this.comments,
+    @required this.data,
+  }) : super(key: key);
+
+  final Comments comments;
+  final DocumentSnapshot data;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 10.0,
+      ),
+      title: comments.visible
+          ? Text(
+              '${comments.firstName} ${comments.lastName}',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            )
+          : Text(
+              'Hidden',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+      subtitle: comments.visible == true
+          ? Text('${comments.content}')
+          : Text('This comment has been hidden by a moderator.'),
+      trailing: role == true
+          ? IconButton(
+              //color: Colors.red,
+              icon: visibleIcon,
+              onPressed: () {
+                toggleVisibility(data, comments.commentID);
+              },
+            )
+          : null,
+    );
+  }
 }
 
 // ? /////////////////////////////////////////////////////
@@ -306,7 +383,29 @@ Widget _buildRepliesListItem(
   return Padding(
     //key: ValueKey(replies.parentCommentID),
     padding: const EdgeInsets.only(left: 20.0),
-    child: Card(
+    child: new ReplyCard(replies: replies, formattedDate: formattedDate, data: data, user: user),
+  );
+}
+
+
+//Reply Card Area
+class ReplyCard extends StatelessWidget {
+  const ReplyCard({
+    Key key,
+    @required this.replies,
+    @required this.formattedDate,
+    @required this.data,
+    @required this.user,
+  }) : super(key: key);
+
+  final Replies replies;
+  final String formattedDate;
+  final DocumentSnapshot data;
+  final FirebaseUser user;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
       elevation: 5.0,
       color: Colors.lightBlue[50],
       child: Container(
@@ -353,6 +452,6 @@ Widget _buildRepliesListItem(
           ],
         ),
       ),
-    ),
-  );
+    );
+  }
 }
