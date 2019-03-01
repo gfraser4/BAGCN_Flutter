@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
+import 'package:bagcndemo/Comments/commentReply.dart';
 import 'package:bagcndemo/Comments/commentsLogic.dart';
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 import 'package:bagcndemo/Models/Comments.dart';
@@ -15,6 +16,7 @@ Icon visibleIcon;
 Icon notHiddenIcon =
     Icon(Icons.visibility, color: Color.fromRGBO(28, 165, 229, 1));
 Icon hiddenIcon = Icon(Icons.visibility_off, color: Colors.grey);
+ScrollController _scrollController = new ScrollController();
 
 class CommentsPage extends StatefulWidget {
   final FirebaseUser user;
@@ -28,6 +30,7 @@ class CommentsPage extends StatefulWidget {
 }
 
 class _CommentsPage extends State<CommentsPage> {
+
   final _commentController = new TextEditingController();
 
   @override
@@ -49,51 +52,70 @@ class _CommentsPage extends State<CommentsPage> {
   Widget build(BuildContext context) {
     role = widget.isSuper;
     return Scaffold(
-      resizeToAvoidBottomPadding: true,
+      //resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         title: Text(widget.announcement.title),
       ),
-      body: _buildCommentsBody(context, widget.announcement, widget.user),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.comment),
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('Comment on ${widget.announcement.title}'),
-                content: TextFormField(
-                  keyboardType: TextInputType.multiline,
-                  maxLines: 8,
-                  autofocus: false,
-                  controller: _commentController,
-                  decoration: InputDecoration(
-                    hintText: 'Leave comment...',
-                    filled: true,
-                  ),
-                ),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text("Cancel"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  FlatButton(
-                    child: Text("Comment"),
-                    onPressed: () {
-                      createComment(context, widget.user,
-                          _commentController.text, widget.announcement.id);
+      body: Column(children: <Widget>[
+        Expanded(
+          child: _buildCommentsBody(context, widget.announcement, widget.user),
+        ),
+        Form(
+          child: Container(
+            color: Color.fromRGBO(28, 165, 229, 1),
+            padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+            child: TextFormField(
+              validator: (input) {
+                if (input.isEmpty)
+                  return 'Please enter a title for the announcement.';
+              },
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              onSaved: (input) => _commentController.text = input,
+              textInputAction: TextInputAction.done,
+              autofocus: false,
+              controller: _commentController,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.send),
+                  color: Color.fromRGBO(123, 193, 67, 1),
+                  onPressed: () {
+                    if (_commentController.text.trim().isNotEmpty) {
+                      createComment(
+                          context,
+                          widget.user,
+                          _commentController.text.trim(),
+                          widget.announcement.id);
                       _commentController.text = "";
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            },
-          );
-        },
-      ),
+                      FocusScope.of(context).requestFocus(new FocusNode());
+
+                      _scrollController.animateTo(
+                        _scrollController.position.maxScrollExtent,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOut,
+                      );
+
+                      print('Send');
+                    }
+                  },
+                ),
+                labelText: 'Type a message...',
+                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6.0),
+                    borderSide: BorderSide(
+                      color: Color.fromRGBO(123, 193, 67, 1),
+                      width: 2,
+                    )),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6.0)),
+              ),
+            ),
+          ),
+        ),
+      ]),
     );
   }
 }
@@ -123,6 +145,7 @@ Widget _buildCommentsBody(
 Widget _buildCommentsList(
     BuildContext context, List<DocumentSnapshot> snapshot, FirebaseUser user) {
   return ListView(
+    controller: _scrollController,
     padding: const EdgeInsets.only(
       top: 8.0,
     ),
@@ -135,7 +158,6 @@ Widget _buildCommentsList(
 //widget to build individual card item for each announcement from original query
 Widget _buildCommentsListItem(
     BuildContext context, DocumentSnapshot data, FirebaseUser user) {
-  final _replyController = new TextEditingController();
   final comments = Comments.fromSnapshot(data);
   var formatter = new DateFormat.yMd().add_jm();
   String formattedDate = formatter.format(comments.created);
@@ -160,21 +182,26 @@ Widget _buildCommentsListItem(
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 10.0,
               ),
-              title: comments.visible ? Text(
-                '${comments.firstName} ${comments.lastName}',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ) : Text(
-                'Hidden',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              subtitle: comments.visible == true ? Text('${comments.content}') : Text('This comment has been hidden by moderator.'),
+              title: comments.visible
+                  ? Text(
+                      '${comments.firstName} ${comments.lastName}',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    )
+                  : Text(
+                      'Hidden',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+              subtitle: comments.visible == true
+                  ? Text('${comments.content}')
+                  : Text('This comment has been hidden by a moderator.'),
               trailing: role == true
                   ? IconButton(
                       //color: Colors.red,
                       icon: visibleIcon,
                       onPressed: () {
                         toggleVisibility(data, comments.commentID);
-                      },)
+                      },
+                    )
                   : null,
             ),
             Divider(color: Color(0xFF1ca5e5)),
@@ -192,63 +219,33 @@ Widget _buildCommentsListItem(
                 Expanded(
                   child: Container(),
                 ),
-                canEditComment(context, comments, user),
-                FlatButton(
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.reply,
-                        color: Color(0xFF1ca5e5),
-                      ),
-                      Text(
-                        'Reply',
-                        style: TextStyle(color: Color(0xFF1ca5e5)),
-                      )
-                    ],
-                  ),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text(
-                              'Reply to ${comments.firstName} ${comments.lastName}'),
-                          content: TextFormField(
-                            keyboardType: TextInputType.multiline,
-                            maxLines: 8,
-                            autofocus: false,
-                            controller: _replyController,
-                            decoration: InputDecoration(
-                              hintText: 'Leave reply...',
-                              filled: true,
+                comments.visible == true
+                    ? canEditComment(context, comments, user)
+                    : Text(''),
+                comments.visible == true
+                    ? FlatButton(
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.reply,
+                              color: Color(0xFF1ca5e5),
                             ),
-                          ),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text("Cancel"),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                            FlatButton(
-                              child: Text("Reply"),
-                              onPressed: () {
-                                createReply(
-                                    context,
-                                    user,
-                                    _replyController.text,
-                                    comments.commentID,
-                                    comments.announcementID);
-                                _replyController.text = "";
-                                Navigator.of(context).pop();
-                              },
-                            ),
+                            Text(
+                              'Reply',
+                              style: TextStyle(color: Color(0xFF1ca5e5)),
+                            )
                           ],
-                        );
-                      },
-                    );
-                  },
-                ),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    ReplyPage(comments, user)),
+                          );
+                        },
+                      )
+                    : Text(''),
               ],
             ),
             Divider(color: Color(0xFF1ca5e5)),
@@ -316,14 +313,18 @@ Widget _buildRepliesListItem(
           children: <Widget>[
             ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 20.0),
-              title: replies.visible ? Text(
-                '${replies.firstName} ${replies.lastName}',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ) : Text(
-                'Hidden',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              subtitle: replies.visible == true ? Text('${replies.content}') : Text('This comment has been hidden by moderator.'),
+              title: replies.visible
+                  ? Text(
+                      '${replies.firstName} ${replies.lastName}',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    )
+                  : Text(
+                      'Hidden',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+              subtitle: replies.visible == true
+                  ? Text('${replies.content}')
+                  : Text('This reply has been hidden by a moderator.'),
               trailing: role == true
                   ? IconButton(
                       //color: Colors.red,
@@ -342,7 +343,7 @@ Widget _buildRepliesListItem(
                   child: Row(
                     children: <Widget>[
                       Text('$formattedDate'),
-                      canEditReply(context, replies, user),
+                      replies.visible == true ? canEditReply(context, replies, user) :Text(''),
                     ],
                   ),
                 ),
@@ -354,21 +355,3 @@ Widget _buildRepliesListItem(
     ),
   );
 }
-
-
-
-// Widget toggleVisible(BuildContext context, DocumentSnapshot data,
-//     FirebaseUser user, Replies replies) {
-//   if (checkRole(user) == true) {
-//     print('Test ${checkRole(user)}');
-//     IconButton(
-//         //color: Colors.red,
-//         icon: visibleIcon,
-//         onPressed: () {
-//           toggleReplyVisibility(data, replies.replyID);
-//         });
-//   } else {
-//     print('Else');
-//     Container();
-//   }
-// }

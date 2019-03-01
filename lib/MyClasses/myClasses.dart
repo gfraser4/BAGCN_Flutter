@@ -8,6 +8,7 @@ import 'package:bagcndemo/About/aboutPage.dart';
 import 'package:bagcndemo/AddClasses/addClassesPage.dart';
 import 'package:bagcndemo/Settings/settingsPage.dart';
 import 'package:bagcndemo/Announcements/announcementPage.dart';
+import 'package:bagcndemo/MyClasses/myClassesLogic.dart';
 
 //Imported Models
 import 'package:bagcndemo/Models/ClassesModel.dart';
@@ -210,6 +211,7 @@ Widget _buildList(
 
 Widget _buildListItem(
     BuildContext context, DocumentSnapshot data, FirebaseUser user) {
+      
   final classes = Classes.fromSnapshot(data);
   List<String> userID = ['${user.uid}'];
   return Column(
@@ -266,10 +268,20 @@ Widget _buildListItem(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          IconButton(
+                          classes.notifyUsers.contains(user.uid) == true ? IconButton(
                             icon: Icon(Icons.notifications_active),
                             color: Color(0xFF1ca5e5),
-                            onPressed: () {},
+                            onPressed: () {
+                              MyClassesLogic.notifyClick(
+                  user, classes);
+                            },
+                          ) : IconButton(
+                            icon: Icon(Icons.notifications_off),
+                            color: Colors.grey,
+                            onPressed: () {
+                              MyClassesLogic.notifyClick(
+                  user, classes);
+                            },
                           ),
                           IconButton(
                             icon: Icon(Icons.delete),

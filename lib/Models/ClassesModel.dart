@@ -6,6 +6,7 @@ class Classes {
   final String dates;
   final String times;
   final int code;
+  final List<dynamic> notifyUsers;
   final DocumentReference reference;
 
   Classes.fromMap(Map<String, dynamic> map, {this.reference})
@@ -15,6 +16,7 @@ class Classes {
         assert(map['times'] != null),
         assert(map['location'] != null),
         clsName = map['clsName'],
+        notifyUsers = map['notifyUsers'],
         location = map['location'],
         dates = map['dates'],
         times = map['times'],
