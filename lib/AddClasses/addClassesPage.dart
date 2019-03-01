@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:validators/validators.dart';
 
+import 'package:bagcndemo/AddClasses/addClassesLogic.dart';
 import 'package:bagcndemo/Models/ClassesModel.dart';
 
 String _search = '';
@@ -80,7 +81,9 @@ class _AddClassesPage extends State<AddClassesPage> {
       );
     }
 
-//page scaffold
+//******************************************\\
+//*********** page scaffold *****************\\
+//********************************************\\
     return Scaffold(
       backgroundColor: Color.fromRGBO(28, 165, 229, 1),
       appBar: _buildBar(context),
@@ -195,15 +198,7 @@ class RemoveButton extends StatelessWidget {
                 FlatButton(
                   child: Text("Remove"),
                   onPressed: () {
-                    try {
-                      classes.reference.updateData({
-                        "enrolledUsers": FieldValue.arrayRemove(
-                            userID), 
-                      });
-                      Navigator.of(context).pop();
-                    } catch (e) {
-                      print(e.toString());
-                    }
+                    ClassMGMTLogic.removeClass(context, classes, userID);
                   },
                 ),
               ],
@@ -252,14 +247,7 @@ class JoinButton extends StatelessWidget {
                 FlatButton(
                   child: Text("Add Class"),
                   onPressed: () {
-                    try {
-                      classes.reference.updateData({
-                        "enrolledUsers": FieldValue.arrayUnion(userID),
-                      });
-                      Navigator.of(context).pop();
-                    } catch (e) {
-                      print(e.toString());
-                    }
+                    ClassMGMTLogic.addClass(context, classes, userID);
                   },
                 ),
               ],
