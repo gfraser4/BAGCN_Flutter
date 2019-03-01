@@ -21,7 +21,7 @@ class AboutPage extends StatelessWidget {
                       ),
                       
                       Text(
-                        '\n\nWelcome to the Boys and Girls Club Messaging App. This app allows you to stay up to date with the latest anouncements based on your specific class enrollment. It also allows yur to quickly communicate with the instructor.',
+                        '\n\nWelcome to the Boys and Girls Club Messaging App. This app allows you to stay up to date with the latest anouncements based on your specific class enrollment. It also allows you to quickly communicate with the instructor.',
                         style: TextStyle(fontSize: 18), textAlign: TextAlign.center,
                       ),
                     ],
