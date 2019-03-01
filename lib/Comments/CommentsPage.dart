@@ -30,10 +30,8 @@ class CommentsPage extends StatefulWidget {
 }
 
 class _CommentsPage extends State<CommentsPage> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final _commentController = new TextEditingController();
-  String _comment;
 
   @override
   void initState() {
@@ -118,74 +116,6 @@ class _CommentsPage extends State<CommentsPage> {
           ),
         ),
       ]),
-      // floatingActionButton: FloatingActionButton(
-      //   child: Icon(Icons.comment),
-      //   onPressed: () {
-      //     showDialog(
-      //       context: context,
-      //       builder: (BuildContext context) {
-      //         return AlertDialog(
-      //           title: Text('Comment on ${widget.announcement.title}'),
-      //           content: TextFormField(
-      //             keyboardType: TextInputType.multiline,
-      //             maxLines: 8,
-      //             autofocus: false,
-      //             controller: _commentController,
-      //             decoration: InputDecoration(
-      //               hintText: 'Leave comment...',
-      //               filled: true,
-      //             ),
-      //           ),
-      //           actions: <Widget>[
-      //             FlatButton(
-      //               child: Text("Cancel"),
-      //               onPressed: () {
-      //                 Navigator.of(context).pop();
-      //               },
-      //             ),
-      //             FlatButton(
-      //               child: Text("Comment"),
-      //               onPressed: () {
-      //                 createComment(context, widget.user,
-      //                     _commentController.text, widget.announcement.id);
-      //                 _commentController.text = "";
-      //                 Navigator.of(context).pop();
-      //               },
-      //             ),
-      //           ],
-      //         );
-      //       },
-      //     );
-      //   },
-      // ),
-      // bottomNavigationBar: SingleChildScrollView(
-      //   child: Form(
-      //     child: TextFormField(
-      //       validator: (input) {
-      //         if (input.isEmpty)
-      //           return 'Please enter a title for the announcement.';
-      //       },
-      //       keyboardType: TextInputType.text,
-      //       onSaved: (input) => _comment = input,
-      //       textInputAction: TextInputAction.done,
-      //       autofocus: true,
-      //       // controller:
-      //       //     _titleController, //set controller for title textfield
-      //       decoration: InputDecoration(
-      //         labelText: 'Announcement Title',
-      //         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-      //         enabledBorder: OutlineInputBorder(
-      //             borderRadius: BorderRadius.circular(6.0),
-      //             borderSide: BorderSide(
-      //               color: Color.fromRGBO(123, 193, 67, 1),
-      //               width: 2,
-      //             )),
-      //         border:
-      //             OutlineInputBorder(borderRadius: BorderRadius.circular(6.0)),
-      //       ),
-      //     ),
-      //   ),
-      // ),
     );
   }
 }
@@ -228,7 +158,6 @@ Widget _buildCommentsList(
 //widget to build individual card item for each announcement from original query
 Widget _buildCommentsListItem(
     BuildContext context, DocumentSnapshot data, FirebaseUser user) {
-  final _replyController = new TextEditingController();
   final comments = Comments.fromSnapshot(data);
   var formatter = new DateFormat.yMd().add_jm();
   String formattedDate = formatter.format(comments.created);
@@ -426,19 +355,3 @@ Widget _buildRepliesListItem(
     ),
   );
 }
-
-// Widget toggleVisible(BuildContext context, DocumentSnapshot data,
-//     FirebaseUser user, Replies replies) {
-//   if (checkRole(user) == true) {
-//     print('Test ${checkRole(user)}');
-//     IconButton(
-//         //color: Colors.red,
-//         icon: visibleIcon,
-//         onPressed: () {
-//           toggleReplyVisibility(data, replies.replyID);
-//         });
-//   } else {
-//     print('Else');
-//     Container();
-//   }
-// }

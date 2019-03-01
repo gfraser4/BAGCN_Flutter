@@ -9,10 +9,8 @@ import 'package:bagcndemo/CreateAnnouncement/createAnnouncement.dart';
 import 'package:bagcndemo/Comments/CommentsPage.dart';
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 
-import 'package:bagcndemo/Models/Users.dart';
+// import 'package:bagcndemo/Models/Users.dart';
 
-Color likeButtonColor = Colors.grey;
-Color notifyButtonColor = Colors.grey;
 bool role;
 
 //ParentClassAnnouncementPage WIDGET - SHOWS ANNOUNCEMENTS FOR SPECIFIC CLASS --> REQUIRES A title AND code ARGURMENT PASSED TO IT
@@ -30,17 +28,6 @@ class ClassAnnouncementPage extends StatefulWidget {
 
 //HOW PAGE IS BUILT
 class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
-  @override
-  void initState() {
-    likeButtonColor = likeButtonColor;
-    notifyButtonColor = notifyButtonColor;
-  }
-
-  @override
-  void setState(fn) {
-    likeButtonColor = likeButtonColor;
-    notifyButtonColor = notifyButtonColor;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,20 +100,6 @@ Widget _buildListItem(
 //       (DocumentSnapshot doc) => print(doc.data['firstName'].toString()));
 // print(name);
 
-  //Check if user has liked the announcement already and set color of button accordingly
-  if (announcements.likedUsers.contains(user.uid) == true) {
-    likeButtonColor = Color(0xFF1ca5e5);
-  } else {
-    likeButtonColor = Colors.grey;
-  }
-
-//check if users has subscribed to notifications and set button color accordingly
-  if (announcements.notifyUsers.contains(user.uid) == true) {
-    notifyButtonColor = Color(0xFF1ca5e5);
-  } else {
-    notifyButtonColor = Colors.grey;
-  }
-
   Widget announcementEdit(
       BuildContext context, Announcements announcements, FirebaseUser user) {
     final _editAnnouncemntController = new TextEditingController();
@@ -154,18 +127,12 @@ Widget _buildListItem(
           FlatButton(
             child: Text("Edit"),
             onPressed: () {
-
-
-Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    EditAnnouncementPage(announcements, user)),
-                          );
-                // AnnouncementLogic.editAnnouncement(context, user,
-                //     announcements.description, announcements.id);
-                // Navigator.of(context).pop();
-
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        EditAnnouncementPage(announcements, user)),
+              );
             },
           ),
         ],
@@ -198,34 +165,51 @@ Navigator.push(
               ],
             ),
             onPressed: () {
-              if (user.uid == announcements.postedBy){
-              Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    EditAnnouncementPage(announcements, user)),
-                          );
+              if (user.uid == announcements.postedBy) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          EditAnnouncementPage(announcements, user)),
+                );
               }
             },
           ),
-          FlatButton(
+         announcements.notifyUsers.contains(user.uid) == true ? FlatButton(
             child: Row(
               children: <Widget>[
                 Icon(
                   Icons.notifications_active,
-                  color: notifyButtonColor,
+                  color: Color(0xFF1ca5e5),
                 ),
                 Text(
                   'Alerts',
-                  style: TextStyle(color: notifyButtonColor),
+                  style: TextStyle(color: Color(0xFF1ca5e5)),
                 )
               ],
             ),
             onPressed: () {
               AnnouncementLogic.notifyClick(
-                  user, notifyButtonColor, announcements);
+                  user, announcements);
             },
-          ),
+          ) : FlatButton(
+            child: Row(
+              children: <Widget>[
+                Icon(
+                  Icons.notifications_off,
+                  color: Colors.grey,
+                ),
+                Text(
+                  'Alerts',
+                  style: TextStyle(color: Colors.grey),
+                )
+              ],
+            ),
+            onPressed: () {
+              AnnouncementLogic.notifyClick(
+                  user, announcements);
+            },
+          ), 
           FlatButton(
             child: Row(
               children: <Widget>[
@@ -307,19 +291,30 @@ Navigator.push(
                 Container(
                   child: Row(
                     children: <Widget>[
-                      IconButton(
+                      announcements.likedUsers.contains(user.uid) == true ? IconButton(
                         icon: Icon(Icons.thumb_up),
-                        color: likeButtonColor,
+                        color: Color(0xFF1ca5e5),
                         onPressed: () {
                           AnnouncementLogic.likeButtonClick(
-                              user, likeButtonColor, announcements);
+                              user, announcements);
+                        },
+                      ) : IconButton(
+                        icon: Icon(Icons.thumb_up),
+                        color: Colors.grey,
+                        onPressed: () {
+                          AnnouncementLogic.likeButtonClick(
+                              user, announcements);
                         },
                       ),
-                      Text(announcements.likes.toString(),
+                      announcements.likedUsers.contains(user.uid) == true ? Text(announcements.likes.toString(),
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: likeButtonColor,
-                          )),
+                            color: Color(0xFF1ca5e5),
+                          ),) : Text(announcements.likes.toString(),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey,
+                          )) 
                     ],
                   ),
                 ),
@@ -349,7 +344,7 @@ Navigator.push(
                 role == true
                     ? IconButton(
                         icon: Icon(Icons.more_horiz),
-                        color: notifyButtonColor,
+                        color: Color(0xFF1ca5e5),
                         onPressed: () {
                           showDialog(
                               context: context,
@@ -358,14 +353,21 @@ Navigator.push(
                               });
                         },
                       )
-                    : IconButton(
+                    : announcements.notifyUsers.contains(user.uid) == true ? IconButton(
                         icon: Icon(Icons.notifications_active),
-                        color: notifyButtonColor,
+                        color: Color(0xFF1ca5e5),
                         onPressed: () {
                           AnnouncementLogic.notifyClick(
-                              user, notifyButtonColor, announcements);
+                              user, announcements);
                         },
-                      ),
+                      ) : IconButton(
+                        icon: Icon(Icons.notifications_off),
+                        color: Colors.grey,
+                        onPressed: () {
+                          AnnouncementLogic.notifyClick(
+                              user, announcements);
+                        },
+                      )
               ],
             )
           ],
