@@ -208,16 +208,18 @@ class CommentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),),
       elevation: 5.0,
       color: Colors.lightBlue[100],
       child: Container(
         child: Column(
           children: <Widget>[
-            new TopCommentArea(comments: comments, data: data, user: user),
-            Divider(color: Color(0xFF1ca5e5)),
+            new TopCommentArea(comments: comments, data: data, user: user, formattedDate: formattedDate,),
+            //Divider(color: Color(0xFF1ca5e5)),
             new BottomCommentArea(
                 formattedDate: formattedDate, comments: comments, user: user),
-            Divider(color: Color(0xFF1ca5e5)),
+            //Divider(color: Color(0xFF1ca5e5), height: 1,),
             _buildRepliesBody(context, comments, user),
           ],
         ),
@@ -244,14 +246,6 @@ class BottomCommentArea extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Container(
-          padding: const EdgeInsets.only(left: 10.0, bottom: 2.0),
-          child: Row(
-            children: <Widget>[
-              Text('$formattedDate',style: TextStyle(color:Colors.black87)),
-            ],
-          ),
-        ),
         Expanded(
           child: Container(),
         ),
@@ -290,6 +284,7 @@ class BottomCommentArea extends StatelessWidget {
 class TopCommentArea extends StatelessWidget {
   const TopCommentArea({
     Key key,
+    @required this.formattedDate,
     @required this.comments,
     @required this.data,
     @required this.user,
@@ -298,6 +293,7 @@ class TopCommentArea extends StatelessWidget {
   final Comments comments;
   final DocumentSnapshot data;
   final FirebaseUser user;
+  final String formattedDate;
 
   @override
   Widget build(BuildContext context) {
@@ -316,20 +312,22 @@ class TopCommentArea extends StatelessWidget {
           ? Row(
               children: <Widget>[
                 Chip(
+                  //padding must be 0 or two letters can be too big
+                  padding: EdgeInsets.all(0),
                   avatar: CircleAvatar(
                       backgroundColor: hexToColor(comments.profileColor),
                       child: Text(
                           '${comments.firstName[0]}${comments.lastName[0]}',
                           style: TextStyle(color: Colors.white))),
                   label: Text(
-                    '${comments.firstName} ${comments.lastName}',
-                    style: TextStyle(fontWeight: FontWeight.w600,color:Colors.black87),
+                    '${comments.firstName} ${comments.lastName} - $formattedDate',
+                    style: TextStyle(fontWeight: FontWeight.w600),
                   ),
                   backgroundColor: Colors.lightBlue[100],
                 ),
                 Expanded(
                   child: Container(),
-                )
+                ),
               ],
             )
           : Text(
@@ -340,7 +338,8 @@ class TopCommentArea extends StatelessWidget {
           ? Text('${comments.content}',style: TextStyle(color:Colors.black54))
           : Text('This comment has been hidden by a moderator.',style: TextStyle(color:Colors.black54)),
       trailing: role == true
-          ? IconButton(
+          ? 
+          IconButton(
               //color: Colors.red,
               icon: visibleIcon,
               onPressed: () {
@@ -348,6 +347,7 @@ class TopCommentArea extends StatelessWidget {
               },
             )
           : null,
+          
     );
   }
 }
@@ -423,25 +423,29 @@ class ReplyCard extends StatelessWidget {
     }
 
     return Card(
+      shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),),
       elevation: 5.0,
       color: Colors.lightBlue[50],
       child: Container(
         child: Column(
           children: <Widget>[
             ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 20.0),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 10.0),
               title: replies.visible
                   ? Row(
               children: <Widget>[
                 Chip(
+                  //padding must be 0 or two letters can be too big
+                  padding: EdgeInsets.all(0),
                   avatar: CircleAvatar(
                       backgroundColor: hexToColor(replies.profileColor),
                       child: Text(
                           '${replies.firstName[0]}${replies.lastName[0]}',
                           style: TextStyle(color: Colors.white))),
                   label: Text(
-                    '${replies.firstName} ${replies.lastName}',
-                    style: TextStyle(fontWeight: FontWeight.w600,color:Colors.black87),
+                    '${replies.firstName} ${replies.lastName} - $formattedDate',
+                    style: TextStyle(fontWeight: FontWeight.w600),
                   ),
                   backgroundColor: Colors.lightBlue[50],
                 ),
@@ -466,7 +470,7 @@ class ReplyCard extends StatelessWidget {
                       })
                   : null,
             ),
-            Divider(color: Color(0xFF1ca5e5)),
+            // Divider(color: Color(0xFF1ca5e5)),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
@@ -474,7 +478,6 @@ class ReplyCard extends StatelessWidget {
                   padding: const EdgeInsets.all(10),
                   child: Row(
                     children: <Widget>[
-                      Text('$formattedDate',style: TextStyle(color:Colors.black87)),
                       replies.visible == true
                           ? canEditReply(context, replies, user)
                           : Text(''),
