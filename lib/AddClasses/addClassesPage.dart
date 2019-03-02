@@ -148,7 +148,7 @@ class ClassCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Color(0xFFF4F5F7),
+      // color: Color(0xFFF4F5F7),
       elevation: 5.0,
       child: ListTile(
         title: Text(classes.clsName),

@@ -32,7 +32,7 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
   Widget build(BuildContext context) {
     role = widget.isSuper;
     return Scaffold(
-        backgroundColor: Colors.grey[100],
+        // backgroundColor: Colors.grey[100],
         appBar: AppBar(
           title: Text(
               widget.title), //PAGE TITLE BASED ON title THAT WAS PASSED TO PAGE
@@ -187,10 +187,12 @@ Widget _buildListItem(
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               title: Text(
                 announcements.title,
-                style: TextStyle(fontWeight: FontWeight.w600),
+                style: TextStyle(fontWeight: FontWeight.w600,color: Colors.black87),
               ),
               subtitle: Text(
-                  'Posted on: ${announcements.clsName} \nPosted on: $formattedDate\n\n${announcements.description}'),
+                  'Posted on: ${announcements.clsName} \nPosted on: $formattedDate\n\n${announcements.description}',
+                  style: TextStyle(color: Colors.black54),
+                  ),
             ),
             Divider(
               color: Color(0xFF1ca5e5),

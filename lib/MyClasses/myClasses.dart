@@ -13,6 +13,8 @@ import 'package:bagcndemo/MyClasses/myClassesLogic.dart';
 //Imported Models
 import 'package:bagcndemo/Models/ClassesModel.dart';
 
+//DYNAMIC CHANGE THEME
+import 'package:dynamic_theme/dynamic_theme.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 //**MyClassList WIDGET - MY CLASSES PAGE CLASS -- HOW THE MAIN PAGE LOADS AND ITS CONTENT**\\
@@ -61,7 +63,7 @@ checkRole(widget.user);
       print(e.toString());
     }
     return Scaffold(
-      backgroundColor: Color(0xFFF4F5F7), //PAGE BACKGROUND COLOUR
+      // backgroundColor: Color(0xFFF4F5F7), //PAGE BACKGROUND COLOUR
       appBar: AppBar(
           title:
               Text('My Classes ${widget.user.email}')), //PAGE APP BAR AND TITLE
@@ -92,7 +94,7 @@ Widget _navDrawer(BuildContext context, FirebaseUser user) {
   return Drawer(
     elevation: 50,
     child: Container(
-      color: Color(0xFFF4F5F7),
+      // color: Color(0xFFF4F5F7),
       child: ListView(
         // Important: Remove any padding from the ListView.
         padding: EdgeInsets.zero,
@@ -158,6 +160,17 @@ Widget _navDrawer(BuildContext context, FirebaseUser user) {
                 MaterialPageRoute(builder: (context) => AboutPage()),
               );
             },
+          ),
+          Divider(
+            color: Color.fromRGBO(123, 193, 67, 1),
+          ),
+          ListTile(
+            leading: Icon(Icons.lightbulb_outline, color: Color.fromRGBO(28, 165, 229, 1),),
+            title: Text('Dark Mode'),
+            trailing: Checkbox(value:Theme.of(context).brightness == Brightness.dark? true: false,activeColor: Color.fromRGBO(123, 193, 67, 1),onChanged: (bool){
+                DynamicTheme.of(context).setBrightness(Theme.of(context).brightness == Brightness.dark? Brightness.light: Brightness.dark);
+              },
+            ),
           ),
           Divider(
             color: Color.fromRGBO(123, 193, 67, 1),
