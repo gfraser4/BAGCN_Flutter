@@ -332,11 +332,11 @@ class TopCommentArea extends StatelessWidget {
             )
           : Text(
               'Hidden',
-              style: TextStyle(fontWeight: FontWeight.w600),
+              style: TextStyle(fontWeight: FontWeight.w600,color:Colors.black54),
             ),
       subtitle: comments.visible == true
-          ? Text('${comments.content}')
-          : Text('This comment has been hidden by a moderator.'),
+          ? Text('${comments.content}',style: TextStyle(color:Colors.black54))
+          : Text('This comment has been hidden by a moderator.',style: TextStyle(color:Colors.black54)),
       trailing: role == true
           ? 
           IconButton(
@@ -456,11 +456,11 @@ class ReplyCard extends StatelessWidget {
             )
                   : Text(
                       'Hidden',
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                      style: TextStyle(fontWeight: FontWeight.w600,color:Colors.black54),
                     ),
               subtitle: replies.visible == true
-                  ? Text('${replies.content}')
-                  : Text('This reply has been hidden by a moderator.'),
+                  ? Text('${replies.content}',style: TextStyle(color:Colors.black54))
+                  : Text('This reply has been hidden by a moderator.',style: TextStyle(color:Colors.black54)),
               trailing: role == true
                   ? IconButton(
                       //color: Colors.red,
@@ -478,7 +478,6 @@ class ReplyCard extends StatelessWidget {
                   padding: const EdgeInsets.all(10),
                   child: Row(
                     children: <Widget>[
-                      // Text('$formattedDate'),
                       replies.visible == true
                           ? canEditReply(context, replies, user)
                           : Text(''),

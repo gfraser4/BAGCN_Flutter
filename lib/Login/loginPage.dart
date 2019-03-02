@@ -184,7 +184,7 @@ class _LoginPageState extends State<LoginPage> {
       //DISABLES BACK BUTTON ON PHONE WHICH WOULD SEND USER TO MY CLASS LIST BYPASSING LOGIN
       onWillPop: () async => false,
       child: Scaffold(
-        backgroundColor: Color(0xFFF4F5F7),
+        // backgroundColor: Color(0xFFF4F5F7),
         body: Center(      
             child: Form(
               key: _formKey,
