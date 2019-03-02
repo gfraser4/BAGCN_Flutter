@@ -185,7 +185,14 @@ class RemoveButton extends StatelessWidget {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Remove Class?'),
+              title: Text(
+                'Remove Class?',
+                style: TextStyle(
+                  fontSize: 30,
+                  fontStyle: FontStyle.normal,
+                  color: Color.fromRGBO(0, 162, 162, 1),
+                ),
+              ),
               content: Text(
                   'Are you sure you want to remove ${classes.clsName} - ${classes.code} from your class list?'),
               actions: <Widget>[
@@ -234,7 +241,14 @@ class JoinButton extends StatelessWidget {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Add Class?'),
+              title: Text(
+                'Add Class?',
+                style: TextStyle(
+                  fontSize: 30,
+                  fontStyle: FontStyle.normal,
+                  color: Color.fromRGBO(0, 162, 162, 1),
+                ),
+              ),
               content: Text(
                   'Are you sure you want to add ${classes.clsName} - ${classes.code} to your class list?'),
               actions: <Widget>[
