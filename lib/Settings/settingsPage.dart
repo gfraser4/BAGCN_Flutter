@@ -62,7 +62,10 @@ class SettingsPage extends StatelessWidget {
           SizedBox(height: 14,),
           ListTile(
             trailing: TextFormField(
+              style: TextStyle(color: Colors.black),
               decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
                   labelText: 'Change First Name',
                   prefixIcon: Icon(
                     Icons.account_circle,
@@ -82,7 +85,10 @@ class SettingsPage extends StatelessWidget {
           SizedBox(height: 14,),
           ListTile(
             trailing: TextFormField(
+              style: TextStyle(color: Colors.black),
               decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
                   labelText: 'Change Last Name',
                   prefixIcon: Icon(
                     Icons.account_circle,
@@ -102,7 +108,10 @@ class SettingsPage extends StatelessWidget {
           SizedBox(height: 14,),
           ListTile(
             trailing: TextFormField(
+              style: TextStyle(color: Colors.black),
               decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
                   labelText: 'Change Email',
                   prefixIcon: Icon(
                     Icons.email,
@@ -122,7 +131,10 @@ class SettingsPage extends StatelessWidget {
           SizedBox(height: 14,),
           ListTile(
             trailing: TextFormField(
+              style: TextStyle(color: Colors.black),
               decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
                   labelText: 'Change Password',
                   prefixIcon: Icon(
                     Icons.lock,
