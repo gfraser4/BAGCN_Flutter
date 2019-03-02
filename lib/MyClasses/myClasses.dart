@@ -53,7 +53,13 @@ Future<bool> checkRole(FirebaseUser user) async {
 
   @override
   Widget build(BuildContext context) {
-    checkRole(widget.user);
+    try{
+checkRole(widget.user);
+    }
+    catch(e)
+    {
+      print(e.toString());
+    }
     return Scaffold(
       backgroundColor: Color(0xFFF4F5F7), //PAGE BACKGROUND COLOUR
       appBar: AppBar(

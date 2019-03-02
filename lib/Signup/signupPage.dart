@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:validators/validators.dart';
 
+import 'package:bagcndemo/Login/loginPage.dart';
 import 'package:bagcndemo/Signup/signupLogic.dart';
 import 'package:bagcndemo/MyClasses/myClasses.dart';
 
@@ -307,10 +308,10 @@ class _SignUpPage extends State<SignUpPage> {
         if (user != null) {
           //Sign in Successful: Navigate to home
 
-          Navigator.pushReplacement(
+         await Navigator.pushReplacement(
               context,
               new MaterialPageRoute(
-                  builder: (BuildContext context) => new MyClassList(user)));
+                  builder: (BuildContext context) => new LoginPage()));
         } else {
           //Sign in Failed:
           //...Prompt User
@@ -336,10 +337,10 @@ class _SignUpPage extends State<SignUpPage> {
         if (user != null) {
           //Sign in Successful: Navigate to home
 
-          Navigator.pushReplacement(
+          await Navigator.pushReplacement(
               context,
               new MaterialPageRoute(
-                  builder: (BuildContext context) => new MyClassList(user)));
+                  builder: (BuildContext context) => new LoginPage()));
         } else {
           //Sign in Failed:
           //...Prompt User

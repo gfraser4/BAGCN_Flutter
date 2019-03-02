@@ -10,6 +10,7 @@ class Replies {
   final String content;
   final DateTime created;
   final bool visible;
+  final String profileColor;
   final DocumentReference reference;
 
   Replies.fromMap(Map<String, dynamic> map, {this.reference})
@@ -21,8 +22,10 @@ class Replies {
         assert(map['content'] != null),
         assert(map['created'] != null),
         assert(map['visible'] != null),
+        assert(map['profileColor'] != null),
         userID = map['userID'],
         firstName = map['firstName'],
+        profileColor = map['profileColor'],
         lastName = map['lastName'],
         parentCommentID = map['parentCommentID'],
         replyID = map['replyID'],
