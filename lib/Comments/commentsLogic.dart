@@ -30,6 +30,7 @@ Future<void> createComment(BuildContext context, FirebaseUser user,
     'lastName': userInfo.lastName,
     'created': nowTime,
     'visible': true,
+    'profileColor' : userInfo.profileColor, 
   });
 
   DocumentSnapshot announcementSnapshot = await Firestore.instance
@@ -67,6 +68,7 @@ Future<void> createReply(BuildContext context, FirebaseUser user,
     'lastName': userInfo.lastName,
     'created': nowTime,
     'visible': true,
+    'profileColor' : userInfo.profileColor,
   });
 
   DocumentSnapshot announcementSnapshot = await Firestore.instance
@@ -191,4 +193,9 @@ Widget canEditReply(BuildContext context, Replies replies, FirebaseUser user) {
   } else {
     return Container();
   }
+}
+
+//Get Profile color
+Color hexToColor(String code) {
+  return new Color(int.parse(code.substring(10, 16), radix: 16) + 0xFF000000);
 }

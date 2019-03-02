@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
+
 import 'package:bagcndemo/Comments/commentReply.dart';
 import 'package:bagcndemo/Comments/commentsLogic.dart';
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
@@ -212,7 +213,7 @@ class CommentCard extends StatelessWidget {
       child: Container(
         child: Column(
           children: <Widget>[
-            new TopCommentArea(comments: comments, data: data),
+            new TopCommentArea(comments: comments, data: data, user: user),
             Divider(color: Color(0xFF1ca5e5)),
             new BottomCommentArea(
                 formattedDate: formattedDate, comments: comments, user: user),
@@ -291,13 +292,16 @@ class TopCommentArea extends StatelessWidget {
     Key key,
     @required this.comments,
     @required this.data,
+    @required this.user,
   }) : super(key: key);
 
   final Comments comments;
   final DocumentSnapshot data;
+  final FirebaseUser user;
 
   @override
   Widget build(BuildContext context) {
+    //RandomColor _randomColor = RandomColor();
     // checkif comment is visible and set icon accordingly
     if (comments.visible == true) {
       visibleIcon = notHiddenIcon;
@@ -309,9 +313,24 @@ class TopCommentArea extends StatelessWidget {
         horizontal: 10.0,
       ),
       title: comments.visible
-          ? Text(
-              '${comments.firstName} ${comments.lastName}',
-              style: TextStyle(fontWeight: FontWeight.w600),
+          ? Row(
+              children: <Widget>[
+                Chip(
+                  avatar: CircleAvatar(
+                      backgroundColor: hexToColor(comments.profileColor),
+                      child: Text(
+                          '${comments.firstName[0]}${comments.lastName[0]}',
+                          style: TextStyle(color: Colors.white))),
+                  label: Text(
+                    '${comments.firstName} ${comments.lastName}',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  backgroundColor: Colors.lightBlue[100],
+                ),
+                Expanded(
+                  child: Container(),
+                )
+              ],
             )
           : Text(
               'Hidden',
@@ -412,10 +431,25 @@ class ReplyCard extends StatelessWidget {
             ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 20.0),
               title: replies.visible
-                  ? Text(
-                      '${replies.firstName} ${replies.lastName}',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    )
+                  ? Row(
+              children: <Widget>[
+                Chip(
+                  avatar: CircleAvatar(
+                      backgroundColor: hexToColor(replies.profileColor),
+                      child: Text(
+                          '${replies.firstName[0]}${replies.lastName[0]}',
+                          style: TextStyle(color: Colors.white))),
+                  label: Text(
+                    '${replies.firstName} ${replies.lastName}',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  backgroundColor: Colors.lightBlue[50],
+                ),
+                Expanded(
+                  child: Container(),
+                )
+              ],
+            )
                   : Text(
                       'Hidden',
                       style: TextStyle(fontWeight: FontWeight.w600),
