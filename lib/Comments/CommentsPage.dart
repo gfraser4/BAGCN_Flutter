@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
-
 import 'package:bagcndemo/Comments/commentReply.dart';
 import 'package:bagcndemo/Comments/commentsLogic.dart';
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
@@ -89,14 +88,10 @@ class MessageInputBar extends StatelessWidget {
       color: Color.fromRGBO(28, 165, 229, 1),
       padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
       child: TextFormField(
-        validator: (input) {
-          if (input.isEmpty)
-            return 'Please enter a title for the announcement.';
-        },
         keyboardType: TextInputType.multiline,
         maxLines: null,
         onSaved: (input) => _commentController.text = input,
-        textInputAction: TextInputAction.done,
+        //textInputAction: TextInputAction.done,
         autofocus: false,
         controller: _commentController,
         decoration: InputDecoration(
@@ -111,7 +106,7 @@ class MessageInputBar extends StatelessWidget {
                     _commentController.text.trim(), widget.announcement.id);
                 _commentController.text = "";
                 //takes focus off of search area after submitting comment
-                FocusScope.of(context).requestFocus(new FocusNode());
+                //FocusScope.of(context).requestFocus(new FocusNode());
 
                 _scrollController.animateTo(
                   _scrollController.position.maxScrollExtent,
@@ -209,17 +204,23 @@ class CommentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),),
+        borderRadius: BorderRadius.circular(20.0),
+      ),
       elevation: 5.0,
       color: Colors.lightBlue[100],
       child: Container(
         child: Column(
           children: <Widget>[
-            new TopCommentArea(comments: comments, data: data, user: user, formattedDate: formattedDate,),
+            new TopCommentArea(
+              comments: comments,
+              data: data,
+              user: user,
+              formattedDate: formattedDate,
+            ),
             //Divider(color: Color(0xFF1ca5e5)),
             new BottomCommentArea(
                 formattedDate: formattedDate, comments: comments, user: user),
-            //Divider(color: Color(0xFF1ca5e5), height: 1,),
+            Divider(color: Color(0xFF1ca5e5),),
             _buildRepliesBody(context, comments, user),
           ],
         ),
@@ -304,51 +305,114 @@ class TopCommentArea extends StatelessWidget {
     } else {
       visibleIcon = hiddenIcon;
     }
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 10.0,
-      ),
-      title: comments.visible
-          ? Row(
-              children: <Widget>[
-                Chip(
-                  //padding must be 0 or two letters can be too big
-                  padding: EdgeInsets.all(0),
-                  avatar: CircleAvatar(
-                      backgroundColor: hexToColor(comments.profileColor),
-                      child: Text(
-                          '${comments.firstName[0]}${comments.lastName[0]}',
-                          style: TextStyle(color: Colors.white))),
-                  label: Text(
-                    '${comments.firstName} ${comments.lastName} - $formattedDate',
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  backgroundColor: Colors.lightBlue[100],
-                ),
-                Expanded(
-                  child: Container(),
-                ),
-              ],
-            )
-          : Text(
-              'Hidden',
-              style: TextStyle(fontWeight: FontWeight.w600,color:Colors.black54),
-            ),
-      subtitle: comments.visible == true
-          ? Text('${comments.content}',style: TextStyle(color:Colors.black54))
-          : Text('This comment has been hidden by a moderator.',style: TextStyle(color:Colors.black54)),
-      trailing: role == true
-          ? 
-          IconButton(
-              //color: Colors.red,
-              icon: visibleIcon,
-              onPressed: () {
-                toggleVisibility(data, comments.commentID);
-              },
-            )
-          : null,
-          
+    return Column(
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.fromLTRB(10, 3, 10, 3),
+          child: Row(
+            
+            children: <Widget>[
+              comments.visible
+                  ? Chip(
+                      //padding must be 0 or two letters can be too big
+                      padding: EdgeInsets.all(0),
+                      avatar: CircleAvatar(
+                          backgroundColor: hexToColor(comments.profileColor),
+                          child: Text(
+                              '${comments.firstName[0]}${comments.lastName[0]}',
+                              style: TextStyle(color: Colors.white))),
+                      label: Text(
+                        '${comments.firstName} ${comments.lastName}\n$formattedDate',
+                        maxLines: 2,
+                        //overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontSize: 11, fontWeight: FontWeight.w600),
+                      ),
+                      backgroundColor: Colors.lightBlue[100],
+                    )
+                  : Text(
+                      'Hidden',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600, color: Colors.black54),
+                    ),
+              Expanded(
+                child: Container(),
+              ),
+              role == true
+                  ? IconButton(
+                      //color: Colors.red,
+                      icon: visibleIcon,
+                      onPressed: () {
+                        toggleVisibility(data, comments.commentID);
+                      },
+                    )
+                  : null,
+            ],
+          ),
+        ),
+        ListTile(
+          isThreeLine: false,
+          contentPadding: EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+          title: comments.visible == true
+              ? Text('${comments.content}', style: TextStyle(color: Colors.black54, fontSize: 14))
+              : Text('This comment has been hidden by a moderator.',
+                  style: TextStyle(color: Colors.black54, fontSize: 14)),
+        ),
+        //Divider(color: Color(0xFF1ca5e5))
+      ],
     );
+    // ListTile(
+    //   contentPadding: const EdgeInsets.symmetric(
+    //     horizontal: 5.0,
+    //   ),
+    //   title: comments.visible
+    //       ? Row(
+    //           children: <Widget>[
+    //             Container(
+    //               padding: EdgeInsets.all(0),
+    //               margin: EdgeInsets.all(0),
+    //               width: 200,
+    //               child: Chip(
+    //                 //padding must be 0 or two letters can be too big
+    //                 padding: EdgeInsets.all(0),
+    //                 avatar: CircleAvatar(
+    //                     backgroundColor: hexToColor(comments.profileColor),
+    //                     child: Text(
+    //                         '${comments.firstName[0]}${comments.lastName[0]}',
+    //                         style: TextStyle(color: Colors.white))),
+    //                 label: Text(
+    //                   '${comments.firstName} ${comments.lastName}\n$formattedDate',
+    //                   maxLines: 2,
+    //                   //overflow: TextOverflow.ellipsis,
+    //                   style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+    //                 ),
+    //                 backgroundColor: Colors.lightBlue[100],
+    //               ),
+    //             ),
+    //             Expanded(
+    //               child: Container(),
+    //             ),
+    //           ],
+    //         )
+    //       : Text(
+    //           'Hidden',
+    //           style: TextStyle(fontWeight: FontWeight.w600,color:Colors.black54),
+    //         ),
+    //   subtitle: comments.visible == true
+    //       ? Text('${comments.content}',style: TextStyle(color:Colors.black54))
+    //       : Text('This comment has been hidden by a moderator.',style: TextStyle(color:Colors.black54)),
+    //   trailing: role == true
+    //       ?
+    //       IconButton(
+    //           //color: Colors.red,
+    //           icon: visibleIcon,
+    //           onPressed: () {
+    //             toggleVisibility(data, comments.commentID);
+    //           },
+    //         )
+    //       : null,
+
+    // );
   }
 }
 
@@ -424,54 +488,63 @@ class ReplyCard extends StatelessWidget {
 
     return Card(
       shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),),
-      elevation: 5.0,
-      color: Colors.lightBlue[50],
-      child: Container(
-        child: Column(
-          children: <Widget>[
-            ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 10.0),
-              title: replies.visible
-                  ? Row(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      color: Colors.white,
+      child: Column(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.fromLTRB(10, 3, 10, 3),
+            child: Row(
+              
               children: <Widget>[
-                Chip(
-                  //padding must be 0 or two letters can be too big
-                  padding: EdgeInsets.all(0),
-                  avatar: CircleAvatar(
-                      backgroundColor: hexToColor(replies.profileColor),
-                      child: Text(
-                          '${replies.firstName[0]}${replies.lastName[0]}',
-                          style: TextStyle(color: Colors.white))),
-                  label: Text(
-                    '${replies.firstName} ${replies.lastName} - $formattedDate',
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  backgroundColor: Colors.lightBlue[50],
-                ),
+                replies.visible
+                    ? Chip(
+                        //padding must be 0 or two letters can be too big
+                        padding: EdgeInsets.all(0),
+                        avatar: CircleAvatar(
+                            backgroundColor: hexToColor(replies.profileColor),
+                            child: Text(
+                                '${replies.firstName[0]}${replies.lastName[0]}',
+                                style: TextStyle(color: Colors.white))),
+                        label: Text(
+                          '${replies.firstName} ${replies.lastName}\n$formattedDate',
+                          maxLines: 2,
+                          //overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontSize: 11, fontWeight: FontWeight.w600),
+                        ),
+                        backgroundColor: Colors.white,
+                      )
+                    : Text(
+                        'Hidden',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, color: Colors.black54),
+                      ),
                 Expanded(
                   child: Container(),
-                )
+                ),
+                role == true
+                    ? IconButton(
+                        //color: Colors.red,
+                        icon: visibleIcon,
+                        onPressed: () {
+                          toggleReplyVisibility(data, replies.replyID);
+                        },
+                      )
+                    : null,
               ],
-            )
-                  : Text(
-                      'Hidden',
-                      style: TextStyle(fontWeight: FontWeight.w600,color:Colors.black54),
-                    ),
-              subtitle: replies.visible == true
-                  ? Text('${replies.content}',style: TextStyle(color:Colors.black54))
-                  : Text('This reply has been hidden by a moderator.',style: TextStyle(color:Colors.black54)),
-              trailing: role == true
-                  ? IconButton(
-                      //color: Colors.red,
-                      icon: visibleIcon,
-                      onPressed: () {
-                        toggleReplyVisibility(data, replies.replyID);
-                      })
-                  : null,
             ),
-            // Divider(color: Color(0xFF1ca5e5)),
-            Row(
+          ),
+          ListTile(
+            isThreeLine: false,
+            contentPadding: EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+            title: replies.visible == true
+                ? Text('${replies.content}', style: TextStyle(color: Colors.black54, fontSize: 14))
+                : Text('This comment has been hidden by a moderator.',
+                    style: TextStyle(color: Colors.black54, fontSize: 14)),
+          ),
+          Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 Container(
@@ -485,10 +558,83 @@ class ReplyCard extends StatelessWidget {
                   ),
                 ),
               ],
-            )
-          ],
-        ),
+            ),
+          //Divider(color: Color(0xFF1ca5e5))
+        ],
       ),
     );
+    // Card(
+    //   shape: RoundedRectangleBorder(
+    //     borderRadius: BorderRadius.circular(20.0),
+    //   ),
+    //   elevation: 5.0,
+    //   color: Colors.lightBlue[50],
+    //   child: Container(
+    //     child: Column(
+    //       children: <Widget>[
+    //         ListTile(
+    //           contentPadding: const EdgeInsets.symmetric(horizontal: 10.0),
+    //           title: replies.visible
+    //               ? Row(
+    //                   children: <Widget>[
+    //                     Chip(
+    //                       //padding must be 0 or two letters can be too big
+    //                       padding: EdgeInsets.all(0),
+    //                       avatar: CircleAvatar(
+    //                           backgroundColor: hexToColor(replies.profileColor),
+    //                           child: Text(
+    //                               '${replies.firstName[0]}${replies.lastName[0]}',
+    //                               style: TextStyle(color: Colors.white))),
+    //                       label: Text(
+    //                         '${replies.firstName} ${replies.lastName} - $formattedDate',
+    //                         style: TextStyle(
+    //                             fontSize: 11, fontWeight: FontWeight.w600),
+    //                       ),
+    //                       backgroundColor: Colors.lightBlue[50],
+    //                     ),
+    //                     Expanded(
+    //                       child: Container(),
+    //                     )
+    //                   ],
+    //                 )
+    //               : Text(
+    //                   'Hidden',
+    //                   style: TextStyle(
+    //                       fontWeight: FontWeight.w600, color: Colors.black54),
+    //                 ),
+    //           subtitle: replies.visible == true
+    //               ? Text('${replies.content}',
+    //                   style: TextStyle(color: Colors.black54))
+    //               : Text('This reply has been hidden by a moderator.',
+    //                   style: TextStyle(color: Colors.black54)),
+    //           trailing: role == true
+    //               ? IconButton(
+    //                   //color: Colors.red,
+    //                   icon: visibleIcon,
+    //                   onPressed: () {
+    //                     toggleReplyVisibility(data, replies.replyID);
+    //                   })
+    //               : null,
+    //         ),
+    //         // Divider(color: Color(0xFF1ca5e5)),
+    //         Row(
+    //           mainAxisAlignment: MainAxisAlignment.end,
+    //           children: <Widget>[
+    //             Container(
+    //               padding: const EdgeInsets.all(10),
+    //               child: Row(
+    //                 children: <Widget>[
+    //                   replies.visible == true
+    //                       ? canEditReply(context, replies, user)
+    //                       : Text(''),
+    //                 ],
+    //               ),
+    //             ),
+    //           ],
+    //         )
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 }
