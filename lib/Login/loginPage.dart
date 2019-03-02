@@ -29,8 +29,6 @@ class _LoginPageState extends State<LoginPage> {
   String fileName = 'localUser.json';
   bool fileExist = false;
   Map<String,dynamic> fileContent;
-  TextEditingController keyInputController = new TextEditingController();
-  TextEditingController valueInputController = new TextEditingController();
 
 @override
   void initState(){
@@ -52,19 +50,12 @@ class _LoginPageState extends State<LoginPage> {
         isRemember = fileContent['isRemember'];
       });
     });
+    if(isRemember) signIn();
   }
 
   void writeToFile(String email, String paw,bool isRemember){
     jsonFile.writeAsStringSync(json.encode({'isRemember':isRemember,'_email':email,'_password':paw}));
   }
-
-  @override
-  void dispose(){
-    keyInputController.dispose();
-    valueInputController.dispose();
-    super.dispose();
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +73,7 @@ class _LoginPageState extends State<LoginPage> {
 
 //EMAIL INPUT
     final email = TextFormField(
+      
       validator: (input) {
         if (input.isEmpty) return 'Please enter a valid email.';
       },
@@ -94,7 +86,10 @@ class _LoginPageState extends State<LoginPage> {
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
       //initialValue: 'lj@gmail.com',
+      style: TextStyle(color: Colors.black),
       decoration: InputDecoration(
+        fillColor: Colors.white,
+        filled: true,
         labelText: 'Email',
         prefixIcon: Icon(
           Icons.account_circle,
@@ -125,7 +120,10 @@ class _LoginPageState extends State<LoginPage> {
       autofocus: false,
       //initialValue: 'password',
       obscureText: true,
+      style: TextStyle(color: Colors.black),
       decoration: InputDecoration(
+        fillColor: Colors.white,
+        filled: true,
         labelText: 'Password',
         prefixIcon: Icon(
           Icons.lock,
@@ -248,7 +246,7 @@ class _LoginPageState extends State<LoginPage> {
         
       }
     }
-    if(isRemember) writeToFile(_email,_password,true);
-    else writeToFile('','',false);
+    //wheather user choose to auto login or not
+    isRemember ? writeToFile(_email,_password,true) : writeToFile('','',false);
   }
 }

@@ -43,7 +43,10 @@ class _SignUpPage extends State<SignUpPage> {
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
       //initialValue: 'lj@gmail.com',
+      style: TextStyle(color: Colors.black),
       decoration: InputDecoration(
+        fillColor: Colors.white,
+        filled: true,
         labelText: 'First Name',
         prefixIcon: Icon(
           Icons.account_circle,
@@ -69,8 +72,10 @@ class _SignUpPage extends State<SignUpPage> {
       onSaved: (input) => _lastName = input,
       autofocus: false,
       //initialValue: 'password',
-
+      style: TextStyle(color: Colors.black),
       decoration: InputDecoration(
+        fillColor: Colors.white,
+        filled: true,
         labelText: 'Last Name',
         prefixIcon: Icon(
           Icons.account_circle,
@@ -98,7 +103,10 @@ class _SignUpPage extends State<SignUpPage> {
       autofocus: false,
       //initialValue: 'password',
       controller: _emailInput,
+      style: TextStyle(color: Colors.black),
       decoration: InputDecoration(
+        fillColor: Colors.white,
+        filled: true,
         labelText: 'Email',
         prefixIcon: Icon(
           Icons.email,
@@ -126,7 +134,10 @@ class _SignUpPage extends State<SignUpPage> {
       autofocus: false,
       //initialValue: 'password',
       obscureText: true,
+      style: TextStyle(color: Colors.black),
       decoration: InputDecoration(
+        fillColor: Colors.white,
+        filled: true,
         labelText: 'Password',
         prefixIcon: Icon(
           Icons.lock,
@@ -166,7 +177,7 @@ class _SignUpPage extends State<SignUpPage> {
       'Choose your Role:',
       textAlign: TextAlign.center,
       style: TextStyle(
-          color: Color.fromRGBO(41, 60, 62 , 1), fontWeight: FontWeight.w600, fontSize: 18),
+          color: Colors.blue, fontWeight: FontWeight.w600, fontSize: 18),
     );
 
 //SUPERVISOR AND PARENT BUTTONS
@@ -257,7 +268,7 @@ class _SignUpPage extends State<SignUpPage> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        backgroundColor: Color(0xFFF4F5F7),
+        // backgroundColor: Color(0xFFF4F5F7),
         body: Center(
             child: Form(
           key: _formKey,

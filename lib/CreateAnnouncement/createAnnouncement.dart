@@ -58,7 +58,7 @@ class _AnnouncementPage extends State<AnnouncementPage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                color: Color(0xFFF4F5F7),
+                // color: Color(0xFFF4F5F7),
                 child: Form(
                   key: _formKey,
                   child: ListView(
@@ -82,7 +82,10 @@ class _AnnouncementPage extends State<AnnouncementPage> {
                           autofocus: false,
                           // controller:
                           //     _titleController, //set controller for title textfield
+                          style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
                             labelText: 'Announcement Title',
                             contentPadding:
                                 EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
@@ -110,7 +113,10 @@ class _AnnouncementPage extends State<AnnouncementPage> {
                           //     _descriptionController, //set controller for description textfield
                           keyboardType: TextInputType.multiline,
                           maxLines: 8,
+                          style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
                             //alignLabelWithHint: true,
                             labelText: 'Description',
                             contentPadding:
