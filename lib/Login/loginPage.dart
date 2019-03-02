@@ -50,7 +50,6 @@ class _LoginPageState extends State<LoginPage> {
         isRemember = fileContent['isRemember'];
       });
     });
-    if(isRemember) signIn();
   }
 
   void writeToFile(String email, String paw,bool isRemember){

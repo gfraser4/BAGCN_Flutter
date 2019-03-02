@@ -58,7 +58,7 @@ class _EditReplyPage extends State<EditReplyPage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                color: Color(0xFFF4F5F7),
+                // color: Color(0xFFF4F5F7),
                 child: Form(
                   key: _formKey,
                   child: ListView(
