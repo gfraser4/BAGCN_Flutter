@@ -12,7 +12,7 @@ class AboutPage extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: Card(
-                  color: Color(0xFFF4F5F7),
+                  
                   child: Column(
                     children: <Widget>[
                       Container(
