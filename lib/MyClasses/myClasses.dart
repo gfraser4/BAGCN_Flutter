@@ -242,8 +242,8 @@ Widget _buildListItem(
           boxShadow: [
             new BoxShadow(
               color: Colors.grey,
-              offset: new Offset(4.0, 4.0),
-              blurRadius: 3.0,
+              offset: new Offset(3.0, 3.0),
+              blurRadius: 1,
             )
           ],
           borderRadius: new BorderRadius.all(Radius.circular(10.0)),
