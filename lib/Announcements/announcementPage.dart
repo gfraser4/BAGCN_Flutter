@@ -177,8 +177,9 @@ Widget _buildListItem(
     key: ValueKey(announcements.clsName),
     padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 2.0),
     child: Card(
+      margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
       elevation: 5.0,
-      color: Colors.lightBlue[100],
+      color: Colors.white,
       child: Container(
         child: Column(
           children: <Widget>[
@@ -189,15 +190,29 @@ Widget _buildListItem(
                 announcements.title,
                 style: TextStyle(fontWeight: FontWeight.w600,color: Colors.black87),
               ),
-              subtitle: Text(
-                  'Posted on: ${announcements.clsName} \nPosted on: $formattedDate\n\n${announcements.description}',
-                  style: TextStyle(color: Colors.black54),
+              subtitle: RichText(
+                  text: new TextSpan(style: TextStyle(color: Colors.black54),
+                  children: <TextSpan>[
+                    new TextSpan(
+                      text: '${announcements.clsName}',
+                      style: TextStyle(),
+                    ),
+                    new TextSpan(
+                      text: '\n$formattedDate',
+                      style: TextStyle(),
+                    ),
+                    new TextSpan(
+                      text: '\n\n${announcements.description}',
+                      style: TextStyle(),
+                    ),
+                  ]
+                  )
                   ),
             ),
-            Divider(
-              color: Color(0xFF1ca5e5),
-            ),
-            Row(
+            SizedBox(height: 16,),
+            Container(
+            color: Color.fromRGBO(41, 60, 62, 0.15),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 new LikeButton(announcements: announcements, user: user),
@@ -234,6 +249,7 @@ Widget _buildListItem(
                           ),
               ],
             )
+            ),
           ],
         ),
       ),
