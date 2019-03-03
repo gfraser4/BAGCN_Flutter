@@ -12,8 +12,7 @@ import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 // import 'package:bagcndemo/Models/Users.dart';
 
 bool role;
-bool _isSearch = false;
-Icon _icon = Icon(Icons.search);
+bool _isSearch;
 TextEditingController searchValueController = new TextEditingController();
 String searchString = '';
 
@@ -32,6 +31,13 @@ class ClassAnnouncementPage extends StatefulWidget {
 
 //HOW PAGE IS BUILT
 class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
+
+  @override
+    void initState(){
+      super.initState();
+      _isSearch = false;
+    }
+
   @override
   Widget build(BuildContext context) {
     role = widget.isSuper;
@@ -40,7 +46,10 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
         appBar: AppBar(
           title: _isSearch? searchArea():Text(widget.title), //PAGE TITLE BASED ON title THAT WAS PASSED TO PAGE
           actions: <Widget>[
-          _searchButton()
+          IconButton(
+            icon: Icon(Icons.search),
+              onPressed: (){_search();}
+          )
         ],
         ),
         body: _buildBody(
@@ -53,6 +62,7 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
             ? FloatingActionButton(
                 child: Icon(Icons.create),
                 onPressed: () {
+                  _isSearch = false;
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -68,45 +78,34 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
         );
   }
 
-  //SEARCH BUTTON
-  IconButton _searchButton(){
+  //SEARCH METHOD
+  void _search(){
       if(!_isSearch)
-        return IconButton(
-          icon: _icon,
-          onPressed: (){
-            setState(() {
-              _isSearch = true;
-            });
-            _icon = Icon(Icons.find_in_page);
-          }
-        );
-      else
-        return IconButton(
-              icon: _icon,
-              onPressed: (){
-                searchString = searchValueController.text;
-                setState(() {
-                  _isSearch = false;
-                });
-                _icon = Icon(Icons.search);
-              },
-            );
+        setState(() {
+          _isSearch = true;
+        });
+      else{
+        searchString = searchValueController.text;
+        setState(() {
+          _isSearch = false;
+        });
+      }
     }
-
+    //SEARCH TEXT AREA
     Container searchArea(){
       return Container(
-              margin: const EdgeInsets.only(top:4),
-              child:TextField(
-              controller:searchValueController,
-              decoration: InputDecoration(
-                hintText: 'Search...',
-                filled: true,
-                fillColor: Colors.white,
-                border: InputBorder.none,
-              ),
-              autofocus: true,
-              ),
-            );
+        margin: const EdgeInsets.only(top:4),
+        child:TextField(
+        controller:searchValueController,
+        decoration: InputDecoration(
+          hintText: 'Search...',
+          filled: true,
+          fillColor: Colors.white,
+          border: InputBorder.none,
+        ),
+        autofocus: true,
+        ),
+      );
     }
 }
 
@@ -391,6 +390,7 @@ class CommentsButton extends StatelessWidget {
             icon: Icon(Icons.forum),
             color: Color(0xFF1ca5e5),
             onPressed: () {
+              _isSearch = false;
               Navigator.push(
                 context,
                 MaterialPageRoute(
