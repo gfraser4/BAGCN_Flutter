@@ -32,7 +32,7 @@ class _ReplyPage extends State<ReplyPage> {
       appBar: AppBar(
         title: Text('Reply'),
       ),
-      resizeToAvoidBottomPadding: false,
+      //resizeToAvoidBottomPadding: false,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
@@ -82,8 +82,8 @@ class _ReplyPage extends State<ReplyPage> {
                         SizedBox(height: 30.0),
                         TextFormField(
                           //initialValue: widget.comments.content,
-                          textInputAction: TextInputAction.done,
-                          focusNode: _descriptionFocus,
+                          //textInputAction: TextInputAction.done,
+                          //focusNode: _descriptionFocus,
                           validator: (input) {
                             if (input.isEmpty)
                               return 'Please enter a reply.';

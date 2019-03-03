@@ -32,7 +32,7 @@ class _EditCommentPage extends State<EditCommentPage> {
       appBar: AppBar(
         title: Text('Edit Comment'),
       ),
-      resizeToAvoidBottomPadding: false,
+      //resizeToAvoidBottomPadding: false,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
@@ -70,8 +70,8 @@ class _EditCommentPage extends State<EditCommentPage> {
                         SizedBox(height: 30.0),
                         TextFormField(
                           initialValue: widget.comments.content,
-                          textInputAction: TextInputAction.done,
-                          focusNode: _descriptionFocus,
+                          //textInputAction: TextInputAction.done,
+                          //focusNode: _descriptionFocus,
                           validator: (input) {
                             if (input.isEmpty)
                               return 'Please enter a comment.';

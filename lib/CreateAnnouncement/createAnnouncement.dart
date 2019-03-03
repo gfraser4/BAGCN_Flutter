@@ -32,7 +32,7 @@ class _AnnouncementPage extends State<AnnouncementPage> {
       appBar: AppBar(
         title: Text('Create Announcement'),
       ),
-      resizeToAvoidBottomPadding: false,
+      //resizeToAvoidBottomPadding: false,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
@@ -101,7 +101,7 @@ class _AnnouncementPage extends State<AnnouncementPage> {
                         ),
                         SizedBox(height: 30.0),
                         TextFormField(
-                          textInputAction: TextInputAction.done,
+                          //textInputAction: TextInputAction.done,
                           focusNode: _descriptionFocus,
                           validator: (input) {
                             if (input.isEmpty)
