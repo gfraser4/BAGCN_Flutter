@@ -211,7 +211,7 @@ Widget _buildListItem(
             ),
             SizedBox(height: 16,),
             Container(
-            color: Color.fromRGBO(41, 60, 62, 0.2),
+            color: Color.fromRGBO(41, 60, 62, 0.15),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
