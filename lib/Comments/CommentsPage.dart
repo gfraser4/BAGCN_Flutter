@@ -220,7 +220,9 @@ class CommentCard extends StatelessWidget {
             //Divider(color: Color(0xFF1ca5e5)),
             new BottomCommentArea(
                 formattedDate: formattedDate, comments: comments, user: user),
-            Divider(color: Color(0xFF1ca5e5),),
+            Divider(
+              color: Color(0xFF1ca5e5),
+            ),
             _buildRepliesBody(context, comments, user),
           ],
         ),
@@ -310,7 +312,6 @@ class TopCommentArea extends StatelessWidget {
         Container(
           padding: EdgeInsets.fromLTRB(10, 3, 10, 3),
           child: Row(
-            
             children: <Widget>[
               comments.visible
                   ? Chip(
@@ -323,8 +324,8 @@ class TopCommentArea extends StatelessWidget {
                               style: TextStyle(color: Colors.white))),
                       label: Text(
                         '${comments.firstName} ${comments.lastName}\n$formattedDate',
-                        maxLines: 2,
-                        //overflow: TextOverflow.ellipsis,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                             fontSize: 11, fontWeight: FontWeight.w600),
                       ),
@@ -350,14 +351,15 @@ class TopCommentArea extends StatelessWidget {
             ],
           ),
         ),
-        ListTile(
-          isThreeLine: false,
-          contentPadding: EdgeInsets.symmetric(vertical: 2, horizontal: 10),
-          title: comments.visible == true
-              ? Text('${comments.content}', style: TextStyle(color: Colors.black54, fontSize: 14))
+        Container(
+          padding: EdgeInsets.fromLTRB(10, 0, 0, 10),
+          child: comments.visible == true
+              ? Text('${comments.content}',
+                  style: TextStyle(color: Colors.black54, fontSize: 14))
               : Text('This comment has been hidden by a moderator.',
                   style: TextStyle(color: Colors.black54, fontSize: 14)),
-        ),
+        )
+
         //Divider(color: Color(0xFF1ca5e5))
       ],
     );
@@ -496,7 +498,6 @@ class ReplyCard extends StatelessWidget {
           Container(
             padding: EdgeInsets.fromLTRB(10, 3, 10, 3),
             child: Row(
-              
               children: <Widget>[
                 replies.visible
                     ? Chip(
@@ -536,29 +537,29 @@ class ReplyCard extends StatelessWidget {
               ],
             ),
           ),
-          ListTile(
-            isThreeLine: false,
-            contentPadding: EdgeInsets.symmetric(vertical: 2, horizontal: 10),
-            title: replies.visible == true
-                ? Text('${replies.content}', style: TextStyle(color: Colors.black54, fontSize: 14))
+          Container(
+            padding: EdgeInsets.fromLTRB(10, 0, 0, 10),
+            child: replies.visible == true
+                ? Text('${replies.content}',
+                    style: TextStyle(color: Colors.black54, fontSize: 14))
                 : Text('This comment has been hidden by a moderator.',
                     style: TextStyle(color: Colors.black54, fontSize: 14)),
           ),
           Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Row(
-                    children: <Widget>[
-                      replies.visible == true
-                          ? canEditReply(context, replies, user)
-                          : Text(''),
-                    ],
-                  ),
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: Row(
+                  children: <Widget>[
+                    replies.visible == true
+                        ? canEditReply(context, replies, user)
+                        : Text(''),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
           //Divider(color: Color(0xFF1ca5e5))
         ],
       ),
