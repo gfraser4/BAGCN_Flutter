@@ -12,6 +12,10 @@ import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 // import 'package:bagcndemo/Models/Users.dart';
 
 bool role;
+bool _isSearch = false;
+Icon _icon = Icon(Icons.search);
+TextEditingController searchValueController = new TextEditingController();
+String searchString = '';
 
 //ParentClassAnnouncementPage WIDGET - SHOWS ANNOUNCEMENTS FOR SPECIFIC CLASS --> REQUIRES A title AND code ARGURMENT PASSED TO IT
 class ClassAnnouncementPage extends StatefulWidget {
@@ -34,8 +38,10 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
     return Scaffold(
         // backgroundColor: Colors.grey[100],
         appBar: AppBar(
-          title: Text(
-              widget.title), //PAGE TITLE BASED ON title THAT WAS PASSED TO PAGE
+          title: _isSearch? searchArea():Text(widget.title), //PAGE TITLE BASED ON title THAT WAS PASSED TO PAGE
+          actions: <Widget>[
+          _searchButton()
+        ],
         ),
         body: _buildBody(
           context,
@@ -61,7 +67,50 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
             : null //HOW BODY IS BUILT PASSING CLASS title AND CLASS code to _buildBody() WIDGET FOR QUERY
         );
   }
+
+  //SEARCH BUTTON
+  IconButton _searchButton(){
+      if(!_isSearch)
+        return IconButton(
+          icon: _icon,
+          onPressed: (){
+            setState(() {
+              _isSearch = true;
+            });
+            _icon = Icon(Icons.find_in_page);
+          }
+        );
+      else
+        return IconButton(
+              icon: _icon,
+              onPressed: (){
+                searchString = searchValueController.text;
+                setState(() {
+                  _isSearch = false;
+                });
+                _icon = Icon(Icons.search);
+              },
+            );
+    }
+
+    Container searchArea(){
+      return Container(
+              margin: const EdgeInsets.only(top:4),
+              child:TextField(
+              controller:searchValueController,
+              decoration: InputDecoration(
+                hintText: 'Search...',
+                filled: true,
+                fillColor: Colors.white,
+                border: InputBorder.none,
+              ),
+              autofocus: true,
+              ),
+            );
+    }
 }
+
+
 
 //QUERY FIRESTORE FOR ALL ANNOUNCEMENTS FOR A CLASS --> WHERE CLAUSE SEARCHES FOR title OF CLASS AND code FOR CLASS
 Widget _buildBody(
@@ -98,6 +147,10 @@ Widget _buildListItem(
 //   Firestore.instance.collection('users').document(announcements.postedBy).get().then(
 //       (DocumentSnapshot doc) => print(doc.data['firstName'].toString()));
 // print(name);
+
+//filter body content by search string
+  // if(!(announcements.title.contains(searchString)||announcements.description.contains(searchString)))
+  //   return null;
 
 //supervisor Popup menu
   final supervisorMenu = AlertDialog(
