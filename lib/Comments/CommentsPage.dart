@@ -347,7 +347,7 @@ class TopCommentArea extends StatelessWidget {
                         toggleVisibility(data, comments.commentID);
                       },
                     )
-                  : null,
+                  : Text(''),
             ],
           ),
         ),
@@ -533,7 +533,7 @@ class ReplyCard extends StatelessWidget {
                           toggleReplyVisibility(data, replies.replyID);
                         },
                       )
-                    : null,
+                    : Text(''),
               ],
             ),
           ),
@@ -541,7 +541,7 @@ class ReplyCard extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(10, 0, 0, 10),
             child: replies.visible == true
                 ? Text('${replies.content}',
-                    style: TextStyle(color: Colors.black54, fontSize: 14))
+                    style: TextStyle(color: Colors.black54, fontSize: 14),)
                 : Text('This comment has been hidden by a moderator.',
                     style: TextStyle(color: Colors.black54, fontSize: 14)),
           ),
