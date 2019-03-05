@@ -4,6 +4,7 @@ import 'package:bagcndemo/MyClasses/myClasses.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 //FOCUSING
 final FocusNode _passwordFocus = FocusNode();
@@ -220,10 +221,25 @@ class _LoginPageState extends State<LoginPage> {
       );
   }
 
+Future<bool> checkRole(FirebaseUser user) async {
+    DocumentSnapshot snapshot = await Firestore.instance
+        .collection('users')
+        .document('${user.uid}')
+        .get();
+        print('doc got');
+    if (snapshot['role'] == 'super') {
+      return true;
+      
+    } else {
+      return false;
+    }
+  }
+
 
 //future waiting for database response
   Future<void> signIn() async {
     final formState = _formKey.currentState;
+    
     //validate fields
     if (formState.validate()) {
       //login to firebase
@@ -231,13 +247,14 @@ class _LoginPageState extends State<LoginPage> {
       try {
         FirebaseUser user = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: _email, password: _password);
-        //Navigate to home
-        //Navigator.pushReplacementNamed(context, '/');
-        Navigator.pushReplacement(
+
+bool isSuper = await checkRole(user);
+print(isSuper);
+
+        await Navigator.pushReplacement(
             context,
             new MaterialPageRoute(
-                builder: (BuildContext context) => new MyClassList(user)));
-        //Navigator.of(context).pop();
+                builder: (BuildContext context) => new MyClassList(user, isSuper)));
       } catch (ex) {
         setState(() {
           _validation = ex.message.toString();

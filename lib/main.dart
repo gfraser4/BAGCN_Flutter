@@ -14,7 +14,7 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 ///////////////////////////////////////////////////////////
 
 void main(){
-  runApp(
+  runApp( //MyApp()
     new DynamicTheme(
       defaultBrightness: Brightness.light,
       data: (brightness) => new ThemeData(

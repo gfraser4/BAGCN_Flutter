@@ -20,11 +20,12 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 //**MyClassList WIDGET - MY CLASSES PAGE CLASS -- HOW THE MAIN PAGE LOADS AND ITS CONTENT**\\
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-bool isSuper;
+//bool isSuper;
 
 class MyClassList extends StatefulWidget {
-  const MyClassList(this.user);
+  const MyClassList(this.user, this.isSuper);
   final FirebaseUser user;
+  final bool isSuper;
 
   @override
   _MyClassList createState() {
@@ -35,28 +36,28 @@ class MyClassList extends StatefulWidget {
 //LAYOUT OF MY CLASSES PAGE --> CALLS WIDGETS BELOW IT
 class _MyClassList extends State<MyClassList> {
 
-Future<bool> checkRole(FirebaseUser user) async {
-    DocumentSnapshot snapshot = await Firestore.instance
-        .collection('users')
-        .document('${user.uid}')
-        .get();
-        print('doc got');
-    if (snapshot['role'] == 'super') {
-      isSuper = true;
-      print('true!');
-      return isSuper;
+// Future<bool> checkRole(FirebaseUser user) async {
+//     DocumentSnapshot snapshot = await Firestore.instance
+//         .collection('users')
+//         .document('${user.uid}')
+//         .get();
+//         print('doc got');
+//     if (snapshot['role'] == 'super') {
+//       isSuper = true;
+//       print('true!');
+//       return isSuper;
       
-    } else {
-      isSuper = false;
-      print('false ?');
-      return isSuper;
-    }
-  }
+//     } else {
+//       isSuper = false;
+//       print('false ?');
+//       return isSuper;
+//     }
+//   }
 
   @override
   Widget build(BuildContext context) {
     try{
-checkRole(widget.user);
+//checkRole(widget.user);
     }
     catch(e)
     {
@@ -68,7 +69,7 @@ checkRole(widget.user);
           title:
               Text('My Classes ${widget.user.email}')), //PAGE APP BAR AND TITLE
       body: _buildBody(
-          context, widget.user), //PAGE CONTENT --> CALLING _buildBody WIDGET
+          context, widget.user, widget.isSuper), //PAGE CONTENT --> CALLING _buildBody WIDGET
       floatingActionButton: FloatingActionButton(
         //FLOATING ACTION BUTTON TO ADD CLASSES
         child: Icon(Icons.add),
@@ -199,7 +200,7 @@ Widget _navDrawer(BuildContext context, FirebaseUser user) {
 /////////////////////////////////////////////
 
 //QUERY FIRESTORE FOR ALL CLASSES FOR A USER --> currently using hardcoded userid 'lj@gmail.com' in where clause, this will need to be dynamic for userid
-Widget _buildBody(BuildContext context, FirebaseUser user) {
+Widget _buildBody(BuildContext context, FirebaseUser user, bool isSuper) {
   String userID = user.uid;
 
   return StreamBuilder<QuerySnapshot>(
@@ -211,25 +212,25 @@ Widget _buildBody(BuildContext context, FirebaseUser user) {
     builder: (context, snapshot) {
       if (!snapshot.hasData) return LinearProgressIndicator();
       //call to build map of database query --> see next widget
-      return _buildList(context, snapshot.data.documents, user);
+      return _buildList(context, snapshot.data.documents, user, isSuper);
     },
   );
 }
 
 //widget to build list of classes for user based on previous widget query
 Widget _buildList(
-    BuildContext context, List<DocumentSnapshot> snapshot, FirebaseUser user) {
+    BuildContext context, List<DocumentSnapshot> snapshot, FirebaseUser user, bool isSuper) {
   return ListView(
     padding: const EdgeInsets.only(top: 8.0),
     children:
-        snapshot.map((data) => _buildListItem(context, data, user)).toList(),
+        snapshot.map((data) => _buildListItem(context, data, user, isSuper)).toList(),
   );
 }
 
 //widget to build individual item for each class from original query
 
 Widget _buildListItem(
-    BuildContext context, DocumentSnapshot data, FirebaseUser user) {
+    BuildContext context, DocumentSnapshot data, FirebaseUser user, bool isSuper) {
       
   final classes = Classes.fromSnapshot(data);
   List<String> userID = ['${user.uid}'];
