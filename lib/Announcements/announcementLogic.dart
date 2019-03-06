@@ -1,9 +1,10 @@
-// import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 // import 'package:bagcndemo/Models/Users.dart';
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
+import 'package:bagcndemo/Announcements/announcementPage.dart';
 
 class AnnouncementLogic {
 //build announcement stream
@@ -84,7 +85,7 @@ class AnnouncementLogic {
     });
   }
 
-//Edit Comment
+//Edit Announcement
   static Future<void> editAnnouncement(FirebaseUser user, String title,
       String description, String announcementID) async {
     var editAnnouncement = Firestore.instance.collection('announcements').document(announcementID);
@@ -99,4 +100,5 @@ editAnnouncement.updateData({
         }
     
   }
+
 }

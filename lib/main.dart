@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:bagcndemo/Login/loginPage.dart';
 import "package:bagcndemo/Signup/signupPage.dart";
+import 'package:bagcndemo/AddClasses/addClassesPage.dart';
 
 //DYNAMIC CHANGE THEME
 import 'package:dynamic_theme/dynamic_theme.dart';
@@ -42,6 +43,7 @@ void main(){
             //'/main': (context) => MyClassList(),
             '/': (context) => LoginPage(),
             '/signup': (context) => SignUpPage(),
+            //'/addClasses': (context) => 
           },
         );
       }

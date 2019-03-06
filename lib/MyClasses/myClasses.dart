@@ -4,24 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 //IMPORT OTHER PAGES SO CAN BE NAVIGATED TO
-import 'package:bagcndemo/About/aboutPage.dart';
-import 'package:bagcndemo/AddClasses/addClassesPage.dart';
-import 'package:bagcndemo/Settings/settingsPage.dart';
-import 'package:bagcndemo/Announcements/announcementPage.dart';
 import 'package:bagcndemo/MyClasses/myClassesLogic.dart';
+import 'package:bagcndemo/MyClasses/navDrawer.dart';
 
 //Imported Models
 import 'package:bagcndemo/Models/ClassesModel.dart';
 
-//DYNAMIC CHANGE THEME
-import 'package:dynamic_theme/dynamic_theme.dart';
-
 ////////////////////////////////////////////////////////////////////////////////////////////
 //**MyClassList WIDGET - MY CLASSES PAGE CLASS -- HOW THE MAIN PAGE LOADS AND ITS CONTENT**\\
 ////////////////////////////////////////////////////////////////////////////////////////////
-
-//bool isSuper;
-
 class MyClassList extends StatefulWidget {
   const MyClassList(this.user, this.isSuper);
   final FirebaseUser user;
@@ -35,168 +26,35 @@ class MyClassList extends StatefulWidget {
 
 //LAYOUT OF MY CLASSES PAGE --> CALLS WIDGETS BELOW IT
 class _MyClassList extends State<MyClassList> {
-
-// Future<bool> checkRole(FirebaseUser user) async {
-//     DocumentSnapshot snapshot = await Firestore.instance
-//         .collection('users')
-//         .document('${user.uid}')
-//         .get();
-//         print('doc got');
-//     if (snapshot['role'] == 'super') {
-//       isSuper = true;
-//       print('true!');
-//       return isSuper;
-      
-//     } else {
-//       isSuper = false;
-//       print('false ?');
-//       return isSuper;
-//     }
-//   }
-
   @override
   Widget build(BuildContext context) {
-    try{
-//checkRole(widget.user);
-    }
-    catch(e)
-    {
-      print(e.toString());
-    }
     return Scaffold(
-      // backgroundColor: Color(0xFFF4F5F7), //PAGE BACKGROUND COLOUR
       appBar: AppBar(
           title:
               Text('My Classes ${widget.user.email}')), //PAGE APP BAR AND TITLE
-      body: _buildBody(
-          context, widget.user, widget.isSuper), //PAGE CONTENT --> CALLING _buildBody WIDGET
+      body: _buildBody(context, widget.user,
+          widget.isSuper), //PAGE CONTENT --> CALLING _buildBody WIDGET
       floatingActionButton: FloatingActionButton(
         //FLOATING ACTION BUTTON TO ADD CLASSES
         child: Icon(Icons.add),
         onPressed: () {
+          if (!widget.isSuper) {
+            MyClassesLogic.navToJoinClasses(context, widget.user);
+          } else {
+            MyClassesLogic.navToAddClasses(context, widget.user);
+          }
+
           //BUTTON PRESSED EVENT --> NAVIGATES TO AddClassesPAGE()
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => AddClassesPage(widget.user)),
-          );
         },
       ),
-      drawer: _navDrawer(context,
-          widget.user), //BUILDS MENU DRAWER BY CALLING _navDrawer WIDGET
+      drawer: navDrawer(context, widget.user,
+          widget.isSuper), //BUILDS MENU DRAWER BY CALLING navDrawer WIDGET
     );
   }
 }
-///////////////////////////////////
-//**HAMBURGER DRAWER MENU WIDGET**\\
-////////////////////////////////////
-
-Widget _navDrawer(BuildContext context, FirebaseUser user) {
-  return Drawer(
-    elevation: 50,
-    child: Container(
-      // color: Color(0xFFF4F5F7),
-      child: ListView(
-        // Important: Remove any padding from the ListView.
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          DrawerHeader(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 50.0, vertical: 8.0),
-            child: Image.asset(
-              'assets/BGC_Niagara_logo.png',
-            ),
-            decoration: BoxDecoration(
-              boxShadow: [
-                new BoxShadow(
-                  color: Colors.grey,
-                  blurRadius: 5.0, // has the effect of softening the shadow
-                  spreadRadius: 0.7, // has the effect of extending the shadow
-                  offset: Offset(
-                    -1.0, // horizontal, move right 10
-                    1.0, // vertical, move down 10
-                  ),
-                ),
-              ],
-              color: Colors.white,
-            ),
-          ),
-          Divider(
-            color: Color.fromRGBO(123, 193, 67, 1),
-          ),
-          ListTile(
-            leading:
-                Icon(Icons.settings, color: Color.fromRGBO(28, 165, 229, 1)),
-            title: Text('Manage Classes'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AddClassesPage(user)),
-              );
-            },
-          ),
-          Divider(
-            color: Color.fromRGBO(123, 193, 67, 1),
-          ),
-          ListTile(
-            leading: Icon(Icons.account_circle,
-                color: Color.fromRGBO(28, 165, 229, 1)),
-            title: Text('Profile Settings'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SettingsPage()),
-              );
-            },
-          ),
-          Divider(
-            color: Color.fromRGBO(123, 193, 67, 1),
-          ),
-          ListTile(
-            leading: Icon(Icons.info, color: Color.fromRGBO(28, 165, 229, 1)),
-            title: Text('About'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AboutPage()),
-              );
-            },
-          ),
-          Divider(
-            color: Color.fromRGBO(123, 193, 67, 1),
-          ),
-          ListTile(
-            leading: Icon(Icons.lightbulb_outline, color: Color.fromRGBO(28, 165, 229, 1),),
-            title: Text('Dark Mode'),
-            trailing: Checkbox(value:Theme.of(context).brightness == Brightness.dark? true: false,activeColor: Color.fromRGBO(123, 193, 67, 1),onChanged: (bool){
-                DynamicTheme.of(context).setBrightness(Theme.of(context).brightness == Brightness.dark? Brightness.light: Brightness.dark);
-              },
-            ),
-          ),
-          Divider(
-            color: Color.fromRGBO(123, 193, 67, 1),
-          ),
-          ListTile(
-            leading:
-                Icon(Icons.exit_to_app, color: Color.fromRGBO(28, 165, 229, 1)),
-            title: Text('Sign Out'),
-            onTap: () {
-              FirebaseAuth.instance.signOut();
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil("/", ModalRoute.withName("/"));
-            },
-          ),
-          Divider(
-            color: Color.fromRGBO(123, 193, 67, 1),
-          ),
-        ],
-      ),
-    ),
-  );
-}
 
 //////////////////////////////////////////////
-/*MAIN PAGE BUSINESS LOGIC */
+/*MAIN PAGE Build Sequence*/
 /////////////////////////////////////////////
 
 //QUERY FIRESTORE FOR ALL CLASSES FOR A USER --> currently using hardcoded userid 'lj@gmail.com' in where clause, this will need to be dynamic for userid
@@ -204,11 +62,17 @@ Widget _buildBody(BuildContext context, FirebaseUser user, bool isSuper) {
   String userID = user.uid;
 
   return StreamBuilder<QuerySnapshot>(
-    stream: Firestore.instance
-        .collection('class')
-        .where('enrolledUsers', arrayContains: userID)
-        //.orderBy('clsName')
-        .snapshots(),
+    stream: isSuper == true
+        ? Firestore.instance
+            .collection('class')
+            .where('supervisors', arrayContains: userID)
+            //.orderBy('clsName')
+            .snapshots()
+        : Firestore.instance
+            .collection('class')
+            .where('enrolledUsers', arrayContains: userID)
+            //.orderBy('clsName')
+            .snapshots(),
     builder: (context, snapshot) {
       if (!snapshot.hasData) return LinearProgressIndicator();
       //call to build map of database query --> see next widget
@@ -217,21 +81,20 @@ Widget _buildBody(BuildContext context, FirebaseUser user, bool isSuper) {
   );
 }
 
-//widget to build list of classes for user based on previous widget query
-Widget _buildList(
-    BuildContext context, List<DocumentSnapshot> snapshot, FirebaseUser user, bool isSuper) {
+// Widget to build list of classes for user based on previous widget query
+Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot,
+    FirebaseUser user, bool isSuper) {
   return ListView(
     padding: const EdgeInsets.only(top: 8.0),
-    children:
-        snapshot.map((data) => _buildListItem(context, data, user, isSuper)).toList(),
+    children: snapshot
+        .map((data) => _buildListItem(context, data, user, isSuper))
+        .toList(),
   );
 }
 
-//widget to build individual item for each class from original query
-
-Widget _buildListItem(
-    BuildContext context, DocumentSnapshot data, FirebaseUser user, bool isSuper) {
-      
+// Widget to build individual item for each class from original query
+Widget _buildListItem(BuildContext context, DocumentSnapshot data,
+    FirebaseUser user, bool isSuper) {
   final classes = Classes.fromSnapshot(data);
   List<String> userID = ['${user.uid}'];
   return Column(
@@ -251,164 +114,133 @@ Widget _buildListItem(
         ),
         child: Column(
           children: <Widget>[
-            ListTile(
-                contentPadding: const EdgeInsets.fromLTRB(5, 5, 2, 5),
-                title: Text('${classes.clsName} - ${classes.code}',
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: Color.fromRGBO(41, 60, 62, 1))),
-                subtitle: RichText(
-                  text: new TextSpan(
-                    // Note: Styles for TextSpans must be explicitly defined.
-                    // Child text spans will inherit styles from parent
-                    style: new TextStyle(
-                      fontSize: 14.0,
-                      color: Color.fromRGBO(41, 60, 62, 1).withAlpha(180),
-                    ),
-                    children: <TextSpan>[
-                      new TextSpan(
-                          text: 'Dates: ',
-                          style: new TextStyle(fontWeight: FontWeight.bold)),
-                      new TextSpan(text: '${classes.dates}'),
-                      new TextSpan(
-                          text: '\nTimes: ',
-                          style: new TextStyle(fontWeight: FontWeight.bold)),
-                      new TextSpan(text: '${classes.times}'),
-                      new TextSpan(
-                          text: '\nLocation: ',
-                          style: new TextStyle(fontWeight: FontWeight.bold)),
-                      new TextSpan(text: '${classes.location}'),
-                    ],
-                  ),
-                ),
-                leading: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          classes.notifyUsers.contains(user.uid) == true ? IconButton(
-                            icon: Icon(Icons.notifications_active),
-                            color: Color(0xFF1ca5e5),
-                            onPressed: () {
-                              MyClassesLogic.notifyClick(
-                  user, classes);
-                            },
-                          ) : IconButton(
-                            icon: Icon(Icons.notifications_off),
-                            color: Colors.grey,
-                            onPressed: () {
-                              MyClassesLogic.notifyClick(
-                  user, classes);
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            color: Colors.grey,
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text(
-                                      'Remove Class?',
-                                      style: TextStyle(
-                                          fontSize: 30,
-                                          fontStyle: FontStyle.normal,
-                                          color:
-                                              Color.fromRGBO(0, 162, 162, 1)),
-                                    ),
-                                    content: Text(
-                                        'Are you sure you want to remove ${classes.clsName} - ${classes.code} from your class list?'),
-                                    actions: <Widget>[
-                                      FlatButton(
-                                        child: Text("Cancel"),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                      FlatButton(
-                                        child: Text("Accept"),
-                                        onPressed: () {
-                                          classes.reference.updateData({
-                                            "enrolledUsers":
-                                                FieldValue.arrayRemove(userID)
-                                          });
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                trailing: IconButton(
-                  padding: EdgeInsets.all(0),
-                  icon: Icon(Icons.chevron_right),
-                  color: Color(0xFF1ca5e5),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ClassAnnouncementPage(
-                            classes.clsName, classes.code, user, isSuper),
-                      ), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE
-                    );
-                    //checkRole(context, user, classes.code, classes.clsName);
-                  },
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ClassAnnouncementPage(
-                          classes.clsName, classes.code, user, isSuper),
-                    ), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE
-                  );
-
-                  //checkRole(context, user, classes.code, classes.clsName);
-                }),
+            new ClassTileWidget(
+                classes: classes, userID: userID, user: user, isSuper: isSuper),
           ],
         ),
       ),
     ],
     key: ValueKey(classes.clsName),
-    // padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
   );
 }
 
-////////////////////////
-//**CHECK ROLE METHOD**\\
-////////////////////////
+// Individual class tile widget layout
+class ClassTileWidget extends StatelessWidget {
+  const ClassTileWidget({
+    Key key,
+    @required this.classes,
+    @required this.userID,
+    @required this.user,
+    @required this.isSuper,
+  }) : super(key: key);
 
-//future waiting for database response --> check role and send to right page depending on it
-// Future<void> checkRole(BuildContext context, FirebaseUser user, int classCode,
-//     String className) async {
-//   DocumentSnapshot snapshot = await Firestore.instance
-//       .collection('users')
-//       .document('${user.uid}')
-//       .get();
-//   if (snapshot['role'] == 'super') {
-//     Navigator.push(
-//       context,
-//       MaterialPageRoute(
-//         builder: (context) => SuperClassAnnouncementPage(className, classCode, user),
-//       ), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE
-//     );
-//   } else {
-//     Navigator.push(
-//       context,
-//       MaterialPageRoute(
-//         builder: (context) =>
-//             ParentClassAnnouncementPage(className, classCode, user),
-//       ), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE
-//     );
-//   }
-// }
+  final Classes classes;
+  final List<String> userID;
+  final FirebaseUser user;
+  final bool isSuper;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: const EdgeInsets.fromLTRB(5, 5, 2, 5),
+      title: Text('${classes.clsName} - ${classes.code}',
+          style: TextStyle(
+              fontWeight: FontWeight.w700,
+              color: Color.fromRGBO(41, 60, 62, 1))),
+      subtitle: RichText(
+        text: new TextSpan(
+          // Note: Styles for TextSpans must be explicitly defined.
+          // Child text spans will inherit styles from parent
+          style: new TextStyle(
+            fontSize: 14.0,
+            color: Color.fromRGBO(41, 60, 62, 1).withAlpha(180),
+          ),
+          children: <TextSpan>[
+            new TextSpan(
+                text: 'Dates: ',
+                style: new TextStyle(fontWeight: FontWeight.bold)),
+            new TextSpan(text: '${classes.dates}'),
+            new TextSpan(
+                text: '\nTimes: ',
+                style: new TextStyle(fontWeight: FontWeight.bold)),
+            new TextSpan(text: '${classes.times}'),
+            new TextSpan(
+                text: '\nLocation: ',
+                style: new TextStyle(fontWeight: FontWeight.bold)),
+            new TextSpan(text: '${classes.location}'),
+          ],
+        ),
+      ),
+      leading: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                MyClassesLogic.notifyButtonRender(user, classes),
+                IconButton(
+                  icon: Icon(Icons.delete),
+                  color: Colors.grey,
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text(
+                            'Remove Class?',
+                            style: TextStyle(
+                                fontSize: 30,
+                                fontStyle: FontStyle.normal,
+                                color: Color.fromRGBO(0, 162, 162, 1)),
+                          ),
+                          content: Text(
+                              'Are you sure you want to remove ${classes.clsName} - ${classes.code} from your class list?'),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text("Cancel"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            FlatButton(
+                              child: Text("Accept"),
+                              onPressed: () {
+                                isSuper
+                                    ? classes.reference.updateData({
+                                        "supervisors":
+                                            FieldValue.arrayRemove(userID),
+                                        "passcode": ""
+                                      })
+                                    : classes.reference.updateData({
+                                        "enrolledUsers":
+                                            FieldValue.arrayRemove(userID)
+                                      });
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      trailing: IconButton(
+        padding: EdgeInsets.all(0),
+        icon: Icon(Icons.chevron_right),
+        color: Color(0xFF1ca5e5),
+        onPressed: () {
+          MyClassesLogic.navToAnnouncements(context, user, classes, isSuper);
+        },
+      ),
+      onTap: () {
+        MyClassesLogic.navToAnnouncements(context, user, classes, isSuper);
+      },
+    );
+  }
+}
