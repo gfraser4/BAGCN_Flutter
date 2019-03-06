@@ -38,12 +38,17 @@ class _MyClassList extends State<MyClassList> {
         //FLOATING ACTION BUTTON TO ADD CLASSES
         child: Icon(Icons.add),
         onPressed: () {
-          MyClassesLogic.navToAddClasses(context, widget.user);
+          if (!widget.isSuper) {
+            MyClassesLogic.navToJoinClasses(context, widget.user);
+          } else {
+            MyClassesLogic.navToAddClasses(context, widget.user);
+          }
+
           //BUTTON PRESSED EVENT --> NAVIGATES TO AddClassesPAGE()
         },
       ),
-      drawer: navDrawer(context,
-          widget.user), //BUILDS MENU DRAWER BY CALLING navDrawer WIDGET
+      drawer: navDrawer(context, widget.user,
+          widget.isSuper), //BUILDS MENU DRAWER BY CALLING navDrawer WIDGET
     );
   }
 }
@@ -57,11 +62,17 @@ Widget _buildBody(BuildContext context, FirebaseUser user, bool isSuper) {
   String userID = user.uid;
 
   return StreamBuilder<QuerySnapshot>(
-    stream: Firestore.instance
-        .collection('class')
-        .where('enrolledUsers', arrayContains: userID)
-        //.orderBy('clsName')
-        .snapshots(),
+    stream: isSuper == true
+        ? Firestore.instance
+            .collection('class')
+            .where('supervisors', arrayContains: userID)
+            //.orderBy('clsName')
+            .snapshots()
+        : Firestore.instance
+            .collection('class')
+            .where('enrolledUsers', arrayContains: userID)
+            //.orderBy('clsName')
+            .snapshots(),
     builder: (context, snapshot) {
       if (!snapshot.hasData) return LinearProgressIndicator();
       //call to build map of database query --> see next widget
@@ -195,10 +206,16 @@ class ClassTileWidget extends StatelessWidget {
                             FlatButton(
                               child: Text("Accept"),
                               onPressed: () {
-                                classes.reference.updateData({
-                                  "enrolledUsers":
-                                      FieldValue.arrayRemove(userID)
-                                });
+                                isSuper
+                                    ? classes.reference.updateData({
+                                        "supervisors":
+                                            FieldValue.arrayRemove(userID),
+                                        "passcode": ""
+                                      })
+                                    : classes.reference.updateData({
+                                        "enrolledUsers":
+                                            FieldValue.arrayRemove(userID)
+                                      });
                                 Navigator.of(context).pop();
                               },
                             ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'package:bagcndemo/AddClasses/joinClassesPage.dart';
 import 'package:bagcndemo/Announcements/announcementPage.dart';
 import 'package:bagcndemo/AddClasses/addClassesPage.dart';
 import 'package:bagcndemo/Models/ClassesModel.dart';
@@ -25,11 +26,19 @@ class MyClassesLogic {
     });
   }
 
-  // Nav to add classes page
+  // Nav to add classes page for supervisors
   static void navToAddClasses(BuildContext context, FirebaseUser user) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => AddClassesPage(user)),
+    );
+  }
+
+  // Nav to add classes page for parents
+  static void navToJoinClasses(BuildContext context, FirebaseUser user) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => JoinClassesPage(user)),
     );
   }
 

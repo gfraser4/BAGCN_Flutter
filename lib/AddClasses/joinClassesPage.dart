@@ -7,31 +7,30 @@ import 'package:bagcndemo/AddClasses/addClassesLogic.dart';
 import 'package:bagcndemo/Models/ClassesModel.dart';
 
 String _search = '';
-String _passcode;
 
 //SEARCH AND ADD CLASSES PAGE
-class AddClassesPage extends StatefulWidget {
-  const AddClassesPage(this.user);
+class JoinClassesPage extends StatefulWidget {
+  const JoinClassesPage(this.user);
   final FirebaseUser user;
 
   @override
-  _AddClassesPage createState() {
-    return _AddClassesPage();
+  _JoinClassesPage createState() {
+    return _JoinClassesPage();
   }
 }
 
-class _AddClassesPage extends State<AddClassesPage> {
+class _JoinClassesPage extends State<JoinClassesPage> {
   final _searchController =
       new TextEditingController(); //VAR TO HOLD CLASSNAME INPUT
   // final _classCodeController = new TextEditingController(); //VAR TO HOLD CLASSCODE INPUT
   Icon _searchIcon = new Icon(Icons.search);
   Widget _appBarTitle = new Text('Search Classes');
 
-
-  var stream = Firestore.instance
-      .collection('class')
-      .orderBy('clsName')
-      .snapshots(); //DEFAULT QUERY TO LIST ALL CLASSES IN DATABASE
+  // var stream = Firestore.instance
+  //     .collection('class')
+  //     .where('isActive', isEqualTo: true)
+  //     .orderBy('clsName')
+  //     .snapshots(); 
 
   @override
   Widget build(BuildContext context) {
@@ -87,21 +86,23 @@ class _AddClassesPage extends State<AddClassesPage> {
 //*********** page scaffold *****************\\
 //********************************************\\
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
       backgroundColor: Color.fromRGBO(28, 165, 229, 1),
       appBar: _buildBar(context),
       body: _buildBody(
         context,
-        stream,
         widget.user,
       ), //SEARCH RESULTS AREA IS BUILT PASSING DYNAMIC QUERY(stream)
     );
   }
 
 //Search querey dynamic based on search criteria
-  Widget _buildBody(BuildContext context, var stream, FirebaseUser user) {
+  Widget _buildBody(BuildContext context, FirebaseUser user) {
     return StreamBuilder<QuerySnapshot>(
-      stream: stream, //QUERY (stream) WILL BE DEPENDENT ON SEARCH FIELDS
+      stream: Firestore.instance
+      .collection('class')
+      .where('isActive', isEqualTo: true)
+      //.orderBy('clsName')
+      .snapshots(), //QUERY (stream) WILL BE DEPENDENT ON SEARCH FIELDS
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
         return _buildList(context, snapshot.data.documents, user);
@@ -156,8 +157,8 @@ class ClassCard extends StatelessWidget {
       child: ListTile(
         title: Text(classes.clsName),
         subtitle: Text('Course Code: ${classes.code}'),
-        trailing: classes.supervisors.contains(user.uid) == false
-            ? new OpenButton(classes: classes, userID: userID)
+        trailing: classes.enrolledUsers.contains(user.uid) == false
+            ? new JoinButton(classes: classes, userID: userID)
             : new RemoveButton(classes: classes, userID: userID),
       ),
     );
@@ -180,7 +181,7 @@ class RemoveButton extends StatelessWidget {
     return RaisedButton(
       color: Colors.redAccent,
       child: Text(
-        'CLOSE',
+        'REMOVE',
         style: TextStyle(color: Colors.white),
       ),
       onPressed: () {
@@ -189,7 +190,7 @@ class RemoveButton extends StatelessWidget {
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text(
-                'Close Class?',
+                'Remove Class?',
                 style: TextStyle(
                   fontSize: 30,
                   fontStyle: FontStyle.normal,
@@ -197,7 +198,7 @@ class RemoveButton extends StatelessWidget {
                 ),
               ),
               content: Text(
-                  'Are you sure you want to close ${classes.clsName} - ${classes.code} from your class list?'),
+                  'Are you sure you want to remove ${classes.clsName} - ${classes.code} from your class list?'),
               actions: <Widget>[
                 FlatButton(
                   child: Text("Cancel"),
@@ -220,9 +221,9 @@ class RemoveButton extends StatelessWidget {
   }
 }
 
-//Open Button
-class OpenButton extends StatelessWidget {
-  const OpenButton({
+//Join Button
+class JoinButton extends StatelessWidget {
+  const JoinButton({
     Key key,
     @required this.classes,
     @required this.userID,
@@ -233,12 +234,10 @@ class OpenButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-     final FocusNode _passcodeFocus = FocusNode();
     return RaisedButton(
       color: Color.fromRGBO(123, 193, 67, 1),
       child: Text(
-        'OPEN',
+        'JOIN',
         style: TextStyle(color: Colors.white),
       ),
       onPressed: () {
@@ -247,7 +246,7 @@ class OpenButton extends StatelessWidget {
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text(
-                'Open Class?',
+                'Add Class?',
                 style: TextStyle(
                   fontSize: 30,
                   fontStyle: FontStyle.normal,
@@ -255,7 +254,7 @@ class OpenButton extends StatelessWidget {
                 ),
               ),
               content: Text(
-                  'Are you sure you want to open ${classes.clsName} - ${classes.code}?\n\nAs the program supervisor you will be responsible for mainatining announcements and parent enrollment within this application.'),
+                  'Are you sure you want to add ${classes.clsName} - ${classes.code} to your class list?'),
               actions: <Widget>[
                 FlatButton(
                   child: Text("Cancel"),
@@ -264,100 +263,9 @@ class OpenButton extends StatelessWidget {
                   },
                 ),
                 FlatButton(
-                  child: Text("Yes"),
+                  child: Text("Add Class"),
                   onPressed: () {
-                  
-
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text(
-                            'Create passcode for ${classes.clsName} - ${classes.code}',
-                            style: TextStyle(
-                              fontSize: 30,
-                              fontStyle: FontStyle.normal,
-                              color: Color.fromRGBO(0, 162, 162, 1),
-                            ),
-                          ),
-                          content: Container(
-                            width: 300,
-                            child: Form(
-                              key: _formKey,
-                              child: ListView(
-                                shrinkWrap: true,
-                                children: <Widget>[
-                                  Text(
-                                      "This code will be used to help prevent unregistered people from accessing this class and it's content."),
-                                  SizedBox(height: 30.0),
-                                  Text(
-                                      "It is critical that this code is only shared with registered parents of this class."),
-                                  SizedBox(height: 30.0),
-                                  TextFormField(
-                                    validator: (input) {
-                                      if (input.length < 6)
-                                        return 'The passcode needs to be at least 6 characters.';
-                                    },
-                                    textInputAction: TextInputAction.done,
-                                    focusNode: _passcodeFocus,
-                                    // initialValue:_password,
-                                    onSaved: (input) => _passcode = input,
-                                    autofocus: false,
-                                    //initialValue: 'password',
-                                    obscureText: true,
-                                    style: TextStyle(color: Colors.black),
-                                    decoration: InputDecoration(
-                                      fillColor: Colors.white,
-                                      filled: true,
-                                      labelText: 'Passcode',
-                                      prefixIcon: Icon(
-                                        Icons.lock,
-                                        color: Color.fromRGBO(123, 193, 67, 1),
-                                      ),
-                                      //hintText: 'Password',
-                                      contentPadding: EdgeInsets.fromLTRB(
-                                          25.0, 15.0, 20.0, 15.0),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20.0),
-                                          borderSide: BorderSide(
-                                            color:
-                                                Color.fromRGBO(123, 193, 67, 1),
-                                            width: 2,
-                                          )),
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20.0)),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text("Cancel"),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                            FlatButton(
-                              child: Text("Create code"),
-                              onPressed: () {
-                                final formState = _formKey.currentState;
-                            if (formState.validate()) {
-                              //login to firebase
-                              formState.save();
-                                ClassMGMTLogic.openClass(
-                                    context, classes, userID, _passcode.trim());
-                            }
-                                
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    );
+                    ClassMGMTLogic.addClass(context, classes, userID);
                   },
                 ),
               ],

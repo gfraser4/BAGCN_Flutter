@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:validators/validators.dart';
 
 //IMPORT OTHER PAGES SO CAN BE NAVIGATED TO
 import 'package:bagcndemo/About/aboutPage.dart';
 import 'package:bagcndemo/AddClasses/addClassesPage.dart';
 import 'package:bagcndemo/Settings/settingsPage.dart';
+import "package:bagcndemo/MyClasses/myClassesLogic.dart";
 
 //DYNAMIC CHANGE THEME
 import 'package:dynamic_theme/dynamic_theme.dart';
@@ -14,7 +16,7 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 //**HAMBURGER DRAWER MENU WIDGET**\\
 ////////////////////////////////////
 
-Widget navDrawer(BuildContext context, FirebaseUser user) {
+Widget navDrawer(BuildContext context, FirebaseUser user, bool isSuper) {
   return Drawer(
     elevation: 50,
     child: Container(
@@ -47,15 +49,20 @@ Widget navDrawer(BuildContext context, FirebaseUser user) {
           Divider(
             color: Color.fromRGBO(123, 193, 67, 1),
           ),
+          isSuper == true ?  //&& matches(user.email, '@bagcn.com') 
           ListTile(
             leading:
                 Icon(Icons.settings, color: Color.fromRGBO(28, 165, 229, 1)),
             title: Text('Manage Classes'),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AddClassesPage(user)),
-              );
+              MyClassesLogic.navToAddClasses(context, user);
+            },
+          ) : ListTile(
+            leading:
+                Icon(Icons.settings, color: Color.fromRGBO(28, 165, 229, 1)),
+            title: Text('Join Classes'),
+            onTap: () {
+              MyClassesLogic.navToJoinClasses(context, user);
             },
           ),
           Divider(
