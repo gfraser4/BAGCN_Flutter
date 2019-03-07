@@ -320,7 +320,7 @@ class TopCommentArea extends StatelessWidget {
               comments.visible
                   ? Chip(
                       //padding must be 0 or two letters can be too big
-                      padding: EdgeInsets.all(0),
+                      padding: EdgeInsets.all(4),
                       avatar: CircleAvatar(
                           backgroundColor: hexToColor(comments.profileColor),
                           child: Text(
@@ -331,9 +331,9 @@ class TopCommentArea extends StatelessWidget {
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                            fontSize: 11, fontWeight: FontWeight.w600),
+                            fontSize: 11, fontWeight: FontWeight.w600, color: Colors.white),
                       ),
-                      backgroundColor: Colors.lightBlue[100],
+                      backgroundColor: CustomColors.bagcTeal,
                     )
                   : Text(
                       'Hidden',
@@ -356,7 +356,7 @@ class TopCommentArea extends StatelessWidget {
           ),
         ),
         Container(
-          padding: EdgeInsets.fromLTRB(10, 0, 0, 10),
+          padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
           child: comments.visible == true
               ? Text('${comments.content}',
                   style: TextStyle(color: Colors.black54, fontSize: 14))
@@ -462,7 +462,7 @@ Widget _buildRepliesListItem(
 
   return Padding(
     //key: ValueKey(replies.parentCommentID),
-    padding: const EdgeInsets.only(left: 20.0),
+    padding: const EdgeInsets.only(left: 10, right: 10),
     child: new ReplyCard(
         replies: replies, formattedDate: formattedDate, data: data, user: user),
   );
