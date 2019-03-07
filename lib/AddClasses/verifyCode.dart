@@ -7,6 +7,7 @@ import 'package:bagcndemo/AddClasses/addClassesLogic.dart';
 import 'package:bagcndemo/Models/ClassesModel.dart';
 
 String _search = '';
+String _passcode;
 
 //SEARCH AND ADD CLASSES PAGE
 class VerifyCodePage extends StatefulWidget {
@@ -158,133 +159,108 @@ class ClassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    final FocusNode _passcodeFocus = FocusNode();
     return Card(
       // color: Color(0xFFF4F5F7),
       elevation: 5.0,
       child: ListTile(
         title: Text(classes.clsName),
         subtitle: Text('Course Code: ${classes.code}'),
-        // trailing: 
-        // classes.enrolledUsers.contains(user.uid) == false
-        //     ? new JoinButton(classes: classes, userID: userID, user: user)
-        //     : new RemoveButton(classes: classes, userID: userID, user: user),
+        trailing: RaisedButton(
+            color: Color.fromRGBO(123, 193, 67, 1),
+            child: Text(
+              'VERIFY',
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text(
+                      'Verify Class Code',
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontStyle: FontStyle.normal,
+                        color: Color.fromRGBO(0, 162, 162, 1),
+                      ),
+                    ),
+                    content: Container(
+                      width: 300,
+                      child: Form(
+                        key: _formKey,
+                        child: ListView(
+                          shrinkWrap: true,
+                          children: <Widget>[
+                            Text(
+                                "Enter code you recieved by email to acces class."),
+                            SizedBox(height: 30.0),
+                            TextFormField(
+                              validator: (input) {
+                                if (input != classes.passcode)
+                                  return 'Incorrect passcode.';
+                              },
+                              textInputAction: TextInputAction.done,
+                              focusNode: _passcodeFocus,
+                              // initialValue:_password,
+                              onSaved: (input) => _passcode = input,
+                              autofocus: false,
+                              //initialValue: 'password',
+                              obscureText: true,
+                              style: TextStyle(color: Colors.black),
+                              decoration: InputDecoration(
+                                fillColor: Colors.white,
+                                filled: true,
+                                labelText: 'Passcode',
+                                prefixIcon: Icon(
+                                  Icons.lock,
+                                  color: Color.fromRGBO(123, 193, 67, 1),
+                                ),
+                                //hintText: 'Password',
+                                contentPadding:
+                                    EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  borderSide: BorderSide(
+                                    color: Color.fromRGBO(123, 193, 67, 1),
+                                    width: 2,
+                                  ),
+                                ),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(20.0)),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text("Cancel"),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      FlatButton(
+                        child: Text("Yes"),
+                        onPressed: () {
+                          final formState = _formKey.currentState;
+                          if (formState.validate()) {
+                            //login to firebase
+                            formState.save();
+                            if (_passcode == classes.passcode) {
+                              ClassMGMTLogic.addClassEnrolled(context, classes, userID, user);
+                            }
+                          }
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            }),
       ),
-    );
-  }
-}
-
-//Remove Button
-class RemoveButton extends StatelessWidget {
-  const RemoveButton({
-    Key key,
-    @required this.classes,
-    @required this.userID,
-    @required this.user,
-  }) : super(key: key);
-
-  final Classes classes;
-  final List<String> userID;
-  final FirebaseUser user;
-
-  @override
-  Widget build(BuildContext context) {
-    return RaisedButton(
-      color: Colors.redAccent,
-      child: Text(
-        'REMOVE',
-        style: TextStyle(color: Colors.white),
-      ),
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(
-                'Remove Class?',
-                style: TextStyle(
-                  fontSize: 30,
-                  fontStyle: FontStyle.normal,
-                  color: Color.fromRGBO(0, 162, 162, 1),
-                ),
-              ),
-              content: Text(
-                  'Are you sure you want to remove ${classes.clsName} - ${classes.code} from your class list?'),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text("Cancel"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                FlatButton(
-                  child: Text("Remove"),
-                  onPressed: () {
-                    ClassMGMTLogic.removeClass(context, classes, userID, user);
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-}
-
-//Join Button
-class JoinButton extends StatelessWidget {
-  const JoinButton({
-    Key key,
-    @required this.classes,
-    @required this.userID,
-    @required this.user,
-  }) : super(key: key);
-
-  final Classes classes;
-  final List<String> userID;
-  final FirebaseUser user;
-
-  @override
-  Widget build(BuildContext context) {
-    return RaisedButton(
-      color: Color.fromRGBO(123, 193, 67, 1),
-      child: Text(
-        'JOIN',
-        style: TextStyle(color: Colors.white),
-      ),
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(
-                'Add Class?',
-                style: TextStyle(
-                  fontSize: 30,
-                  fontStyle: FontStyle.normal,
-                  color: Color.fromRGBO(0, 162, 162, 1),
-                ),
-              ),
-              content: Text(
-                  'Are you sure you want to add ${classes.clsName} - ${classes.code} to your class list?\n\nOnce accepted by the program supervisor you will be sent a code to complete enrollment.'),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text("Cancel"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                FlatButton(
-                  child: Text("Add Class"),
-                  onPressed: () {
-                    ClassMGMTLogic.addClass(context, classes, userID, user);
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      },
     );
   }
 }

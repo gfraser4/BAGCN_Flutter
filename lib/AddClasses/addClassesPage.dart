@@ -27,7 +27,6 @@ class _AddClassesPage extends State<AddClassesPage> {
   Icon _searchIcon = new Icon(Icons.search);
   Widget _appBarTitle = new Text('Search Classes');
 
-
   var stream = Firestore.instance
       .collection('class')
       .orderBy('clsName')
@@ -233,8 +232,8 @@ class OpenButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-     final FocusNode _passcodeFocus = FocusNode();
+    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    final FocusNode _passcodeFocus = FocusNode();
     return RaisedButton(
       color: Color.fromRGBO(123, 193, 67, 1),
       child: Text(
@@ -254,60 +253,58 @@ class OpenButton extends StatelessWidget {
                   color: Color.fromRGBO(0, 162, 162, 1),
                 ),
               ),
-              content:  Container(
-                            width: 300,
-                            child: Form(
-                              key: _formKey,
-                              child: ListView(
-                                shrinkWrap: true,
-                                children: <Widget>[
-                                  Text(
-                                      "This code will be used to help prevent unregistered people from accessing this class and it's content."),
-                                  SizedBox(height: 30.0),
-                                  Text(
-                                      "It is critical that this code is only shared with registered parents of this class."),
-                                  SizedBox(height: 30.0),
-                                  TextFormField(
-                                    validator: (input) {
-                                      if (input.length < 6)
-                                        return 'The passcode needs to be at least 6 characters.';
-                                    },
-                                    textInputAction: TextInputAction.done,
-                                    focusNode: _passcodeFocus,
-                                    // initialValue:_password,
-                                    onSaved: (input) => _passcode = input,
-                                    autofocus: false,
-                                    //initialValue: 'password',
-                                    obscureText: true,
-                                    style: TextStyle(color: Colors.black),
-                                    decoration: InputDecoration(
-                                      fillColor: Colors.white,
-                                      filled: true,
-                                      labelText: 'Passcode',
-                                      prefixIcon: Icon(
-                                        Icons.lock,
-                                        color: Color.fromRGBO(123, 193, 67, 1),
-                                      ),
-                                      //hintText: 'Password',
-                                      contentPadding: EdgeInsets.fromLTRB(
-                                          25.0, 15.0, 20.0, 15.0),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20.0),
-                                          borderSide: BorderSide(
-                                            color:
-                                                Color.fromRGBO(123, 193, 67, 1),
-                                            width: 2,
-                                          )),
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20.0)),
-                                    ),
-                                  )
-                                ],
-                              ),
+              content: Container(
+                width: 300,
+                child: Form(
+                  key: _formKey,
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: <Widget>[
+                      Text(
+                          "This code will be used to help prevent unregistered people from accessing this class and it's content."),
+                      SizedBox(height: 30.0),
+                      Text(
+                          "It is critical that this code is only shared with registered parents of this class."),
+                      SizedBox(height: 30.0),
+                      TextFormField(
+                        validator: (input) {
+                          if (input.length < 6)
+                            return 'The passcode needs to be at least 6 characters.';
+                        },
+                        textInputAction: TextInputAction.done,
+                        focusNode: _passcodeFocus,
+                        // initialValue:_password,
+                        onSaved: (input) => _passcode = input,
+                        autofocus: false,
+                        //initialValue: 'password',
+                        obscureText: true,
+                        style: TextStyle(color: Colors.black),
+                        decoration: InputDecoration(
+                          fillColor: Colors.white,
+                          filled: true,
+                          labelText: 'Passcode',
+                          prefixIcon: Icon(
+                            Icons.lock,
+                            color: Color.fromRGBO(123, 193, 67, 1),
+                          ),
+                          //hintText: 'Password',
+                          contentPadding:
+                              EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                            borderSide: BorderSide(
+                              color: Color.fromRGBO(123, 193, 67, 1),
+                              width: 2,
                             ),
                           ),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0)),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
               actions: <Widget>[
                 FlatButton(
                   child: Text("Cancel"),
@@ -319,12 +316,12 @@ class OpenButton extends StatelessWidget {
                   child: Text("Yes"),
                   onPressed: () {
                     final formState = _formKey.currentState;
-                            if (formState.validate()) {
-                              //login to firebase
-                              formState.save();
-                                ClassMGMTLogic.openClass(
-                                    context, classes, userID, _passcode.trim());
-                            }
+                    if (formState.validate()) {
+                      //login to firebase
+                      formState.save();
+                      ClassMGMTLogic.openClass(
+                          context, classes, userID, _passcode.trim());
+                    }
                   },
                 ),
               ],

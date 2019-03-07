@@ -69,7 +69,7 @@ class _JoinClassesPage extends State<JoinClassesPage> {
         bottom: TabBar(
           tabs: [
             Tab(
-              text: 'Join',
+              text: 'Class List',
             ),
             Tab(text: 'Verify'),
           ],
@@ -180,12 +180,15 @@ class ClassCard extends StatelessWidget {
 }
 
 Widget classStatus(Classes classes, FirebaseUser user, List<String> userID) {
-  
   if (classes.pendingUsers.contains(user.uid) == true) {
-    return Text('Pending...');
-    
-  } 
-  else if (classes.enrolledUsers.contains(user.uid) == false) {
+    return RaisedButton(
+        color: Colors.yellow,
+        child: Text(
+          'PENDING...',
+          style: TextStyle(color: Colors.white),
+        ),
+        onPressed: () {});
+  } else if (classes.enrolledUsers.contains(user.uid) == false) {
     return new JoinButton(classes: classes, userID: userID, user: user);
   } else {
     return new RemoveButton(classes: classes, userID: userID, user: user);
@@ -296,7 +299,7 @@ class JoinButton extends StatelessWidget {
                 FlatButton(
                   child: Text("Add Class"),
                   onPressed: () {
-                    ClassMGMTLogic.addClass(context, classes, userID, user);
+                    ClassMGMTLogic.addClassPending(context, classes, userID, user);
                   },
                 ),
               ],

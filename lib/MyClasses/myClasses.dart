@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 //IMPORT OTHER PAGES SO CAN BE NAVIGATED TO
+import 'package:bagcndemo/AddClasses/addClassesLogic.dart';
 import 'package:bagcndemo/MyClasses/myClassesLogic.dart';
 import 'package:bagcndemo/MyClasses/navDrawer.dart';
 
@@ -207,15 +208,8 @@ class ClassTileWidget extends StatelessWidget {
                               child: Text("Accept"),
                               onPressed: () {
                                 isSuper
-                                    ? classes.reference.updateData({
-                                        "supervisors":
-                                            FieldValue.arrayRemove(userID),
-                                        "passcode": ""
-                                      })
-                                    : classes.reference.updateData({
-                                        "enrolledUsers":
-                                            FieldValue.arrayRemove(userID)
-                                      });
+                                    ? ClassMGMTLogic.closeClass(context, classes, userID)
+                                    : ClassMGMTLogic.removeClass(context, classes, userID, user);
                                 Navigator.of(context).pop();
                               },
                             ),
