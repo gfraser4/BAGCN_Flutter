@@ -5,9 +5,11 @@ class Classes {
   final String location;
   final String dates;
   final String times;
+  final String passcode;
   final int code;
   final bool isActive;
   final List<dynamic> enrolledUsers;
+  final List<dynamic> pendingUsers;
   final List<dynamic> supervisors;
   final List<dynamic> notifyUsers;
   final DocumentReference reference;
@@ -19,10 +21,12 @@ class Classes {
         assert(map['times'] != null),
         assert(map['location'] != null),
         clsName = map['clsName'],
+        passcode = map['passcode'],
         isActive = map['isActive'],
         enrolledUsers = map['enrolledUsers'],
         supervisors = map['supervisors'],
         notifyUsers = map['notifyUsers'],
+        pendingUsers = map['pendingUsers'],
         location = map['location'],
         dates = map['dates'],
         times = map['times'],

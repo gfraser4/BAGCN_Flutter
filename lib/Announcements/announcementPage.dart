@@ -11,6 +11,7 @@ import 'package:bagcndemo/CreateAnnouncement/createAnnouncement.dart';
 import 'package:bagcndemo/Comments/CommentsPage.dart';
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 import 'package:bagcndemo/Announcements/UserManagement/enrolledUsersPage.dart';
+import 'package:bagcndemo/Announcements/UserManagement/pendingEnrollmentUsers.dart';
 
 // import 'package:bagcndemo/Models/Users.dart';
 
@@ -153,7 +154,7 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
                 widget.user,
               ),
               EnrolledUsersPage(widget.user, widget.code),
-               Text('test2'),
+              PendingUsersPage(widget.user, widget.code),
             ],
           ),
 

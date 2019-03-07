@@ -5,6 +5,7 @@ import 'package:validators/validators.dart';
 
 import 'package:bagcndemo/AddClasses/addClassesLogic.dart';
 import 'package:bagcndemo/Models/ClassesModel.dart';
+import 'package:bagcndemo/AddClasses/verifyCode.dart';
 
 String _search = '';
 
@@ -25,12 +26,6 @@ class _JoinClassesPage extends State<JoinClassesPage> {
   // final _classCodeController = new TextEditingController(); //VAR TO HOLD CLASSCODE INPUT
   Icon _searchIcon = new Icon(Icons.search);
   Widget _appBarTitle = new Text('Search Classes');
-
-  // var stream = Firestore.instance
-  //     .collection('class')
-  //     .where('isActive', isEqualTo: true)
-  //     .orderBy('clsName')
-  //     .snapshots(); 
 
   @override
   Widget build(BuildContext context) {
@@ -70,14 +65,23 @@ class _JoinClassesPage extends State<JoinClassesPage> {
 
 //Appbar main layout
     Widget _buildBar(BuildContext context) {
-      return new AppBar(
+      return AppBar(
+        bottom: TabBar(
+          tabs: [
+            Tab(
+              text: 'Class List',
+            ),
+            Tab(text: 'Verify'),
+          ],
+        ),
         centerTitle: true,
-        title: _appBarTitle,
+        title: _appBarTitle, //PAGE TITLE BASED ON title THAT WAS PASSED TO PAGE
         actions: <Widget>[
           IconButton(
-            icon: _searchIcon,
-            onPressed: _searchPressed,
-          ),
+              icon: _searchIcon,
+              onPressed: () {
+                _searchPressed();
+              })
         ],
       );
     }
@@ -85,24 +89,36 @@ class _JoinClassesPage extends State<JoinClassesPage> {
 //******************************************\\
 //*********** page scaffold *****************\\
 //********************************************\\
-    return Scaffold(
-      backgroundColor: Color.fromRGBO(28, 165, 229, 1),
-      appBar: _buildBar(context),
-      body: _buildBody(
-        context,
-        widget.user,
-      ), //SEARCH RESULTS AREA IS BUILT PASSING DYNAMIC QUERY(stream)
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: Color.fromRGBO(28, 165, 229, 1),
+        appBar: _buildBar(context),
+        body: TabBarView(
+          children: <Widget>[
+            _buildBody(
+              context,
+              widget.user,
+            ),
+            VerifyCodePage(widget.user)
+          ],
+        ),
+      ),
     );
   }
+
+//////////////////////////
+  /// JOIN CLASSES ///
+//////////////////////////
 
 //Search querey dynamic based on search criteria
   Widget _buildBody(BuildContext context, FirebaseUser user) {
     return StreamBuilder<QuerySnapshot>(
       stream: Firestore.instance
-      .collection('class')
-      .where('isActive', isEqualTo: true)
-      //.orderBy('clsName')
-      .snapshots(), //QUERY (stream) WILL BE DEPENDENT ON SEARCH FIELDS
+          .collection('class')
+          .where('isActive', isEqualTo: true)
+          //.orderBy('clsName')
+          .snapshots(), //QUERY (stream) WILL BE DEPENDENT ON SEARCH FIELDS
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
         return _buildList(context, snapshot.data.documents, user);
@@ -157,11 +173,25 @@ class ClassCard extends StatelessWidget {
       child: ListTile(
         title: Text(classes.clsName),
         subtitle: Text('Course Code: ${classes.code}'),
-        trailing: classes.enrolledUsers.contains(user.uid) == false
-            ? new JoinButton(classes: classes, userID: userID)
-            : new RemoveButton(classes: classes, userID: userID),
+        trailing: classStatus(classes, user, userID),
       ),
     );
+  }
+}
+
+Widget classStatus(Classes classes, FirebaseUser user, List<String> userID) {
+  if (classes.pendingUsers.contains(user.uid) == true) {
+    return RaisedButton(
+        color: Colors.yellow,
+        child: Text(
+          'PENDING...',
+          style: TextStyle(color: Colors.white),
+        ),
+        onPressed: () {});
+  } else if (classes.enrolledUsers.contains(user.uid) == false) {
+    return new JoinButton(classes: classes, userID: userID, user: user);
+  } else {
+    return new RemoveButton(classes: classes, userID: userID, user: user);
   }
 }
 
@@ -171,10 +201,12 @@ class RemoveButton extends StatelessWidget {
     Key key,
     @required this.classes,
     @required this.userID,
+    @required this.user,
   }) : super(key: key);
 
   final Classes classes;
   final List<String> userID;
+  final FirebaseUser user;
 
   @override
   Widget build(BuildContext context) {
@@ -209,7 +241,7 @@ class RemoveButton extends StatelessWidget {
                 FlatButton(
                   child: Text("Remove"),
                   onPressed: () {
-                    ClassMGMTLogic.removeClass(context, classes, userID);
+                    ClassMGMTLogic.removeClass(context, classes, userID, user);
                   },
                 ),
               ],
@@ -227,10 +259,12 @@ class JoinButton extends StatelessWidget {
     Key key,
     @required this.classes,
     @required this.userID,
+    @required this.user,
   }) : super(key: key);
 
   final Classes classes;
   final List<String> userID;
+  final FirebaseUser user;
 
   @override
   Widget build(BuildContext context) {
@@ -254,7 +288,7 @@ class JoinButton extends StatelessWidget {
                 ),
               ),
               content: Text(
-                  'Are you sure you want to add ${classes.clsName} - ${classes.code} to your class list?'),
+                  'Are you sure you want to add ${classes.clsName} - ${classes.code} to your class list?\n\nOnce accepted by the program supervisor you will be sent a code to complete enrollment.'),
               actions: <Widget>[
                 FlatButton(
                   child: Text("Cancel"),
@@ -265,7 +299,7 @@ class JoinButton extends StatelessWidget {
                 FlatButton(
                   child: Text("Add Class"),
                   onPressed: () {
-                    ClassMGMTLogic.addClass(context, classes, userID);
+                    ClassMGMTLogic.addClassPending(context, classes, userID, user);
                   },
                 ),
               ],
