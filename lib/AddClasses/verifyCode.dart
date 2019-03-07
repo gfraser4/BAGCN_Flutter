@@ -5,22 +5,21 @@ import 'package:validators/validators.dart';
 
 import 'package:bagcndemo/AddClasses/addClassesLogic.dart';
 import 'package:bagcndemo/Models/ClassesModel.dart';
-import 'package:bagcndemo/AddClasses/verifyCode.dart';
 
 String _search = '';
 
 //SEARCH AND ADD CLASSES PAGE
-class JoinClassesPage extends StatefulWidget {
-  const JoinClassesPage(this.user);
+class VerifyCodePage extends StatefulWidget {
+  const VerifyCodePage(this.user);
   final FirebaseUser user;
 
   @override
-  _JoinClassesPage createState() {
-    return _JoinClassesPage();
+  _VerifyCodePage createState() {
+    return _VerifyCodePage();
   }
 }
 
-class _JoinClassesPage extends State<JoinClassesPage> {
+class _VerifyCodePage extends State<VerifyCodePage> {
   final _searchController =
       new TextEditingController(); //VAR TO HOLD CLASSNAME INPUT
   // final _classCodeController = new TextEditingController(); //VAR TO HOLD CLASSCODE INPUT
@@ -89,20 +88,12 @@ class _JoinClassesPage extends State<JoinClassesPage> {
 //******************************************\\
 //*********** page scaffold *****************\\
 //********************************************\\
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        backgroundColor: Color.fromRGBO(28, 165, 229, 1),
-        appBar: _buildBar(context),
-        body: TabBarView(
-          children: <Widget>[
-            _buildBody(
-              context,
-              widget.user,
-            ),
-            VerifyCodePage(widget.user)
-          ],
-        ),
+    return Scaffold(
+      appBar: null,
+      backgroundColor: Color.fromRGBO(28, 165, 229, 1),
+      body: _buildBody(
+        context,
+        widget.user,
       ),
     );
   }
@@ -116,7 +107,7 @@ class _JoinClassesPage extends State<JoinClassesPage> {
     return StreamBuilder<QuerySnapshot>(
       stream: Firestore.instance
           .collection('class')
-          .where('isActive', isEqualTo: true)
+          .where('pendingUsers', arrayContains: user.uid)
           //.orderBy('clsName')
           .snapshots(), //QUERY (stream) WILL BE DEPENDENT ON SEARCH FIELDS
       builder: (context, snapshot) {
@@ -173,22 +164,12 @@ class ClassCard extends StatelessWidget {
       child: ListTile(
         title: Text(classes.clsName),
         subtitle: Text('Course Code: ${classes.code}'),
-        trailing: classStatus(classes, user, userID),
+        // trailing: 
+        // classes.enrolledUsers.contains(user.uid) == false
+        //     ? new JoinButton(classes: classes, userID: userID, user: user)
+        //     : new RemoveButton(classes: classes, userID: userID, user: user),
       ),
     );
-  }
-}
-
-Widget classStatus(Classes classes, FirebaseUser user, List<String> userID) {
-  
-  if (classes.pendingUsers.contains(user.uid) == true) {
-    return Text('Pending...');
-    
-  } 
-  else if (classes.enrolledUsers.contains(user.uid) == false) {
-    return new JoinButton(classes: classes, userID: userID, user: user);
-  } else {
-    return new RemoveButton(classes: classes, userID: userID, user: user);
   }
 }
 

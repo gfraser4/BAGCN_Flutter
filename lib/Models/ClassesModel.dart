@@ -8,6 +8,7 @@ class Classes {
   final int code;
   final bool isActive;
   final List<dynamic> enrolledUsers;
+  final List<dynamic> pendingUsers;
   final List<dynamic> supervisors;
   final List<dynamic> notifyUsers;
   final DocumentReference reference;
@@ -23,6 +24,7 @@ class Classes {
         enrolledUsers = map['enrolledUsers'],
         supervisors = map['supervisors'],
         notifyUsers = map['notifyUsers'],
+        pendingUsers = map['pendingUsers'],
         location = map['location'],
         dates = map['dates'],
         times = map['times'],

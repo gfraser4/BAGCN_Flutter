@@ -96,7 +96,7 @@ class AnnouncementLogic {
     }
   }
 
-//Remove User From Class
+// Remove User From Class
   static removeEnrolledUser(int code, String userId) async {
     List<String> userID = [userId];
     Firestore db = Firestore.instance;
@@ -115,4 +115,27 @@ class AnnouncementLogic {
       print(e.toString());
     }
   }
+
+  // Add User to Class
+  static addUserToClass(int code, String userId) async {
+    List<String> userID = [userId];
+    Firestore db = Firestore.instance;
+    try {
+      QuerySnapshot _query = await db
+          .collection('class')
+          .where('code', isEqualTo: code)
+          .getDocuments();
+      _query.documents.forEach((doc) {
+        db.collection('class').document(doc.documentID).updateData({
+          "enrolledUsers": FieldValue.arrayUnion(userID),
+          "pendingUsers": FieldValue.arrayRemove(userID),
+        });
+      });
+      print(userID);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+
 }

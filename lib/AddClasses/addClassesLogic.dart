@@ -1,14 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:bagcndemo/Models/ClassesModel.dart';
 
 class ClassMGMTLogic {
-  static addClass(BuildContext context, Classes classes, List<String> userID) async {
+  static addClass(BuildContext context, Classes classes, List<String> userID, FirebaseUser user) async {
+
+    List<int> clsCode = [classes.code];
+    Firestore db = Firestore.instance;
     try {
       await classes.reference.updateData({
-        "enrolledUsers": FieldValue.arrayUnion(userID),
+        "pendingUsers": FieldValue.arrayUnion(userID),
       });
+      
+      QuerySnapshot _query = await db
+          .collection('users')
+          .where('id', isEqualTo: user.uid)
+          .getDocuments();
+      _query.documents.forEach((doc) {
+        db.collection('users').document(doc.documentID).updateData({
+          "enrolledPending": FieldValue.arrayUnion(clsCode),
+        });
+      });
+      print(userID);
       Navigator.of(context).pop();
     } catch (e) {
       print(e.toString());
@@ -17,7 +32,7 @@ class ClassMGMTLogic {
 
   
   static removeClass(
-      BuildContext context, Classes classes, List<String> userID) async {
+      BuildContext context, Classes classes, List<String> userID, FirebaseUser user) async {
     try {
      await classes.reference.updateData({
         "enrolledUsers": FieldValue.arrayRemove(userID),
