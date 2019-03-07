@@ -101,7 +101,9 @@ class ClassMGMTLogic {
 //  Closing a class should reset all class fields and delete any associated comments/announcements etc.
 //*  
   static closeClass(
-      BuildContext context, Classes classes, List<String> userID) async {
+      BuildContext context, Classes classes, List<String> userID, FirebaseUser user) async {
+        Firestore db = Firestore.instance;
+        List<int> clsCode = [classes.code];
     try {
       await classes.reference.updateData({
         "enrolledUsers": [],
@@ -110,6 +112,16 @@ class ClassMGMTLogic {
         "isActive": false,
         "notifyUsers":[],
 
+      });
+      QuerySnapshot _query = await db
+          .collection('users')
+          .where('id', isEqualTo: user.uid)
+          .getDocuments();
+      _query.documents.forEach((doc) {
+        db.collection('users').document(doc.documentID).updateData({
+          "enrolledPending": FieldValue.arrayRemove(clsCode),
+          "enrolledIn": FieldValue.arrayRemove(clsCode),
+        });
       });
       Navigator.of(context).pop();
     } catch (e) {
