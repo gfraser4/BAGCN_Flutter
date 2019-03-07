@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:bagcndemo/MyClasses/myClasses.dart';
+import 'package:bagcndemo/Style/customColors.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'dart:convert';
@@ -93,13 +94,13 @@ class _LoginPageState extends State<LoginPage> {
         labelText: 'Email',
         prefixIcon: Icon(
           Icons.account_circle,
-          color: Color.fromRGBO(123, 193, 67, 1),
+          color: CustomColors.bagcGreen,
         ),
         //hintText: 'Email',
         contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
         enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), 
           borderSide: BorderSide(
-              color: Color.fromRGBO(123, 193, 67, 1),
+              color: CustomColors.bagcGreen,
               width: 2,
             ) 
           ),
@@ -127,13 +128,13 @@ class _LoginPageState extends State<LoginPage> {
         labelText: 'Password',
         prefixIcon: Icon(
           Icons.lock,
-          color: Color.fromRGBO(123, 193, 67, 1),
+          color: CustomColors.bagcGreen,
         ),
         //hintText: 'Password',
         contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
         enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), 
           borderSide: BorderSide(
-              color: Color.fromRGBO(123, 193, 67, 1),
+              color: CustomColors.bagcGreen,
               width: 2,
             ) 
           ),
@@ -143,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
 
 //CHECKBOX REMEMBER THE USER
     Checkbox checkButton = Checkbox(
-      value: isRemember,activeColor: Color.fromRGBO(123, 193, 67, 1),onChanged: (bool){
+      value: isRemember,activeColor: CustomColors.bagcGreen,onChanged: (bool){
         setState(() {
           isRemember = bool;
         });},
@@ -160,7 +161,7 @@ class _LoginPageState extends State<LoginPage> {
           signIn();
         },
         padding: EdgeInsets.all(12),
-        color: Color.fromRGBO(28, 165, 229, 1),
+        color: CustomColors.bagcBlue,
         child: Text('Log In', style: TextStyle(fontSize: 18, color: Colors.white)),
         shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
       ),
@@ -170,7 +171,7 @@ class _LoginPageState extends State<LoginPage> {
     final signup = FlatButton(
       child: Text(
         'Sign up',
-        style: TextStyle(color: Color(0xFF1ca5e5)),
+        style: TextStyle(color: CustomColors.bagcBlue),
       ),
       onPressed: () {
         Navigator.pushReplacementNamed(context, '/signup');
