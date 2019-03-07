@@ -208,7 +208,7 @@ class ClassTileWidget extends StatelessWidget {
                               child: Text("Accept"),
                               onPressed: () {
                                 isSuper
-                                    ? ClassMGMTLogic.closeClass(context, classes, userID)
+                                    ? ClassMGMTLogic.closeClass(context, classes, userID, user)
                                     : ClassMGMTLogic.removeClass(context, classes, userID, user);
                                 Navigator.of(context).pop();
                               },

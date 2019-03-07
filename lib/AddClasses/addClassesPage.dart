@@ -157,7 +157,7 @@ class ClassCard extends StatelessWidget {
         subtitle: Text('Course Code: ${classes.code}'),
         trailing: classes.supervisors.contains(user.uid) == false
             ? new OpenButton(classes: classes, userID: userID)
-            : new RemoveButton(classes: classes, userID: userID),
+            : new RemoveButton(classes: classes, userID: userID, user: user),
       ),
     );
   }
@@ -169,10 +169,12 @@ class RemoveButton extends StatelessWidget {
     Key key,
     @required this.classes,
     @required this.userID,
+    @required this.user,
   }) : super(key: key);
 
   final Classes classes;
   final List<String> userID;
+  final FirebaseUser user;
 
   @override
   Widget build(BuildContext context) {
@@ -207,7 +209,7 @@ class RemoveButton extends StatelessWidget {
                 FlatButton(
                   child: Text("Close"),
                   onPressed: () {
-                    ClassMGMTLogic.closeClass(context, classes, userID);
+                    ClassMGMTLogic.closeClass(context, classes, userID, user);
                   },
                 ),
               ],
