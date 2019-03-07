@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:validators/validators.dart';
-
+import 'package:bagcndemo/Style/customColors.dart';
 import 'package:bagcndemo/Login/loginPage.dart';
 import 'package:bagcndemo/Signup/signupLogic.dart';
 import 'package:bagcndemo/MyClasses/myClasses.dart';
@@ -50,13 +50,13 @@ class _SignUpPage extends State<SignUpPage> {
         labelText: 'First Name',
         prefixIcon: Icon(
           Icons.account_circle,
-          color: Color.fromRGBO(123, 193, 67, 1),
+          color: CustomColors.bagcGreen,
         ),
         //hintText: 'Email',
         contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), 
           borderSide: BorderSide(
-              color: Color.fromRGBO(123, 193, 67, 1),
+              color: CustomColors.bagcGreen,
               width: 2,
             ) 
           ),
@@ -79,13 +79,13 @@ class _SignUpPage extends State<SignUpPage> {
         labelText: 'Last Name',
         prefixIcon: Icon(
           Icons.account_circle,
-          color: Color.fromRGBO(123, 193, 67, 1),
+          color: CustomColors.bagcGreen,
         ),
         //hintText: 'Password',
         contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), 
           borderSide: BorderSide(
-              color: Color.fromRGBO(123, 193, 67, 1),
+              color: CustomColors.bagcGreen,
               width: 2,
             ) 
           ),
@@ -110,13 +110,13 @@ class _SignUpPage extends State<SignUpPage> {
         labelText: 'Email',
         prefixIcon: Icon(
           Icons.email,
-          color: Color.fromRGBO(123, 193, 67, 1),
+          color: CustomColors.bagcGreen,
         ),
         //hintText: 'Password',
         contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), 
           borderSide: BorderSide(
-              color: Color.fromRGBO(123, 193, 67, 1),
+              color: CustomColors.bagcGreen,
               width: 2,
             ) 
           ),
@@ -141,13 +141,13 @@ class _SignUpPage extends State<SignUpPage> {
         labelText: 'Password',
         prefixIcon: Icon(
           Icons.lock,
-          color: Color.fromRGBO(123, 193, 67, 1),
+          color: CustomColors.bagcGreen,
         ),
         //hintText: 'Password',
         contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), 
           borderSide: BorderSide(
-              color: Color.fromRGBO(123, 193, 67, 1),
+              color: CustomColors.bagcGreen,
               width: 2,
             ) 
           ),
@@ -188,7 +188,7 @@ class _SignUpPage extends State<SignUpPage> {
           width: 130,
           margin: EdgeInsets.only(top: 10, right: 10),
           child: RaisedButton(
-            color: Color.fromRGBO(28, 165, 229, 1),
+            color: CustomColors.bagcBlue,
             child: Row(
               children: <Widget>[
                 Container(
@@ -228,7 +228,7 @@ class _SignUpPage extends State<SignUpPage> {
           width: 130,
           margin: EdgeInsets.only(top: 10, right: 10),
           child: RaisedButton(
-            color: Color.fromRGBO(28, 165, 229, 1),
+            color: CustomColors.bagcBlue,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
