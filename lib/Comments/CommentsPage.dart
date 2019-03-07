@@ -320,7 +320,7 @@ class TopCommentArea extends StatelessWidget {
               comments.visible
                   ? Chip(
                       //padding must be 0 or two letters can be too big
-                      padding: EdgeInsets.all(4),
+                      padding: EdgeInsets.fromLTRB(5, 4, 5 ,4),
                       avatar: CircleAvatar(
                           backgroundColor: hexToColor(comments.profileColor),
                           child: Text(
@@ -333,7 +333,7 @@ class TopCommentArea extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 11, fontWeight: FontWeight.w600, color: Colors.white),
                       ),
-                      backgroundColor: CustomColors.bagcTeal,
+                      backgroundColor: CustomColors.bagcBlue,
                     )
                   : Text(
                       'Hidden',
