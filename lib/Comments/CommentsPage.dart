@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
-
+import 'package:bagcndemo/Style/customColors.dart';
 import 'package:bagcndemo/Comments/commentReply.dart';
 import 'package:bagcndemo/Comments/commentsLogic.dart';
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
@@ -99,7 +99,7 @@ class MessageInputBar extends StatelessWidget {
           fillColor: Colors.white,
           suffixIcon: IconButton(
             icon: Icon(Icons.send),
-            color: Color.fromRGBO(123, 193, 67, 1),
+            color: CustomColors.bagcGreen,
             onPressed: () {
               if (_commentController.text.trim().isNotEmpty) {
                 createComment(context, widget.user,
@@ -207,7 +207,7 @@ class CommentCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.0),
       ),
       elevation: 5.0,
-      color: Colors.lightBlue[100],
+      color: Colors.white,
       child: Container(
         child: Column(
           children: <Widget>[
@@ -220,10 +220,11 @@ class CommentCard extends StatelessWidget {
             //Divider(color: Color(0xFF1ca5e5)),
             new BottomCommentArea(
                 formattedDate: formattedDate, comments: comments, user: user),
-            Divider(
-              color: Color(0xFF1ca5e5),
+            Container(
+              color: Color.fromRGBO(41, 60, 62, 0.15),
+              child: _buildRepliesBody(context, comments, user),
+              padding: EdgeInsets.only(bottom: 15)
             ),
-            _buildRepliesBody(context, comments, user),
           ],
         ),
       ),
@@ -246,39 +247,42 @@ class BottomCommentArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Expanded(
-          child: Container(),
-        ),
-        comments.visible == true
-            ? canEditComment(context, comments, user)
-            : Text(''),
-        comments.visible == true
-            ? FlatButton(
-                child: Row(
-                  children: <Widget>[
-                    Icon(
-                      Icons.reply,
-                      color: Color(0xFF1ca5e5),
-                    ),
-                    Text(
-                      'Reply',
-                      style: TextStyle(color: Color(0xFF1ca5e5)),
-                    )
-                  ],
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ReplyPage(comments, user)),
-                  );
-                },
-              )
-            : Text(''),
-      ],
+    return Container(
+      color: Color.fromRGBO(41, 60, 62, 0.15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Expanded(
+            child: Container(),
+          ),
+          comments.visible == true
+              ? canEditComment(context, comments, user)
+              : Text(''),
+          comments.visible == true
+              ? FlatButton(
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.reply,
+                        color: Color(0xFF1ca5e5),
+                      ),
+                      Text(
+                        'Reply',
+                        style: TextStyle(color: Color(0xFF1ca5e5)),
+                      )
+                    ],
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ReplyPage(comments, user)),
+                    );
+                  },
+                )
+              : Text(''),
+        ],
+      ),
     );
   }
 }
@@ -538,7 +542,7 @@ class ReplyCard extends StatelessWidget {
             ),
           ),
           Container(
-            padding: EdgeInsets.fromLTRB(10, 0, 0, 10),
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 5),
             child: replies.visible == true
                 ? Text('${replies.content}',
                     style: TextStyle(color: Colors.black54, fontSize: 14),)
