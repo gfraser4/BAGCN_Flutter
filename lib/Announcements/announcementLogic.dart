@@ -1,10 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-// import 'package:bagcndemo/Models/Users.dart';
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
-import 'package:bagcndemo/Announcements/announcementPage.dart';
+
 
 class AnnouncementLogic {
 //build announcement stream
@@ -46,8 +44,7 @@ class AnnouncementLogic {
 //   }
 
 //add user to liked l ist and increase count like by one or decrease by one
-  static void likeButtonClick(
-      FirebaseUser user, Announcements announcements) {
+  static void likeButtonClick(FirebaseUser user, Announcements announcements) {
     List<String> userID = ['${user.uid}'];
     Firestore.instance.runTransaction((transaction) async {
       final freshSnapshot = await transaction.get(announcements.reference);
@@ -67,8 +64,7 @@ class AnnouncementLogic {
   }
 
   //keep track of who has subrscribed to announcement-comments notifications
-  static void notifyClick(
-      FirebaseUser user, Announcements announcements) {
+  static void notifyClick(FirebaseUser user, Announcements announcements) {
     List<String> userID = ['${user.uid}'];
     Firestore.instance.runTransaction((transaction) async {
       final freshSnapshot = await transaction.get(announcements.reference);
@@ -88,17 +84,35 @@ class AnnouncementLogic {
 //Edit Announcement
   static Future<void> editAnnouncement(FirebaseUser user, String title,
       String description, String announcementID) async {
-    var editAnnouncement = Firestore.instance.collection('announcements').document(announcementID);
-        try{
-editAnnouncement.updateData({
-      'title': title,
-      'description': description,
-    });
-        }
-        catch (e){
-          print(e.toString());
-        }
-    
+    var editAnnouncement =
+        Firestore.instance.collection('announcements').document(announcementID);
+    try {
+      editAnnouncement.updateData({
+        'title': title,
+        'description': description,
+      });
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
+//Remove User From Class
+  static removeEnrolledUser(int code, String userId) async {
+    List<String> userID = [userId];
+    Firestore db = Firestore.instance;
+    try {
+      QuerySnapshot _query = await db
+          .collection('class')
+          .where('code', isEqualTo: code)
+          .getDocuments();
+      _query.documents.forEach((doc) {
+        db.collection('class').document(doc.documentID).updateData({
+          "enrolledUsers": FieldValue.arrayRemove(userID),
+        });
+      });
+      print(userID);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }

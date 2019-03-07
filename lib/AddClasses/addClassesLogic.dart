@@ -35,7 +35,7 @@ class ClassMGMTLogic {
         "passcode" : passCode,
         "isActive": true
       });
-      // Navigator.of(context).pop();
+      Navigator.of(context).pop();
     } catch (e) {
       print(e.toString());
     }

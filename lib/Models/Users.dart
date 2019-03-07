@@ -9,6 +9,7 @@ class Users {
   final String email;
   final String role;
   final String profileColor;
+  final List<dynamic> enrolledIn;
   final DocumentReference reference;
 
   Users.fromMap(Map<String, dynamic> map, {this.reference})
@@ -19,6 +20,7 @@ class Users {
         assert(map['profileColor'] != null),
         assert(map['id'] != null),
         firstName = map['firstName'],
+        enrolledIn = map['enrolledIn'],
         lastName = map['lastName'],
         id = map['id'],
         profileColor = map['profileColor'],

@@ -206,9 +206,9 @@ class RemoveButton extends StatelessWidget {
                   },
                 ),
                 FlatButton(
-                  child: Text("Remove"),
+                  child: Text("Close"),
                   onPressed: () {
-                    ClassMGMTLogic.removeClass(context, classes, userID);
+                    ClassMGMTLogic.closeClass(context, classes, userID);
                   },
                 ),
               ],
@@ -254,33 +254,7 @@ class OpenButton extends StatelessWidget {
                   color: Color.fromRGBO(0, 162, 162, 1),
                 ),
               ),
-              content: Text(
-                  'Are you sure you want to open ${classes.clsName} - ${classes.code}?\n\nAs the program supervisor you will be responsible for mainatining announcements and parent enrollment within this application.'),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text("Cancel"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                FlatButton(
-                  child: Text("Yes"),
-                  onPressed: () {
-                  
-
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text(
-                            'Create passcode for ${classes.clsName} - ${classes.code}',
-                            style: TextStyle(
-                              fontSize: 30,
-                              fontStyle: FontStyle.normal,
-                              color: Color.fromRGBO(0, 162, 162, 1),
-                            ),
-                          ),
-                          content: Container(
+              content:  Container(
                             width: 300,
                             child: Form(
                               key: _formKey,
@@ -334,30 +308,23 @@ class OpenButton extends StatelessWidget {
                               ),
                             ),
                           ),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text("Cancel"),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                            FlatButton(
-                              child: Text("Create code"),
-                              onPressed: () {
-                                final formState = _formKey.currentState;
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("Cancel"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                FlatButton(
+                  child: Text("Yes"),
+                  onPressed: () {
+                    final formState = _formKey.currentState;
                             if (formState.validate()) {
                               //login to firebase
                               formState.save();
                                 ClassMGMTLogic.openClass(
                                     context, classes, userID, _passcode.trim());
                             }
-                                
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    );
                   },
                 ),
               ],
