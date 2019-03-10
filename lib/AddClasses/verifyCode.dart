@@ -194,7 +194,7 @@ class ClassCard extends StatelessWidget {
                           shrinkWrap: true,
                           children: <Widget>[
                             Text(
-                                "Enter code you recieved by email to acces class."),
+                                "Enter the code you recieved by email to access class."),
                             SizedBox(height: 30.0),
                             TextFormField(
                               validator: (input) {

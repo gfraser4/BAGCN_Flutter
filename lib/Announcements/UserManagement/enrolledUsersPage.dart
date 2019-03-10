@@ -103,7 +103,7 @@ class UserCard extends StatelessWidget {
               padding: EdgeInsets.all(0),
               avatar: CircleAvatar(
                   backgroundColor: hexToColor(users.profileColor),
-                  child: Text('${users.firstName[0]}${users.lastName[0]}',
+                  child: Text('${users.firstName[0].toUpperCase()}${users.lastName[0].toUpperCase()}',
                       style: TextStyle(color: Colors.white))),
               label: Text(
                 '${users.firstName} ${users.lastName}\n${users.email}',

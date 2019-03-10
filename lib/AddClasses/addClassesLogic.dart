@@ -5,15 +5,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:bagcndemo/Models/ClassesModel.dart';
 
 class ClassMGMTLogic {
-  static addClassPending(BuildContext context, Classes classes, List<String> userID, FirebaseUser user) async {
-
+  static addClassPending(BuildContext context, Classes classes,
+      List<String> userID, FirebaseUser user) async {
     List<int> clsCode = [classes.code];
     Firestore db = Firestore.instance;
     try {
       await classes.reference.updateData({
         "pendingUsers": FieldValue.arrayUnion(userID),
       });
-      
+
       QuerySnapshot _query = await db
           .collection('users')
           .where('id', isEqualTo: user.uid)
@@ -30,8 +30,8 @@ class ClassMGMTLogic {
     }
   }
 
-    static addClassEnrolled(BuildContext context, Classes classes, List<String> userID, FirebaseUser user) async {
-
+  static addClassEnrolled(BuildContext context, Classes classes,
+      List<String> userID, FirebaseUser user) async {
     List<int> clsCode = [classes.code];
     Firestore db = Firestore.instance;
     try {
@@ -39,7 +39,7 @@ class ClassMGMTLogic {
         "pendingUsers": FieldValue.arrayRemove(userID),
         "enrolledUsers": FieldValue.arrayUnion(userID),
       });
-      
+
       QuerySnapshot _query = await db
           .collection('users')
           .where('id', isEqualTo: user.uid)
@@ -57,13 +57,12 @@ class ClassMGMTLogic {
     }
   }
 
-  
-  static removeClass(
-      BuildContext context, Classes classes, List<String> userID, FirebaseUser user) async {
-        Firestore db = Firestore.instance;
-        List<int> clsCode = [classes.code];
+  static removeClass(BuildContext context, Classes classes, List<String> userID,
+      FirebaseUser user) async {
+    Firestore db = Firestore.instance;
+    List<int> clsCode = [classes.code];
     try {
-     await classes.reference.updateData({
+      await classes.reference.updateData({
         "enrolledUsers": FieldValue.arrayRemove(userID),
         "pendingUsers": FieldValue.arrayRemove(userID),
       });
@@ -84,11 +83,12 @@ class ClassMGMTLogic {
     }
   }
 
-  static openClass(BuildContext context, Classes classes, List<String> userID, String passCode) async {
+  static openClass(BuildContext context, Classes classes, List<String> userID,
+      String passCode) async {
     try {
       await classes.reference.updateData({
         "supervisors": FieldValue.arrayUnion(userID),
-        "passcode" : passCode,
+        "passcode": passCode,
         "isActive": true
       });
       Navigator.of(context).pop();
@@ -99,34 +99,45 @@ class ClassMGMTLogic {
 
 //*
 //  Closing a class should reset all class fields and delete any associated comments/announcements etc.
-//*  
-  static closeClass(
-      BuildContext context, Classes classes, List<String> userID, FirebaseUser user) async {
-        Firestore db = Firestore.instance;
-        List<int> clsCode = [classes.code];
+//*
+  static closeClass(BuildContext context, Classes classes, List<String> userID,
+      FirebaseUser user) async {
+    Firestore db = Firestore.instance;
+    List<int> clsCode = [classes.code];
     try {
+      QuerySnapshot _query = await db
+          .collection('users')
+          .where('enrolledIn', arrayContains: classes.code)
+          .getDocuments();
+      _query.documents.forEach((doc) {
+        db.collection('users').document(doc.documentID).updateData({
+          // "enrolledPending": FieldValue.arrayRemove(clsCode),
+          "enrolledIn": FieldValue.arrayRemove(clsCode),
+        });
+      });
+
+// So announcements are never delete changes their code to 0 for history but they won't show back up if class is reopened.
+      QuerySnapshot _announcementsQuery = await db
+          .collection('announcements')
+          .where('code', isEqualTo: classes.code)
+          .getDocuments();
+      _announcementsQuery.documents.forEach((doc) {
+        db.collection('announcements').document(doc.documentID).updateData({
+          "code": 0,
+        });
+      });
+
       await classes.reference.updateData({
         "enrolledUsers": [],
         "supervisors": [],
         "passcode": "",
         "isActive": false,
-        "notifyUsers":[],
+        "notifyUsers": [],
+      });
 
-      });
-      QuerySnapshot _query = await db
-          .collection('users')
-          .where('id', isEqualTo: user.uid)
-          .getDocuments();
-      _query.documents.forEach((doc) {
-        db.collection('users').document(doc.documentID).updateData({
-          "enrolledPending": FieldValue.arrayRemove(clsCode),
-          "enrolledIn": FieldValue.arrayRemove(clsCode),
-        });
-      });
       Navigator.of(context).pop();
     } catch (e) {
       print(e.toString());
     }
   }
-
 }
