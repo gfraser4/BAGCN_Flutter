@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-
+// PAGES
 import 'package:bagcndemo/Login/loginPage.dart';
 import "package:bagcndemo/Signup/signupPage.dart";
 
 //DYNAMIC CHANGE THEME
 // import 'package:dynamic_theme/dynamic_theme.dart';
 
-///////////////////////////////////////////////////////////
 //**MAIN FUNCTION TO LAUNCH APP --> CALLS MyApp() WIDGET**\\
-///////////////////////////////////////////////////////////
 
 void main(){
   runApp( MyApp());}

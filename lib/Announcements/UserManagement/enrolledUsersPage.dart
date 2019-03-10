@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import 'package:bagcndemo/Models/Users.dart';
+// LOGIC
 import 'package:bagcndemo/Comments/commentsLogic.dart';
 import 'package:bagcndemo/Announcements/announcementLogic.dart';
+// MODELS
+import 'package:bagcndemo/Models/Users.dart';
 
 // SEE ENROLLED USERS PAGE
 class EnrolledUsersPage extends StatefulWidget {

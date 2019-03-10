@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import 'package:bagcndemo/Models/Users.dart';
+// LOGIC
 import 'package:bagcndemo/Comments/commentsLogic.dart';
+// MODELS
+import 'package:bagcndemo/Models/Users.dart';
 
 // SEE PENDING USERS PAGE
 class PendingUsersPage extends StatefulWidget {

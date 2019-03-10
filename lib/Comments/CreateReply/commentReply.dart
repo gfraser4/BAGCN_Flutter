@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-
+// LOGIC
 import 'package:bagcndemo/Comments/commentsLogic.dart';
+// MODELS
 import 'package:bagcndemo/Models/Comments.dart';
 
 //CREATE A COMMENT REPLY

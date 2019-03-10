@@ -1,32 +1,35 @@
 import 'package:flutter/material.dart';
+// LOGIC
+import 'package:bagcndemo/Announcements/announcementLogic.dart';
+// MODELS
+import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 
-import 'package:bagcndemo/CreateAnnouncement/createLogic.dart';
 
 final FocusNode _descriptionFocus = FocusNode();
 
-//CREATE ANNOUNCEMENT PAGE --> REQUIRES title and code PASSED TO IT AS ARGUMENTS
-class AnnouncementPage extends StatefulWidget {
-  final String title;
-  final int code;
+// EDIT ANNOUNCEMENT PAGE 
+class EditAnnouncementPage extends StatefulWidget {
+  final Announcements announcements;
   final user;
-  AnnouncementPage(this.title, this.code, this.user);
+  EditAnnouncementPage(this.announcements, this.user);
   @override
-  _AnnouncementPage createState() {
-    return _AnnouncementPage();
+  _EditAnnouncementPage createState() {
+    return _EditAnnouncementPage();
   }
 }
 
-class _AnnouncementPage extends State<AnnouncementPage> {
+class _EditAnnouncementPage extends State<EditAnnouncementPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   DateTime nowTime = new DateTime.now().toUtc();
   String _aTitle;
   String _aDescription;
   @override
   Widget build(BuildContext context) {
+    _aTitle = widget.announcements.title;
     return Scaffold(
       backgroundColor: Color.fromRGBO(28, 165, 229, 1),
       appBar: AppBar(
-        title: Text('Create Announcement'),
+        title: Text('Edit Announcement'),
       ),
       body: Center(
         child: Padding(
@@ -36,7 +39,7 @@ class _AnnouncementPage extends State<AnnouncementPage> {
             padding: EdgeInsets.all(0),
             children: <Widget>[
               Text(
-                '${widget.title} - ${widget.code}',
+                '${widget.announcements.title} - ${widget.announcements.code}',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Color(0xFFF4F5F7),
@@ -52,6 +55,7 @@ class _AnnouncementPage extends State<AnnouncementPage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
+                color: Color(0xFFF4F5F7),
                 child: Form(
                   key: _formKey,
                   child: ListView(
@@ -60,6 +64,7 @@ class _AnnouncementPage extends State<AnnouncementPage> {
                     children: <Widget>[
                       SizedBox(height: 10),
                       TextFormField(
+                        initialValue: widget.announcements.title,
                         validator: (input) {
                           if (input.isEmpty)
                             return 'Please enter a title for the announcement.';
@@ -72,10 +77,7 @@ class _AnnouncementPage extends State<AnnouncementPage> {
                               .requestFocus(_descriptionFocus);
                         },
                         autofocus: false,
-                        style: TextStyle(color: Colors.black),
                         decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
                           labelText: 'Announcement Title',
                           contentPadding:
                               EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
@@ -91,6 +93,7 @@ class _AnnouncementPage extends State<AnnouncementPage> {
                       ),
                       SizedBox(height: 30.0),
                       TextFormField(
+                        initialValue: widget.announcements.description,
                         focusNode: _descriptionFocus,
                         validator: (input) {
                           if (input.isEmpty)
@@ -100,10 +103,7 @@ class _AnnouncementPage extends State<AnnouncementPage> {
                         autofocus: false,
                         keyboardType: TextInputType.multiline,
                         maxLines: 8,
-                        style: TextStyle(color: Colors.black),
                         decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
                           labelText: 'Description',
                           contentPadding:
                               EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
@@ -118,30 +118,39 @@ class _AnnouncementPage extends State<AnnouncementPage> {
                         ),
                       ),
                       SizedBox(height: 30.0),
-                      RaisedButton(
-                        color: Color.fromRGBO(123, 193, 67, 1),
-                        child: Text(
-                          'Submit',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () {
-                          final formState = _formKey.currentState;
-                          if (formState.validate()) {
-                            formState.save();
-                            try {
-                              CreateAnnouncementLogic.createAnnouncement(
-                                  widget.code,
-                                  widget.title,
-                                  _aTitle,
-                                  _aDescription,
-                                  nowTime,
-                                  widget.user);
-                            } catch (ex) {
-                              print(ex.toString());
-                            }
-                            Navigator.pop(context);
-                          }
-                        },
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          RaisedButton(
+                            color: Color.fromRGBO(123, 193, 67, 1),
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          RaisedButton(
+                            color: Color.fromRGBO(123, 193, 67, 1),
+                            child: Text(
+                              'Save',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            onPressed: () {
+                              final formState = _formKey.currentState;
+                              if (formState.validate()) {
+                                formState.save();
+                                AnnouncementLogic.editAnnouncement(
+                                    widget.user,
+                                    _aTitle.trim(),
+                                    _aDescription.trim(),
+                                    widget.announcements.id);
+                                Navigator.of(context).pop();
+                              }
+                            },
+                          ),
+                        ],
                       ),
                       SizedBox(height: 20.0),
                     ],
@@ -151,7 +160,7 @@ class _AnnouncementPage extends State<AnnouncementPage> {
             ],
           ),
         ),
-      ),
+      ), 
     );
   }
 }

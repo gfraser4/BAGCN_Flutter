@@ -3,17 +3,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
+// LOGIC
+import 'package:bagcndemo/Announcements/announcementLogic.dart';
+// MODELS
+import 'package:bagcndemo/Models/AnnouncementsModel.dart';
+// PAGES
 import 'package:bagcndemo/Announcements/deleteButton.dart';
 import 'package:bagcndemo/Announcements/likeButton.dart';
-import 'package:bagcndemo/Announcements/announcementLogic.dart';
-import 'package:bagcndemo/Announcements/editAnnouncementPage.dart';
-import 'package:bagcndemo/CreateAnnouncement/createAnnouncement.dart';
+import 'package:bagcndemo/Announcements/EditAnnouncement/editAnnouncementPage.dart';
+import 'package:bagcndemo/Announcements/CreateAnnouncement/createAnnouncement.dart';
 import 'package:bagcndemo/Comments/CommentsPage.dart';
-import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 import 'package:bagcndemo/Announcements/UserManagement/enrolledUsersPage.dart';
 import 'package:bagcndemo/Announcements/UserManagement/pendingEnrollmentUsers.dart';
-
-// import 'package:bagcndemo/Models/Users.dart';
 
 bool role;
 // bool _isSearch;

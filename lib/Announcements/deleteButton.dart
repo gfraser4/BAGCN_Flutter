@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-
+// LOGIC
 import 'package:bagcndemo/Announcements/announcementLogic.dart';
+// MODELS
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 
 

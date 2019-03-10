@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import 'package:bagcndemo/Comments/EditCommentReply/editComment.dart';
-import 'package:bagcndemo/Comments/EditCommentReply/editReply.dart';
+// MODELS
 import 'package:bagcndemo/Models/Users.dart';
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 import 'package:bagcndemo/Models/Comments.dart';
 import 'package:bagcndemo/Models/Replies.dart';
-
+// PAGES
+import 'package:bagcndemo/Comments/EditCommentReply/editComment.dart';
+import 'package:bagcndemo/Comments/EditCommentReply/editReply.dart';
 import 'package:bagcndemo/Comments/CommentsPage.dart';
 
 // CREATE COMMENT

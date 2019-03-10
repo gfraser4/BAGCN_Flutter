@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+// MODELS
+import 'package:bagcndemo/Models/ClassesModel.dart';
+// PAGES
 import 'package:bagcndemo/AddClasses/joinClassesPage.dart';
 import 'package:bagcndemo/Announcements/announcementPage.dart';
 import 'package:bagcndemo/AddClasses/addClassesPage.dart';
-import 'package:bagcndemo/Models/ClassesModel.dart';
+
 
 class MyClassesLogic {
   // Notification Toggle for class

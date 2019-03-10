@@ -2,13 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-//IMPORTED PAGES
+// LOGIC
 import 'package:bagcndemo/AddClasses/addClassesLogic.dart';
 import 'package:bagcndemo/MyClasses/myClassesLogic.dart';
+// PAGES
 import 'package:bagcndemo/MyClasses/navDrawer.dart';
-
-//Imported Models
+// MODELS
 import 'package:bagcndemo/Models/ClassesModel.dart';
 
 //**MyClassList WIDGET - MY CLASSES PAGE CLASS -- HOW THE MAIN PAGE LOADS AND ITS CONTENT**\\

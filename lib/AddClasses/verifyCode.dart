@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:validators/validators.dart';
-
+// LOGIC
 import 'package:bagcndemo/AddClasses/addClassesLogic.dart';
+// MODELS
 import 'package:bagcndemo/Models/ClassesModel.dart';
 
 String _search = '';

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:validators/validators.dart';
-
+// LOGIC
+import 'package:bagcndemo/Signup/signupLogic.dart';
+// PAGES
 import 'package:bagcndemo/Style/customColors.dart';
 import 'package:bagcndemo/Login/loginPage.dart';
-import 'package:bagcndemo/Signup/signupLogic.dart';
+
 
 // Signup Initialization
 class SignUpPage extends StatefulWidget {

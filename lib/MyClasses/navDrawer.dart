@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-//IMPORT OTHER PAGES SO CAN BE NAVIGATED TO
+// LOGIC
+import "package:bagcndemo/MyClasses/myClassesLogic.dart";
+// PAGES
 import 'package:bagcndemo/About/aboutPage.dart';
 import 'package:bagcndemo/Settings/settingsPage.dart';
-import "package:bagcndemo/MyClasses/myClassesLogic.dart";
 
 //DYNAMIC CHANGE THEME
 import 'package:dynamic_theme/dynamic_theme.dart';

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+// LOGIC
 import 'package:bagcndemo/Announcements/announcementLogic.dart';
+// MODELS
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 
 

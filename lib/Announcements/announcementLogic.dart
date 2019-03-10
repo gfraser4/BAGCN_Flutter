@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+// MODELS
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
-
 
 class AnnouncementLogic {
 

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-//CLASS MAP BASED ON FIRESTORE ANNOUNCEMENT TABLE
+// MAP OF COMMENTS QUERY
 class Comments {
   final String userID;
   final String commentID;
@@ -37,6 +37,4 @@ class Comments {
   Comments.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data, reference: snapshot.reference);
 
-  // @override
-  // String toString() => "Record<$clsName:$title>";
 }
