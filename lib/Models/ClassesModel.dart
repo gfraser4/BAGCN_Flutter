@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+// MAP OF CLASSES QUERY
 class Classes {
   final String clsName;
   final String location;
@@ -35,6 +36,4 @@ class Classes {
   Classes.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data, reference: snapshot.reference);
 
-  @override
-  String toString() => "Record<$clsName:$code>";
 }

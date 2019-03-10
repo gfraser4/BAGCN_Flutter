@@ -4,26 +4,30 @@ import 'package:random_color/random_color.dart';
 
 class SignupLogic {
 
-//Create Supervisor
+// Create Supervisor
 static void createSupervisor(FirebaseUser user, String _email, String _password, String _firstName, String _lastName) async {
   RandomColor _randomColor = RandomColor();
         Firestore.instance.collection('users').document('${user.uid}').setData({
           'id': user.uid,
           'firstName': _firstName,
           'lastName': _lastName,
+          'enrolledIn':[],
+          'enrolledPending':[],
           'email': _email,
           'role': 'super',
           'profileColor' : _randomColor.randomColor().toString(),
         });
 }
 
-//Create Parent
+// Create Parent
 static void createParent(FirebaseUser user, String _email, String _password, String _firstName, String _lastName) async {
   RandomColor _randomColor = RandomColor();
         Firestore.instance.collection('users').document('${user.uid}').setData({
           'id': user.uid,
           'firstName': _firstName,
           'lastName': _lastName,
+          'enrolledIn':[],
+          'enrolledPending':[],
           'email': _email,
           'role': 'parent',
           'profileColor' : _randomColor.randomColor().toString(),

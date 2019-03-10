@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-//CLASS MAP BASED ON FIRESTORE ANNOUNCEMENT TABLE
+// MAP OF USERS QUERY
 class Users {
   final String id;
   final String firstName;
@@ -10,6 +9,7 @@ class Users {
   final String role;
   final String profileColor;
   final List<dynamic> enrolledIn;
+  final List<dynamic> enrolledPending;
   final DocumentReference reference;
 
   Users.fromMap(Map<String, dynamic> map, {this.reference})
@@ -21,6 +21,7 @@ class Users {
         assert(map['id'] != null),
         firstName = map['firstName'],
         enrolledIn = map['enrolledIn'],
+        enrolledPending = map['enrolledPending'],
         lastName = map['lastName'],
         id = map['id'],
         profileColor = map['profileColor'],
@@ -30,6 +31,4 @@ class Users {
   Users.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data, reference: snapshot.reference);
 
-  // @override
-  // String toString() => "Record<$clsName:$title>";
 }
