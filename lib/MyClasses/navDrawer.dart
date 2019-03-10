@@ -71,11 +71,11 @@ Widget navDrawer(BuildContext context, FirebaseUser user, bool isSuper) {
           ListTile(
             leading: Icon(Icons.account_circle,
                 color: Color.fromRGBO(28, 165, 229, 1)),
-            title: Text('Profile Settings'),
+            title: Text('Settings'),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SettingsPage()),
+                MaterialPageRoute(builder: (context) => SettingsPage(user)),
               );
             },
           ),
@@ -91,17 +91,6 @@ Widget navDrawer(BuildContext context, FirebaseUser user, bool isSuper) {
                 MaterialPageRoute(builder: (context) => AboutPage()),
               );
             },
-          ),
-          Divider(
-            color: Color.fromRGBO(123, 193, 67, 1),
-          ),
-          ListTile(
-            leading: Icon(Icons.lightbulb_outline, color: Color.fromRGBO(28, 165, 229, 1),),
-            title: Text('Dark Mode'),
-            trailing: Checkbox(value:Theme.of(context).brightness == Brightness.dark? true: false,activeColor: Color.fromRGBO(123, 193, 67, 1),onChanged: (bool){
-                DynamicTheme.of(context).setBrightness(Theme.of(context).brightness == Brightness.dark? Brightness.light: Brightness.dark);
-              },
-            ),
           ),
           Divider(
             color: Color.fromRGBO(123, 193, 67, 1),
