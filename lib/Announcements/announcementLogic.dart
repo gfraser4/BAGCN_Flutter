@@ -5,7 +5,8 @@ import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 
 
 class AnnouncementLogic {
-//build announcement stream
+
+// BUILD ANNOUNCEMENT STREAM
   static Stream<QuerySnapshot> announcementStream(String title, int code) {
     return Firestore.instance
         .collection('announcements')
@@ -15,7 +16,7 @@ class AnnouncementLogic {
         .snapshots();
   }
 
-//Delete Announcement and any associated comments
+// DELETE ANNOUNCEMENTS AND CASCADE DELETE COMMENTS
   static deleteAnnouncement(String id) async {
     Firestore db = Firestore.instance;
     try {
@@ -33,17 +34,7 @@ class AnnouncementLogic {
     }
   }
 
-// static Future<String> getSuper(String userID) async {
-//     DocumentSnapshot snapshot = await Firestore.instance
-//         .collection('users')
-//         .document('$userID')
-//         .get();
-//         print('user doc read');
-//         final superInfo = Users.fromSnapshot(snapshot);
-//         return '${superInfo.firstName}'  ;
-//   }
-
-//add user to liked l ist and increase count like by one or decrease by one
+// ADD OR REMOVE USER TO LIKED LIST AND INCREASE OR DECREASE LIKE COUNT 
   static void likeButtonClick(FirebaseUser user, Announcements announcements) {
     List<String> userID = ['${user.uid}'];
     Firestore.instance.runTransaction((transaction) async {
@@ -63,7 +54,7 @@ class AnnouncementLogic {
     });
   }
 
-  //keep track of who has subrscribed to announcement-comments notifications
+  // TRACK NOTIFIFICATION SUBSCRIPTIONS
   static void notifyClick(FirebaseUser user, Announcements announcements) {
     List<String> userID = ['${user.uid}'];
     Firestore.instance.runTransaction((transaction) async {
@@ -81,7 +72,7 @@ class AnnouncementLogic {
     });
   }
 
-//Edit Announcement
+// EDIT ANNOUNCEMENT
   static Future<void> editAnnouncement(FirebaseUser user, String title,
       String description, String announcementID) async {
     var editAnnouncement =
@@ -96,7 +87,7 @@ class AnnouncementLogic {
     }
   }
 
-// Remove User From Class
+// REMOVE USER FROM CLASS
   static removeEnrolledUser(int code, String userId) async {
     List<String> userID = [userId];
     Firestore db = Firestore.instance;
@@ -116,7 +107,7 @@ class AnnouncementLogic {
     }
   }
 
-  // Add User to Class
+  // ADD USER TO CLASS
   static addUserToClass(int code, String userId) async {
     List<String> userID = [userId];
     Firestore db = Firestore.instance;

@@ -4,9 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:bagcndemo/Models/Users.dart';
 import 'package:bagcndemo/Comments/commentsLogic.dart';
-import 'package:bagcndemo/Announcements/announcementLogic.dart';
 
-//SEARCH AND ADD users PAGE
+// SEE PENDING USERS PAGE
 class PendingUsersPage extends StatefulWidget {
   const PendingUsersPage(this.user, this.code);
   final FirebaseUser user;
@@ -19,11 +18,10 @@ class PendingUsersPage extends StatefulWidget {
 }
 
 class _PendingUsersPage extends State<PendingUsersPage> {
-//******************************************\\
-//*********** page scaffold *****************\\
-//********************************************\\
+
   @override
   Widget build(BuildContext context) {
+    //*********** PAGE SCAFFOLD *****************\\
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       backgroundColor: Color.fromRGBO(28, 165, 229, 1),
@@ -36,7 +34,7 @@ class _PendingUsersPage extends State<PendingUsersPage> {
     );
   }
 
-//Search querey dynamic based on search criteria
+// Search query for pending users
   Widget _buildEnrolledBody(BuildContext context, FirebaseUser user, int code) {
     return StreamBuilder<QuerySnapshot>(
       stream: Firestore.instance
@@ -50,18 +48,17 @@ class _PendingUsersPage extends State<PendingUsersPage> {
     );
   }
 
-//Build ListView for queried items based on above query
+// Build ListView
   Widget _buildEnrolledList(BuildContext context,
       List<DocumentSnapshot> snapshot, FirebaseUser user, int code) {
     return ListView(
-      //padding: const EdgeInsets.only(top: 20.0),
       children: snapshot
           .map((data) => _buildEnrolledListItem(context, data, user, code))
           .toList(),
     );
   }
 
-//WIDGET TO BUILD WACH CLASS ITEM --> Username needed to add users to that usres class list on their home screen (currently hardcoded as "lj@gmail.com")
+// BUILD EACH PENDING USER
   Widget _buildEnrolledListItem(
       BuildContext context, DocumentSnapshot data, FirebaseUser user, int code) {
     final users = Users.fromSnapshot(data);
@@ -73,7 +70,7 @@ class _PendingUsersPage extends State<PendingUsersPage> {
   }
 }
 
-//Class Cards
+// PENDING USER CARD
 class UserCard extends StatelessWidget {
   const UserCard({
     Key key,
@@ -91,7 +88,6 @@ class UserCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      // color: Color(0xFFF4F5F7),
       elevation: 5.0,
       child: Container(
         padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
@@ -121,7 +117,7 @@ class UserCard extends StatelessWidget {
   }
 }
 
-//Add to enrollment Button
+// ADD TO ENROLLMENT BUTTON
 class AllowButton extends StatelessWidget {
   const AllowButton({
     Key key,
@@ -136,7 +132,6 @@ class AllowButton extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    List<int> codeList = [code];
     return RaisedButton(
       color: Color.fromRGBO(123, 193, 67, 1),
       child: Text(
@@ -169,7 +164,7 @@ class AllowButton extends StatelessWidget {
                   child: Text("Yes"),
                   onPressed: () {
 
-                    // SEND EMAIL WITH PASSCODE
+                    // SEND EMAIL WITH PASSCODE \\
 
                     // users.reference.updateData({
                     //   "enrolledPending": FieldValue.arrayRemove(codeList),

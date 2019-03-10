@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class CreateAnnouncementLogic {
 
+// CREATE ANNOUNCEMENT
 static void createAnnouncement(int code, String className, String title, String description, DateTime nowTime, FirebaseUser user ){
 var newAnnouncement = Firestore.instance
                       .collection('announcements').document();

@@ -4,7 +4,7 @@ import 'package:random_color/random_color.dart';
 
 class SignupLogic {
 
-//Create Supervisor
+// Create Supervisor
 static void createSupervisor(FirebaseUser user, String _email, String _password, String _firstName, String _lastName) async {
   RandomColor _randomColor = RandomColor();
         Firestore.instance.collection('users').document('${user.uid}').setData({
@@ -17,7 +17,7 @@ static void createSupervisor(FirebaseUser user, String _email, String _password,
         });
 }
 
-//Create Parent
+// Create Parent
 static void createParent(FirebaseUser user, String _email, String _password, String _firstName, String _lastName) async {
   RandomColor _randomColor = RandomColor();
         Firestore.instance.collection('users').document('${user.uid}').setData({

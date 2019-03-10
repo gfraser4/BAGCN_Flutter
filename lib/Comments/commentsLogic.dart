@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:bagcndemo/Comments/editReply.dart';
-import 'package:bagcndemo/Comments/editComment.dart';
+import 'package:bagcndemo/Comments/EditCommentReply/editComment.dart';
+import 'package:bagcndemo/Comments/EditCommentReply/editReply.dart';
 import 'package:bagcndemo/Models/Users.dart';
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 import 'package:bagcndemo/Models/Comments.dart';
@@ -11,7 +11,8 @@ import 'package:bagcndemo/Models/Replies.dart';
 
 import 'package:bagcndemo/Comments/CommentsPage.dart';
 
-//Create Comment
+// CREATE COMMENT
+
 Future<void> createComment(BuildContext context, FirebaseUser user,
     String content, String announcementID) async {
   DateTime nowTime = new DateTime.now().toUtc();
@@ -30,7 +31,7 @@ Future<void> createComment(BuildContext context, FirebaseUser user,
     'lastName': userInfo.lastName,
     'created': nowTime,
     'visible': true,
-    'profileColor' : userInfo.profileColor, 
+    'profileColor': userInfo.profileColor,
   });
 
   DocumentSnapshot announcementSnapshot = await Firestore.instance
@@ -38,7 +39,7 @@ Future<void> createComment(BuildContext context, FirebaseUser user,
       .document(announcementID)
       .get();
 
-//Increases comment count by one for specific announcement
+// Increases comment count by one for specific announcement
   Firestore.instance.runTransaction((transaction) async {
     final freshSnapshot = await transaction.get(announcementSnapshot.reference);
     final fresh = Announcements.fromSnapshot(freshSnapshot);
@@ -49,7 +50,7 @@ Future<void> createComment(BuildContext context, FirebaseUser user,
   });
 }
 
-//Create Reply
+// CREATE REPLY
 Future<void> createReply(BuildContext context, FirebaseUser user,
     String content, String commentID, String announcementID) async {
   DateTime nowTime = new DateTime.now().toUtc();
@@ -68,7 +69,7 @@ Future<void> createReply(BuildContext context, FirebaseUser user,
     'lastName': userInfo.lastName,
     'created': nowTime,
     'visible': true,
-    'profileColor' : userInfo.profileColor,
+    'profileColor': userInfo.profileColor,
   });
 
   DocumentSnapshot announcementSnapshot = await Firestore.instance
@@ -76,7 +77,7 @@ Future<void> createReply(BuildContext context, FirebaseUser user,
       .document(announcementID)
       .get();
 
-  //Increases comment count by one for specific announcement
+  // Increases comment count by one for specific announcement
   Firestore.instance.runTransaction((transaction) async {
     final freshSnapshot = await transaction.get(announcementSnapshot.reference);
     final fresh = Announcements.fromSnapshot(freshSnapshot);
@@ -87,7 +88,7 @@ Future<void> createReply(BuildContext context, FirebaseUser user,
   });
 }
 
-//Edit Comment
+// EDIT COMMENT
 Future<void> editComment(BuildContext context, FirebaseUser user,
     String content, String commentID) async {
   var editComment =
@@ -97,7 +98,7 @@ Future<void> editComment(BuildContext context, FirebaseUser user,
   });
 }
 
-//Edit Reply
+// EDIT REPLY
 Future<void> editReply(BuildContext context, FirebaseUser user, String content,
     String replyID) async {
   var editComment = Firestore.instance.collection('replies').document(replyID);
@@ -106,7 +107,7 @@ Future<void> editReply(BuildContext context, FirebaseUser user, String content,
   });
 }
 
-//Comment Visibility
+// COMMENT VISIBILITY
 void toggleVisibility(DocumentSnapshot data, String commentID) {
   final comment = Comments.fromSnapshot(data);
   if (comment.visible == true) {
@@ -118,7 +119,7 @@ void toggleVisibility(DocumentSnapshot data, String commentID) {
   }
 }
 
-//Reply Visibility
+// REPLY VISBILITY
 void toggleReplyVisibility(DocumentSnapshot data, String replyID) {
   final reply = Replies.fromSnapshot(data);
   if (reply.visible == true) {
@@ -130,7 +131,7 @@ void toggleReplyVisibility(DocumentSnapshot data, String replyID) {
   }
 }
 
-//Verify if user made comment: if did then allow edit button
+// VERIFY IF USER MADE COMMENT AND SHOW EDIT BUTTON ACCORDINGLY
 Widget canEditComment(
     BuildContext context, Comments comments, FirebaseUser user) {
   final _editCommentController = new TextEditingController();
@@ -151,11 +152,10 @@ Widget canEditComment(
         ),
         onPressed: () {
           Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    EditCommentPage(comments, user)),
-                          );
+            context,
+            MaterialPageRoute(
+                builder: (context) => EditCommentPage(comments, user)),
+          );
         });
   } else {
     return Expanded(
@@ -164,6 +164,7 @@ Widget canEditComment(
   }
 }
 
+// VERIFY IF USER MADE REPLY AND SHOW EDIT BUTTON ACCORDINGLY
 Widget canEditReply(BuildContext context, Replies replies, FirebaseUser user) {
   final _editReplyController = new TextEditingController();
   _editReplyController.text = replies.content;
@@ -183,11 +184,9 @@ Widget canEditReply(BuildContext context, Replies replies, FirebaseUser user) {
       ),
       onPressed: () {
         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    EditReplyPage(replies, user)),
-                          );
+          context,
+          MaterialPageRoute(builder: (context) => EditReplyPage(replies, user)),
+        );
       },
     );
   } else {
@@ -195,7 +194,7 @@ Widget canEditReply(BuildContext context, Replies replies, FirebaseUser user) {
   }
 }
 
-//Get Profile color
+// GET USER PROFILE COLOR
 Color hexToColor(String code) {
   return new Color(int.parse(code.substring(10, 16), radix: 16) + 0xFF000000);
 }

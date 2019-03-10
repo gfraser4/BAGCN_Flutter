@@ -7,9 +7,10 @@ import 'package:bagcndemo/AddClasses/addClassesLogic.dart';
 import 'package:bagcndemo/Models/ClassesModel.dart';
 import 'package:bagcndemo/AddClasses/verifyCode.dart';
 
+// Search Text
 String _search = '';
 
-//SEARCH AND ADD CLASSES PAGE
+// SEARCH AND ADD CLASSES PAGE - FOR PARENTS
 class JoinClassesPage extends StatefulWidget {
   const JoinClassesPage(this.user);
   final FirebaseUser user;
@@ -23,7 +24,6 @@ class JoinClassesPage extends StatefulWidget {
 class _JoinClassesPage extends State<JoinClassesPage> {
   final _searchController =
       new TextEditingController(); //VAR TO HOLD CLASSNAME INPUT
-  // final _classCodeController = new TextEditingController(); //VAR TO HOLD CLASSCODE INPUT
   Icon _searchIcon = new Icon(Icons.search);
   Widget _appBarTitle = new Text('Search Classes');
 
@@ -42,7 +42,7 @@ class _JoinClassesPage extends State<JoinClassesPage> {
       }
     });
 
-//search icon is pressed toggle bvetween input and title
+// Search Icon is pressed toggle bvetween input and title
     void _searchPressed() {
       setState(() {
         if (this._searchIcon.icon == Icons.search) {
@@ -63,7 +63,7 @@ class _JoinClassesPage extends State<JoinClassesPage> {
       });
     }
 
-//Appbar main layout
+// APPBAR LAYOUT - TABBAR
     Widget _buildBar(BuildContext context) {
       return AppBar(
         bottom: TabBar(
@@ -86,9 +86,7 @@ class _JoinClassesPage extends State<JoinClassesPage> {
       );
     }
 
-//******************************************\\
-//*********** page scaffold *****************\\
-//********************************************\\
+//*********** PAGE SCAFFOLD *****************\\
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -107,18 +105,16 @@ class _JoinClassesPage extends State<JoinClassesPage> {
     );
   }
 
-//////////////////////////
-  /// JOIN CLASSES ///
-//////////////////////////
+// JOIN CLASSES //
 
-//Search querey dynamic based on search criteria
+// Search and Build Query
   Widget _buildBody(BuildContext context, FirebaseUser user) {
     return StreamBuilder<QuerySnapshot>(
       stream: Firestore.instance
           .collection('class')
           .where('isActive', isEqualTo: true)
           //.orderBy('clsName')
-          .snapshots(), //QUERY (stream) WILL BE DEPENDENT ON SEARCH FIELDS
+          .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
         return _buildList(context, snapshot.data.documents, user);
@@ -126,17 +122,16 @@ class _JoinClassesPage extends State<JoinClassesPage> {
     );
   }
 
-//Build ListView for queried items based on above query
+// Build ListView for returned queried
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot,
       FirebaseUser user) {
     return ListView(
-      //padding: const EdgeInsets.only(top: 20.0),
       children:
           snapshot.map((data) => _buildListItem(context, data, user)).toList(),
     );
   }
 
-//WIDGET TO BUILD WACH CLASS ITEM --> Username needed to add classes to that usres class list on their home screen (currently hardcoded as "lj@gmail.com")
+// WIDGET TO BUILD EACH CLASS ITEM
   Widget _buildListItem(
       BuildContext context, DocumentSnapshot data, FirebaseUser user) {
     final classes = Classes.fromSnapshot(data);
@@ -152,7 +147,7 @@ class _JoinClassesPage extends State<JoinClassesPage> {
   }
 }
 
-//Class Cards
+// Class Cards
 class ClassCard extends StatelessWidget {
   const ClassCard({
     Key key,
@@ -168,7 +163,6 @@ class ClassCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      // color: Color(0xFFF4F5F7),
       elevation: 5.0,
       child: ListTile(
         title: Text(classes.clsName),
@@ -179,15 +173,17 @@ class ClassCard extends StatelessWidget {
   }
 }
 
+// JOIN, REMOVE OR PENDING STATUS
 Widget classStatus(Classes classes, FirebaseUser user, List<String> userID) {
   if (classes.pendingUsers.contains(user.uid) == true) {
     return RaisedButton(
-        color: Colors.yellow,
-        child: Text(
-          'PENDING...',
-          style: TextStyle(color: Colors.white),
-        ),
-        onPressed: () {});
+      color: Colors.yellow,
+      child: Text(
+        'PENDING...',
+        style: TextStyle(color: Colors.white),
+      ),
+      onPressed: () {},
+    );
   } else if (classes.enrolledUsers.contains(user.uid) == false) {
     return new JoinButton(classes: classes, userID: userID, user: user);
   } else {
@@ -195,7 +191,7 @@ Widget classStatus(Classes classes, FirebaseUser user, List<String> userID) {
   }
 }
 
-//Remove Button
+// Remove Button
 class RemoveButton extends StatelessWidget {
   const RemoveButton({
     Key key,
@@ -253,7 +249,7 @@ class RemoveButton extends StatelessWidget {
   }
 }
 
-//Join Button
+// Join Button
 class JoinButton extends StatelessWidget {
   const JoinButton({
     Key key,
@@ -299,7 +295,8 @@ class JoinButton extends StatelessWidget {
                 FlatButton(
                   child: Text("Add Class"),
                   onPressed: () {
-                    ClassMGMTLogic.addClassPending(context, classes, userID, user);
+                    ClassMGMTLogic.addClassPending(
+                        context, classes, userID, user);
                   },
                 ),
               ],

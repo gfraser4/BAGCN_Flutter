@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:bagcndemo/Models/ClassesModel.dart';
 
 class ClassMGMTLogic {
+  // ADD USER TO PENDING STATUS - UPDATES CLASS AND USERS TABLES
   static addClassPending(BuildContext context, Classes classes,
       List<String> userID, FirebaseUser user) async {
     List<int> clsCode = [classes.code];
@@ -23,15 +24,15 @@ class ClassMGMTLogic {
           "enrolledPending": FieldValue.arrayUnion(clsCode),
         });
       });
-      print(userID);
       Navigator.of(context).pop();
     } catch (e) {
       print(e.toString());
     }
   }
 
+// ADD USER TO ENROLLED STATUS - UPDATES CLASS AND USERS TABLES
   static addClassEnrolled(BuildContext context, Classes classes,
-      List<String> userID, FirebaseUser user) async {
+    List<String> userID, FirebaseUser user) async {
     List<int> clsCode = [classes.code];
     Firestore db = Firestore.instance;
     try {
@@ -57,6 +58,7 @@ class ClassMGMTLogic {
     }
   }
 
+// REMOVES USER FROM A CLASS - UPDATES USERS AND CLASSES TABLES
   static removeClass(BuildContext context, Classes classes, List<String> userID,
       FirebaseUser user) async {
     Firestore db = Firestore.instance;
@@ -83,6 +85,7 @@ class ClassMGMTLogic {
     }
   }
 
+// OPENS A CLASS
   static openClass(BuildContext context, Classes classes, List<String> userID,
       String passCode) async {
     try {
@@ -97,9 +100,8 @@ class ClassMGMTLogic {
     }
   }
 
-//*
-//  Closing a class should reset all class fields and delete any associated comments/announcements etc.
-//*
+
+//  CLOSING A CLASS - should reset all class fields and delete any associated comments/announcements etc.
   static closeClass(BuildContext context, Classes classes, List<String> userID,
       FirebaseUser user) async {
     Firestore db = Firestore.instance;
@@ -116,7 +118,7 @@ class ClassMGMTLogic {
         });
       });
 
-// So announcements are never delete changes their code to 0 for history but they won't show back up if class is reopened.
+// So announcements are never deleted changes their code to 0 for history but they won't show back up if class is reopened.
       QuerySnapshot _announcementsQuery = await db
           .collection('announcements')
           .where('code', isEqualTo: classes.code)

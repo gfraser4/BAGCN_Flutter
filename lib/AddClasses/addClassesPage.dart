@@ -6,10 +6,12 @@ import 'package:validators/validators.dart';
 import 'package:bagcndemo/AddClasses/addClassesLogic.dart';
 import 'package:bagcndemo/Models/ClassesModel.dart';
 
+// Search Text
 String _search = '';
+// Class Passcode Text Entry
 String _passcode;
 
-//SEARCH AND ADD CLASSES PAGE
+// SEARCH AND ADD CLASSES PAGE - FOR SUPERVISORS
 class AddClassesPage extends StatefulWidget {
   const AddClassesPage(this.user);
   final FirebaseUser user;
@@ -23,14 +25,8 @@ class AddClassesPage extends StatefulWidget {
 class _AddClassesPage extends State<AddClassesPage> {
   final _searchController =
       new TextEditingController(); //VAR TO HOLD CLASSNAME INPUT
-  // final _classCodeController = new TextEditingController(); //VAR TO HOLD CLASSCODE INPUT
   Icon _searchIcon = new Icon(Icons.search);
   Widget _appBarTitle = new Text('Search Classes');
-
-  var stream = Firestore.instance
-      .collection('class')
-      .orderBy('clsName')
-      .snapshots(); //DEFAULT QUERY TO LIST ALL CLASSES IN DATABASE
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +43,7 @@ class _AddClassesPage extends State<AddClassesPage> {
       }
     });
 
-//search icon is pressed toggle bvetween input and title
+// Search Icon is pressed toggle bvetween input and title
     void _searchPressed() {
       setState(() {
         if (this._searchIcon.icon == Icons.search) {
@@ -68,7 +64,7 @@ class _AddClassesPage extends State<AddClassesPage> {
       });
     }
 
-//Appbar main layout
+// APPBAR WITH SEARCH LAYOUT
     Widget _buildBar(BuildContext context) {
       return new AppBar(
         centerTitle: true,
@@ -82,25 +78,25 @@ class _AddClassesPage extends State<AddClassesPage> {
       );
     }
 
-//******************************************\\
-//*********** page scaffold *****************\\
-//********************************************\\
+//*********** PAGE SCAFFOLD *****************\\
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       backgroundColor: Color.fromRGBO(28, 165, 229, 1),
       appBar: _buildBar(context),
       body: _buildBody(
         context,
-        stream,
         widget.user,
       ), //SEARCH RESULTS AREA IS BUILT PASSING DYNAMIC QUERY(stream)
     );
   }
 
-//Search querey dynamic based on search criteria
-  Widget _buildBody(BuildContext context, var stream, FirebaseUser user) {
+// BUILD QUERY STREAM
+  Widget _buildBody(BuildContext context, FirebaseUser user) {
     return StreamBuilder<QuerySnapshot>(
-      stream: stream, //QUERY (stream) WILL BE DEPENDENT ON SEARCH FIELDS
+      stream: Firestore.instance
+      .collection('class')
+      .orderBy('clsName')
+      .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
         return _buildList(context, snapshot.data.documents, user);
@@ -108,17 +104,16 @@ class _AddClassesPage extends State<AddClassesPage> {
     );
   }
 
-//Build ListView for queried items based on above query
+// Build ListView for Returned Query Items
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot,
       FirebaseUser user) {
     return ListView(
-      //padding: const EdgeInsets.only(top: 20.0),
       children:
           snapshot.map((data) => _buildListItem(context, data, user)).toList(),
     );
   }
 
-//WIDGET TO BUILD WACH CLASS ITEM --> Username needed to add classes to that usres class list on their home screen (currently hardcoded as "lj@gmail.com")
+//WIDGET TO BUILD WACH CLASS ITEM
   Widget _buildListItem(
       BuildContext context, DocumentSnapshot data, FirebaseUser user) {
     final classes = Classes.fromSnapshot(data);
@@ -134,7 +129,7 @@ class _AddClassesPage extends State<AddClassesPage> {
   }
 }
 
-//Class Cards
+// Class Cards
 class ClassCard extends StatelessWidget {
   const ClassCard({
     Key key,
@@ -150,7 +145,6 @@ class ClassCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      // color: Color(0xFFF4F5F7),
       elevation: 5.0,
       child: ListTile(
         title: Text(classes.clsName),
@@ -163,7 +157,7 @@ class ClassCard extends StatelessWidget {
   }
 }
 
-//Remove Button
+// Remove Button
 class RemoveButton extends StatelessWidget {
   const RemoveButton({
     Key key,
@@ -221,7 +215,7 @@ class RemoveButton extends StatelessWidget {
   }
 }
 
-//Open Button
+// Open Button
 class OpenButton extends StatelessWidget {
   const OpenButton({
     Key key,
@@ -257,55 +251,7 @@ class OpenButton extends StatelessWidget {
               ),
               content: Container(
                 width: 300,
-                child: Form(
-                  key: _formKey,
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: <Widget>[
-                      Text(
-                          "This code will be used to help prevent unregistered people from accessing this class and it's content."),
-                      SizedBox(height: 30.0),
-                      Text(
-                          "It is critical that this code is only shared with registered parents of this class."),
-                      SizedBox(height: 30.0),
-                      TextFormField(
-                        validator: (input) {
-                          if (input.length < 6)
-                            return 'The passcode needs to be at least 6 characters.';
-                        },
-                        textInputAction: TextInputAction.done,
-                        focusNode: _passcodeFocus,
-                        // initialValue:_password,
-                        onSaved: (input) => _passcode = input,
-                        autofocus: false,
-                        //initialValue: 'password',
-                        obscureText: true,
-                        style: TextStyle(color: Colors.black),
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          labelText: 'Passcode',
-                          prefixIcon: Icon(
-                            Icons.lock,
-                            color: Color.fromRGBO(123, 193, 67, 1),
-                          ),
-                          //hintText: 'Password',
-                          contentPadding:
-                              EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                            borderSide: BorderSide(
-                              color: Color.fromRGBO(123, 193, 67, 1),
-                              width: 2,
-                            ),
-                          ),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20.0)),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+                child: new OpenClassForm(formKey: _formKey, passcodeFocus: _passcodeFocus),
               ),
               actions: <Widget>[
                 FlatButton(
@@ -331,6 +277,68 @@ class OpenButton extends StatelessWidget {
           },
         );
       },
+    );
+  }
+}
+
+// OPEN CLASS FORM IN ALERTBOX
+class OpenClassForm extends StatelessWidget {
+  const OpenClassForm({
+    Key key,
+    @required GlobalKey<FormState> formKey,
+    @required FocusNode passcodeFocus,
+  }) : _formKey = formKey, _passcodeFocus = passcodeFocus, super(key: key);
+
+  final GlobalKey<FormState> _formKey;
+  final FocusNode _passcodeFocus;
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: ListView(
+        shrinkWrap: true,
+        children: <Widget>[
+          Text(
+              "This code will be used to help prevent unregistered people from accessing this class and it's content."),
+          SizedBox(height: 30.0),
+          Text(
+              "It is critical that this code is only shared with registered parents of this class."),
+          SizedBox(height: 30.0),
+          TextFormField(
+            validator: (input) {
+              if (input.length < 6)
+                return 'The passcode needs to be at least 6 characters.';
+            },
+            textInputAction: TextInputAction.done,
+            focusNode: _passcodeFocus,
+            onSaved: (input) => _passcode = input,
+            autofocus: false,
+            obscureText: true,
+            style: TextStyle(color: Colors.black),
+            decoration: InputDecoration(
+              fillColor: Colors.white,
+              filled: true,
+              labelText: 'Passcode',
+              prefixIcon: Icon(
+                Icons.lock,
+                color: Color.fromRGBO(123, 193, 67, 1),
+              ),
+              contentPadding:
+                  EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20.0),
+                borderSide: BorderSide(
+                  color: Color.fromRGBO(123, 193, 67, 1),
+                  width: 2,
+                ),
+              ),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.0)),
+            ),
+          )
+        ],
+      ),
     );
   }
 }

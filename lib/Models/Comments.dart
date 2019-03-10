@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 //CLASS MAP BASED ON FIRESTORE ANNOUNCEMENT TABLE

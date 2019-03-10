@@ -6,7 +6,7 @@ import 'package:bagcndemo/Models/Users.dart';
 import 'package:bagcndemo/Comments/commentsLogic.dart';
 import 'package:bagcndemo/Announcements/announcementLogic.dart';
 
-//SEARCH AND ADD users PAGE
+// SEE ENROLLED USERS PAGE
 class EnrolledUsersPage extends StatefulWidget {
   const EnrolledUsersPage(this.user, this.code);
   final FirebaseUser user;
@@ -19,11 +19,9 @@ class EnrolledUsersPage extends StatefulWidget {
 }
 
 class _EnrolledUsersPage extends State<EnrolledUsersPage> {
-//******************************************\\
-//*********** page scaffold *****************\\
-//********************************************\\
   @override
   Widget build(BuildContext context) {
+    //*********** PAGE SCAFFOLD *****************\\
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       backgroundColor: Color.fromRGBO(28, 165, 229, 1),
@@ -36,7 +34,7 @@ class _EnrolledUsersPage extends State<EnrolledUsersPage> {
     );
   }
 
-//Search querey dynamic based on search criteria
+// QUERY FRO ENROLLED USERS
   Widget _buildEnrolledBody(BuildContext context, FirebaseUser user, int code) {
     return StreamBuilder<QuerySnapshot>(
       stream: Firestore.instance
@@ -50,18 +48,17 @@ class _EnrolledUsersPage extends State<EnrolledUsersPage> {
     );
   }
 
-//Build ListView for queried items based on above query
+// Build ListView for queried users
   Widget _buildEnrolledList(BuildContext context,
       List<DocumentSnapshot> snapshot, FirebaseUser user, int code) {
     return ListView(
-      //padding: const EdgeInsets.only(top: 20.0),
       children: snapshot
           .map((data) => _buildEnrolledListItem(context, data, user, code))
           .toList(),
     );
   }
 
-//WIDGET TO BUILD WACH CLASS ITEM --> Username needed to add users to that usres class list on their home screen (currently hardcoded as "lj@gmail.com")
+// WIDGET TO BUILD EACH USER ITEM
   Widget _buildEnrolledListItem(
       BuildContext context, DocumentSnapshot data, FirebaseUser user, int code) {
     final users = Users.fromSnapshot(data);
@@ -73,7 +70,7 @@ class _EnrolledUsersPage extends State<EnrolledUsersPage> {
   }
 }
 
-//Class Cards
+// USER CARD
 class UserCard extends StatelessWidget {
   const UserCard({
     Key key,
@@ -91,7 +88,6 @@ class UserCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      // color: Color(0xFFF4F5F7),
       elevation: 5.0,
       child: Container(
         padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
@@ -121,7 +117,7 @@ class UserCard extends StatelessWidget {
   }
 }
 
-//Remove Button
+// REMOVE BUTTON - REMOVES USER FROM CLASS
 class RemoveButton extends StatelessWidget {
   const RemoveButton({
     Key key,

@@ -16,11 +16,11 @@ import 'package:bagcndemo/Announcements/UserManagement/pendingEnrollmentUsers.da
 // import 'package:bagcndemo/Models/Users.dart';
 
 bool role;
-bool _isSearch;
+// bool _isSearch;
 TextEditingController searchValueController = new TextEditingController();
 String searchString = '';
 
-//ParentClassAnnouncementPage WIDGET - SHOWS ANNOUNCEMENTS FOR SPECIFIC CLASS --> REQUIRES A title AND code ARGURMENT PASSED TO IT
+// ANNOUNCEMENT PAGE - SHOWS ANNOUNCEMENTS FOR SPECIFIC CLASS
 class ClassAnnouncementPage extends StatefulWidget {
   final FirebaseUser user;
   final String title;
@@ -33,14 +33,13 @@ class ClassAnnouncementPage extends StatefulWidget {
   }
 }
 
-//HOW PAGE IS BUILT
 class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
-
-  @override
-  void initState() {
-    super.initState();
-    _isSearch = false;
-  }
+// Announcements SEARCH BAR
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _isSearch = false;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -48,45 +47,9 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
 
     return buildScaffold(
         context, widget.title, widget.code, widget.user, widget.isSuper);
-
-    // return Scaffold(
-    //     // backgroundColor: Colors.grey[100],
-    //     appBar: AppBar(
-    //       title: _isSearch? searchArea():Text(widget.title), //PAGE TITLE BASED ON title THAT WAS PASSED TO PAGE
-    //       actions: <Widget>[
-    //       IconButton(
-    //         icon: Icon(Icons.search),
-    //           onPressed: (){_search();}
-    //       )
-    //     ],
-    //     ),
-    //     body: _buildBody(
-    //       context,
-    //       widget.title,
-    //       widget.code,
-    //       widget.user,
-    //     ),
-    //     floatingActionButton: role == true
-    //         ? FloatingActionButton(
-    //             child: Icon(Icons.create),
-    //             onPressed: () {
-    //               _isSearch = false;
-    //               Navigator.push(
-    //                 context,
-    //                 MaterialPageRoute(
-    //                     builder: (context) => AnnouncementPage(
-    //                           widget.title,
-    //                           widget.code,
-    //                           widget.user,
-    //                         )), //NAVIGATION TO CREATE ANNOUNCEMENT --> AGAIN PASSING title AND code SO ANNOUNCEMENT IS MADE FOR SPECIFIC CLASS
-    //               );
-    //             },
-    //           )
-    //         : null //HOW BODY IS BUILT PASSING CLASS title AND CLASS code to _buildBody() WIDGET FOR QUERY
-    //     );
   }
 
-  // Scaffold depending on user role
+  // SCAFFOLD DEPENDING ON PARENT OR SUPERVISOR
   Widget buildScaffold(
     BuildContext context,
     String title,
@@ -94,19 +57,19 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
     FirebaseUser user,
     bool isSuper,
   ) {
+    // PARENT SCAFFOLD
     if (!isSuper) {
       return Scaffold(
-        // backgroundColor: Colors.grey[100],
         appBar: AppBar(
-          title:
-              //_isSearch ? searchArea() :
-              Text(title), //PAGE TITLE BASED ON title THAT WAS PASSED TO PAGE
+          title: Text(title),
           actions: <Widget>[
-            IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {
-                  //_search();
-                })
+            // SEARCH ANNOUNCEMENTS ICON
+            // IconButton(
+            //   icon: Icon(Icons.search),
+            //   onPressed: () {
+            //     _search();
+            //   },
+            // ),
           ],
         ),
         body: _buildBody(
@@ -115,13 +78,13 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
           code,
           user,
         ),
-//HOW BODY IS BUILT PASSING CLASS title AND CLASS code to _buildBody() WIDGET FOR QUERY
       );
-    } else {
+    }
+    // SUPERVISOR SCAFFOLD \\
+    else {
       return DefaultTabController(
         length: 3,
         child: Scaffold(
-          // backgroundColor: Colors.grey[100],
           appBar: AppBar(
             bottom: TabBar(
               tabs: [
@@ -135,16 +98,18 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
             title:
                 //  _isSearch
                 //     ? searchArea() :
-                Text(widget
-                    .title), //PAGE TITLE BASED ON title THAT WAS PASSED TO PAGE
+                Text(widget.title),
             actions: <Widget>[
-              IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () {
-                    //_search();
-                  })
+              // SEARCH ANNOUNCEMENTS ICON
+              // IconButton(
+              //   icon: Icon(Icons.search),
+              //   onPressed: () {
+              //     _search();
+              //   },
+              // ),
             ],
           ),
+          // TABS
           body: TabBarView(
             children: <Widget>[
               _buildBody(
@@ -161,7 +126,7 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
           floatingActionButton: FloatingActionButton(
             child: Icon(Icons.create),
             onPressed: () {
-              _isSearch = false;
+              // _isSearch = false;
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -170,7 +135,7 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
                         widget.code,
                         widget.user,
                       ),
-                ), //NAVIGATION TO CREATE ANNOUNCEMENT --> AGAIN PASSING title AND code SO ANNOUNCEMENT IS MADE FOR SPECIFIC CLASS
+                ),
               );
             },
           ),
@@ -179,19 +144,19 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
     }
   }
 
-  //SEARCH METHOD
-  void _search() {
-    if (!_isSearch)
-      setState(() {
-        _isSearch = true;
-      });
-    else {
-      searchString = searchValueController.text;
-      setState(() {
-        _isSearch = false;
-      });
-    }
-  }
+  // SEARCH METHOD
+  // void _search() {
+  //   if (!_isSearch)
+  //     setState(() {
+  //       _isSearch = true;
+  //     });
+  //   else {
+  //     searchString = searchValueController.text;
+  //     setState(() {
+  //       _isSearch = false;
+  //     });
+  //   }
+  // }
 
   //SEARCH TEXT AREA
   Container searchArea() {
@@ -224,7 +189,7 @@ Widget _buildBody(
   );
 }
 
-//widget to build list of announcements based on class and class code
+// widget to build list of announcements based on class and class code
 Widget _buildList(
     BuildContext context, List<DocumentSnapshot> snapshot, FirebaseUser user) {
   return ListView(
@@ -234,24 +199,14 @@ Widget _buildList(
   );
 }
 
-//widget to build individual card item for each announcement from original query
+// widget to build individual card item for each announcement from original query
 Widget _buildListItem(
     BuildContext context, DocumentSnapshot data, FirebaseUser user) {
-  List<String> userID = ['${user.uid}'];
   final announcements = Announcements.fromSnapshot(data);
   var formatter = new DateFormat.yMd().add_jm();
   String formattedDate = formatter.format(announcements.created);
 
-// var name =
-//   Firestore.instance.collection('users').document(announcements.postedBy).get().then(
-//       (DocumentSnapshot doc) => print(doc.data['firstName'].toString()));
-// print(name);
-
-//filter body content by search string
-  // if(!(announcements.title.contains(searchString)||announcements.description.contains(searchString)))
-  //   return null;
-
-//supervisor Popup menu
+// SUPERVISOR POP UP MENU
   final supervisorMenu = AlertDialog(
     content: Container(
       height: 150,
@@ -335,75 +290,51 @@ Widget _buildListItem(
       child: Container(
         child: Column(
           children: <Widget>[
-            ListTile(
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              title: Text(
-                announcements.title,
-                style: TextStyle(
-                    fontWeight: FontWeight.w600, color: Colors.black87),
-              ),
-              subtitle: RichText(
-                  text: new TextSpan(
-                      style: TextStyle(color: Colors.black54),
-                      children: <TextSpan>[
-                    new TextSpan(
-                      text: '${announcements.clsName}',
-                      style: TextStyle(),
-                    ),
-                    new TextSpan(
-                      text: '\n$formattedDate',
-                      style: TextStyle(),
-                    ),
-                    new TextSpan(
-                      text: '\n\n${announcements.description}',
-                      style: TextStyle(),
-                    ),
-                  ])),
-            ),
+            new AnouncementText(
+                announcements: announcements, formattedDate: formattedDate),
             SizedBox(
               height: 16,
             ),
             Container(
-                color: Color.fromRGBO(41, 60, 62, 0.15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    new LikeButton(announcements: announcements, user: user),
-                    new CommentsButton(
-                        announcements: announcements, user: user),
-                    //Popup for supervisors or notification for parents
-                    role == true
-                        ? IconButton(
-                            icon: Icon(Icons.more_horiz),
-                            color: Color(0xFF1ca5e5),
-                            onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return supervisorMenu;
-                                  });
-                            },
-                          )
-                        : announcements.notifyUsers.contains(user.uid) == true
-                            ? IconButton(
-                                icon: Icon(Icons.notifications_active),
-                                color: Color(0xFF1ca5e5),
-                                onPressed: () {
-                                  AnnouncementLogic.notifyClick(
-                                      user, announcements);
-                                },
-                              )
-                            : IconButton(
-                                icon: Icon(Icons.notifications_off),
-                                color: Colors.grey,
-                                onPressed: () {
-                                  AnnouncementLogic.notifyClick(
-                                      user, announcements);
-                                },
-                              ),
-                  ],
-                )),
+              color: Color.fromRGBO(41, 60, 62, 0.15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  new LikeButton(announcements: announcements, user: user),
+                  new CommentsButton(announcements: announcements, user: user),
+                  // POP UP FOR SUPERVISORS OR NOTIFICATION BUTTON FOR PARENTS
+                  role == true
+                      ? IconButton(
+                          icon: Icon(Icons.more_horiz),
+                          color: Color(0xFF1ca5e5),
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return supervisorMenu;
+                                });
+                          },
+                        )
+                      : announcements.notifyUsers.contains(user.uid) == true
+                          ? IconButton(
+                              icon: Icon(Icons.notifications_active),
+                              color: Color(0xFF1ca5e5),
+                              onPressed: () {
+                                AnnouncementLogic.notifyClick(
+                                    user, announcements);
+                              },
+                            )
+                          : IconButton(
+                              icon: Icon(Icons.notifications_off),
+                              color: Colors.grey,
+                              onPressed: () {
+                                AnnouncementLogic.notifyClick(
+                                    user, announcements);
+                              },
+                            ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -411,8 +342,50 @@ Widget _buildListItem(
   );
 }
 
+// ANNOUNCEMENT LAYOUT FOR TITLE/DATE/DESCRIPTION
+class AnouncementText extends StatelessWidget {
+  const AnouncementText({
+    Key key,
+    @required this.announcements,
+    @required this.formattedDate,
+  }) : super(key: key);
 
-//Comments Button
+  final Announcements announcements;
+  final String formattedDate;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      title: Text(
+        announcements.title,
+        style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87),
+      ),
+      subtitle: RichText(
+        text: new TextSpan(
+          style: TextStyle(color: Colors.black54),
+          children: <TextSpan>[
+            new TextSpan(
+              text: '${announcements.clsName}',
+              style: TextStyle(),
+            ),
+            new TextSpan(
+              text: '\n$formattedDate',
+              style: TextStyle(),
+            ),
+            new TextSpan(
+              text: '\n\n${announcements.description}',
+              style: TextStyle(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// COMMENTS BUTTON
 class CommentsButton extends StatelessWidget {
   const CommentsButton({
     Key key,
@@ -432,7 +405,7 @@ class CommentsButton extends StatelessWidget {
             icon: Icon(Icons.forum),
             color: Color(0xFF1ca5e5),
             onPressed: () {
-              _isSearch = false;
+              // _isSearch = false;
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -451,53 +424,3 @@ class CommentsButton extends StatelessWidget {
     );
   }
 }
-
-// //Like Button
-// class LikeButton extends StatelessWidget {
-//   const LikeButton({
-//     Key key,
-//     @required this.announcements,
-//     @required this.user,
-//   }) : super(key: key);
-
-//   final Announcements announcements;
-//   final FirebaseUser user;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       child: Row(
-//         children: <Widget>[
-//           announcements.likedUsers.contains(user.uid) == true
-//               ? IconButton(
-//                   icon: Icon(Icons.thumb_up),
-//                   color: Color(0xFF1ca5e5),
-//                   onPressed: () {
-//                     AnnouncementLogic.likeButtonClick(user, announcements);
-//                   },
-//                 )
-//               : IconButton(
-//                   icon: Icon(Icons.thumb_up),
-//                   color: Colors.grey,
-//                   onPressed: () {
-//                     AnnouncementLogic.likeButtonClick(user, announcements);
-//                   },
-//                 ),
-//           announcements.likedUsers.contains(user.uid) == true
-//               ? Text(
-//                   announcements.likes.toString(),
-//                   style: TextStyle(
-//                     fontWeight: FontWeight.w600,
-//                     color: Color(0xFF1ca5e5),
-//                   ),
-//                 )
-//               : Text(announcements.likes.toString(),
-//                   style: TextStyle(
-//                     fontWeight: FontWeight.w600,
-//                     color: Colors.grey,
-//                   ))
-//         ],
-//       ),
-//     );
-//   }
-// }

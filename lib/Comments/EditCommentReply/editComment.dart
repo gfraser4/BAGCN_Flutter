@@ -1,33 +1,30 @@
 import 'package:flutter/material.dart';
 
-import 'package:bagcndemo/Models/AnnouncementsModel.dart';
-import 'package:bagcndemo/Announcements/announcementLogic.dart';
+import 'package:bagcndemo/Comments/commentsLogic.dart';
+import 'package:bagcndemo/Models/Comments.dart';
 
-final FocusNode _descriptionFocus = FocusNode();
-
-// EDIT ANNOUNCEMENT PAGE 
-class EditAnnouncementPage extends StatefulWidget {
-  final Announcements announcements;
+// EDIT COMMENT PAGE
+class EditCommentPage extends StatefulWidget {
+  final Comments comments;
   final user;
-  EditAnnouncementPage(this.announcements, this.user);
+  EditCommentPage(this.comments, this.user);
   @override
-  _EditAnnouncementPage createState() {
-    return _EditAnnouncementPage();
+  _EditCommentPage createState() {
+    return _EditCommentPage();
   }
 }
 
-class _EditAnnouncementPage extends State<EditAnnouncementPage> {
+class _EditCommentPage extends State<EditCommentPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   DateTime nowTime = new DateTime.now().toUtc();
-  String _aTitle;
-  String _aDescription;
+  String _cContent;
   @override
   Widget build(BuildContext context) {
-    _aTitle = widget.announcements.title;
+    _cContent = widget.comments.content;
     return Scaffold(
       backgroundColor: Color.fromRGBO(28, 165, 229, 1),
       appBar: AppBar(
-        title: Text('Edit Announcement'),
+        title: Text('Edit Comment'),
       ),
       body: Center(
         child: Padding(
@@ -37,7 +34,7 @@ class _EditAnnouncementPage extends State<EditAnnouncementPage> {
             padding: EdgeInsets.all(0),
             children: <Widget>[
               Text(
-                '${widget.announcements.title} - ${widget.announcements.code}',
+                'Edit your comment...',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Color(0xFFF4F5F7),
@@ -53,7 +50,6 @@ class _EditAnnouncementPage extends State<EditAnnouncementPage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                color: Color(0xFFF4F5F7),
                 child: Form(
                   key: _formKey,
                   child: ListView(
@@ -61,48 +57,18 @@ class _EditAnnouncementPage extends State<EditAnnouncementPage> {
                     padding: EdgeInsets.fromLTRB(20, 10.0, 20, 10),
                     children: <Widget>[
                       SizedBox(height: 10),
-                      TextFormField(
-                        initialValue: widget.announcements.title,
-                        validator: (input) {
-                          if (input.isEmpty)
-                            return 'Please enter a title for the announcement.';
-                        },
-                        keyboardType: TextInputType.text,
-                        onSaved: (input) => _aTitle = input,
-                        textInputAction: TextInputAction.next,
-                        onFieldSubmitted: (String value) {
-                          FocusScope.of(context)
-                              .requestFocus(_descriptionFocus);
-                        },
-                        autofocus: false,
-                        decoration: InputDecoration(
-                          labelText: 'Announcement Title',
-                          contentPadding:
-                              EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                          enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(6.0),
-                              borderSide: BorderSide(
-                                color: Color.fromRGBO(123, 193, 67, 1),
-                                width: 2,
-                              )),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(6.0)),
-                        ),
-                      ),
                       SizedBox(height: 30.0),
                       TextFormField(
-                        initialValue: widget.announcements.description,
-                        focusNode: _descriptionFocus,
+                        initialValue: widget.comments.content,
                         validator: (input) {
-                          if (input.isEmpty)
-                            return 'Please enter the announcement.';
+                          if (input.isEmpty) return 'Please enter a comment.';
                         },
-                        onSaved: (input) => _aDescription = input,
+                        onSaved: (input) => _cContent = input,
                         autofocus: false,
                         keyboardType: TextInputType.multiline,
                         maxLines: 8,
                         decoration: InputDecoration(
-                          labelText: 'Description',
+                          labelText: 'Comment',
                           contentPadding:
                               EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                           enabledBorder: OutlineInputBorder(
@@ -139,11 +105,8 @@ class _EditAnnouncementPage extends State<EditAnnouncementPage> {
                               final formState = _formKey.currentState;
                               if (formState.validate()) {
                                 formState.save();
-                                AnnouncementLogic.editAnnouncement(
-                                    widget.user,
-                                    _aTitle.trim(),
-                                    _aDescription.trim(),
-                                    widget.announcements.id);
+                                editComment(context, widget.user, _cContent,
+                                    widget.comments.commentID);
                                 Navigator.of(context).pop();
                               }
                             },
@@ -158,7 +121,7 @@ class _EditAnnouncementPage extends State<EditAnnouncementPage> {
             ],
           ),
         ),
-      ), 
+      ),
     );
   }
 }

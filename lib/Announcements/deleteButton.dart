@@ -4,7 +4,7 @@ import 'package:bagcndemo/Announcements/announcementLogic.dart';
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 
 
-//Delete Button
+// DELETE BUTTON - DELETES ANNOUNCEMENTS FROM SUPERVISOR POP UP
 class DeleteButton extends StatelessWidget {
   const DeleteButton({
     Key key,

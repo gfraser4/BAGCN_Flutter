@@ -5,7 +5,7 @@ import 'package:bagcndemo/Announcements/announcementLogic.dart';
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 
 
-//Like Button
+// LIKE BUTTON
 class LikeButton extends StatelessWidget {
   const LikeButton({
     Key key,
