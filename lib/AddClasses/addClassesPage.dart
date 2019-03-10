@@ -304,7 +304,7 @@ class OpenClassForm extends StatelessWidget {
         shrinkWrap: true,
         children: <Widget>[
           Text(
-              "This code will be used to help prevent unregistered people from accessing this class and it's content."),
+              "This code will be used to help prevent unregistered people from accessing this class and its content."),
           SizedBox(height: 30.0),
           Text(
               "It is critical that this code is only shared with registered parents of this class."),
