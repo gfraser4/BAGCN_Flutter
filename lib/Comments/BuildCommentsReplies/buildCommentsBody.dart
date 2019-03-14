@@ -233,9 +233,11 @@ class TopCommentArea extends StatelessWidget {
           ),
         ),
         Container(
+          alignment: Alignment.centerLeft,
           padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
           child: comments.visible == true
               ? Text('${comments.content}',
+              textAlign: TextAlign.left,
                   style: TextStyle(color: Colors.black54, fontSize: 14))
               : Text('This comment has been hidden by a moderator.',
                   style: TextStyle(color: Colors.black54, fontSize: 14)),
