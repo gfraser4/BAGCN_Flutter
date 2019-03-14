@@ -127,10 +127,12 @@ class ReplyCard extends StatelessWidget {
             ),
           ),
           Container(
+            alignment: Alignment.centerLeft,
             padding: EdgeInsets.fromLTRB(20, 0, 20, 5),
             child: replies.visible == true
                 ? Text(
                     '${replies.content}',
+                    textAlign: TextAlign.left,
                     style: TextStyle(color: Colors.black54, fontSize: 14),
                   )
                 : Text('This comment has been hidden by a moderator.',
