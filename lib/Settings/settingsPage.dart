@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:bagcndemo/Models/Users.dart';
 import 'package:bagcndemo/Settings/changePassword.dart';
@@ -7,6 +8,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server/gmail.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage(this.user);
@@ -16,45 +19,153 @@ class SettingsPage extends StatefulWidget {
   _SettingsPage createState() => new _SettingsPage();
 }
 
-bool isMute = false;
 Users user;
-String password;
-String _validation = '';
 
 class _SettingsPage extends State<SettingsPage> {
 
+bool isMute = false;
+TextEditingController email = new TextEditingController();
+TextEditingController passcode = new TextEditingController();
+String code = "123456";
+String _validation = '';
+
+@override
+void initState() {
+  super.initState();
+  getUser();
+}
+
+void _randomCode(){
+  Random random = new Random();
+  for (int i = 0; i < 6; i++){
+    code += random.nextInt(10).toString();
+  }
+}
+
+Future<void> sendCode() async {
+  // _randomCode();
+  // String username = 'bagcn2019@gmail.com';
+  // String password = 'boysandgirls2019';
+  String username = 'leeczwkey@gmail.com';
+  String password = 'leeczw9201554=';
+
+  final smtpServer = gmail(username, password);
+  
+  final message = new Message()
+    ..from = new Address(username, 'Boys&Girls Club')
+    ..recipients.add(email.text)
+    ..subject = 'Your pass code to change your password'
+    ..text = code;
+  try{
+    await send(message, smtpServer);
+    print('sent successful');
+  }
+  catch(ex){
+    print('fail');
+  }
+}
+  
 Future<void> getUser() async {
     DocumentSnapshot snapshot = await Firestore.instance
         .collection('users')
         .document('${widget.user.uid}')
         .get();
-        print('doc got');
     user = Users.fromSnapshot(snapshot);
 }
 
 AlertDialog _enterPassword(int page){
   return AlertDialog(
     title: Text(
-      'Enter Your Password',
+      'Enter Your PassCode',
       style: TextStyle(
           fontSize: 30,
           fontStyle: FontStyle.normal,
           color: Color.fromRGBO(0, 162, 162, 1)),
     ),
-    content: Column(
-      children: <Widget>[
+    content: Container(
+      width: 300,
+      child:ListView(
+        shrinkWrap: true,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+                width: 210,
+                child: TextFormField(
+                  textInputAction: TextInputAction.done,
+                  controller:email,
+                  autofocus: true,
+                  style: TextStyle(color: Colors.black),
+                        decoration: InputDecoration(
+                          fillColor: Colors.white,
+                          filled: true,
+                          labelText: 'Email',
+                          prefixIcon: Icon(
+                            Icons.lock,
+                            color: Color.fromRGBO(123, 193, 67, 1),
+                          ),
+                          contentPadding:
+                              EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                            borderSide: BorderSide(
+                              color: Color.fromRGBO(123, 193, 67, 1),
+                              width: 2,
+                            ),
+                          ),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0)),
+                        ),
+                ),
+              ),
+              Container(
+                width: 70,
+                child: RaisedButton(
+                  color: Colors.green,
+                  child: Text('Send',style: TextStyle(color: Colors.white)),
+                  shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10.0)),
+                  onPressed: () {
+                    // email.text==user.email
+                    true?sendCode():_validation="Wrong Email";
+                    setState(() {});
+                  },
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 15.0),
         TextFormField(
           textInputAction: TextInputAction.done,
-          onSaved: (input) => password = input,
+          controller:passcode,
           autofocus: true,
-          decoration: InputDecoration(
-            labelText: 'Password',
-          )
+          style: TextStyle(color: Colors.black),
+                        decoration: InputDecoration(
+                          fillColor: Colors.white,
+                          filled: true,
+                          labelText: 'Passcode',
+                          prefixIcon: Icon(
+                            Icons.lock,
+                            color: Color.fromRGBO(123, 193, 67, 1),
+                          ),
+                          //hintText: 'Password',
+                          contentPadding:
+                              EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                            borderSide: BorderSide(
+                              color: Color.fromRGBO(123, 193, 67, 1),
+                              width: 2,
+                            ),
+                          ),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0)),
+                        ),
         ),
         Text('$_validation',
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.red),)
-      ],
+        ],
+      )
     ),
     actions: <Widget>[
       FlatButton(
@@ -66,10 +177,12 @@ AlertDialog _enterPassword(int page){
       FlatButton(
         child: Text("Ok"),
         onPressed: () {
-          try{
-            FirebaseAuth.instance
-            .signInWithEmailAndPassword(email: user.email, password: password);
-            Navigator.pop(context);
+          if(code.length!=6){
+            setState(() {
+              _validation = "Please enter your email to get your pass code";
+            });
+          }
+          else if(passcode.text==code){
             page==1?
             Navigator.push(
               context,
@@ -80,11 +193,11 @@ AlertDialog _enterPassword(int page){
               MaterialPageRoute(builder: (context) => ChangePassword(widget.user))
             );
           }
-        catch(ex){
-          setState(() {
-            _validation = "Wrong password";
-          });
-        } 
+          else{
+            setState(() {
+              _validation = "Wrong code";
+            });
+          } 
         },
       ),
     ],
@@ -237,7 +350,6 @@ ListView settingPage(){
 
   @override
   Widget build(BuildContext context) {
-    getUser();
     return Scaffold(
       appBar: AppBar(title: Text("Settings")),
       body: settingPage()
