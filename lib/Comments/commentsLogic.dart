@@ -154,7 +154,8 @@ Widget canEditComment(
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => EditCommentPage(comments, user)),
+                 builder: (context) => EditCommentPage(comments, user)),
+                //builder: (context) => MessageInputEdit(comments, user)),
           );
         });
   } else {

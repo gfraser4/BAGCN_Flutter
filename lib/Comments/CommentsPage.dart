@@ -5,12 +5,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:bagcndemo/Comments/commentsLogic.dart';
 // MODELS
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
+import 'package:bagcndemo/Models/Comments.dart';
 // PAGES
 import 'package:bagcndemo/Comments/BuildCommentsReplies/buildCommentsBody.dart';
 import 'package:bagcndemo/Style/customColors.dart';
 
-
-
+bool flag = false;
 bool role;
 bool visible = true;
 Icon visibleIcon;
@@ -47,27 +47,44 @@ class _CommentsPage extends State<CommentsPage> {
       visibleIcon = hiddenIcon;
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     role = widget.isSuper;
+    
     // PAGE SCAFFOLD \\
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.announcement.title),
       ),
-      body: Column(children: <Widget>[
-        Expanded(
-          child: buildCommentsBody(context, widget.announcement, widget.user),
-        ),
-        Form(
-          child: new MessageInputBar(
-            commentController: _commentController,
-            widget: widget,
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: buildCommentsBody(context, widget.announcement, widget.user),
           ),
-        ),
-      ]),
+          Form(
+            child: messageBar(_commentController, widget)
+
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(child: Icon(Icons.ac_unit),  onPressed: (){
+      } ,),
     );
   }
+}
+
+Widget messageBar(TextEditingController _commentController, Widget widget){
+  if (flag == false){
+return MessageInputBar(
+              commentController: _commentController,
+              widget: widget,
+            );
+  }
+  else {
+    return Text('');
+}
 }
 
 // MESSAGE INPUT BAR
@@ -94,6 +111,7 @@ class MessageInputBar extends StatelessWidget {
         autofocus: false,
         controller: _commentController,
         decoration: InputDecoration(
+          hasFloatingPlaceholder: false,
           filled: true,
           fillColor: Colors.white,
           suffixIcon: IconButton(
@@ -126,6 +144,53 @@ class MessageInputBar extends StatelessWidget {
     );
   }
 }
+
+// Widget MessageInputEdit(Comments) {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       color: Color.fromRGBO(28, 165, 229, 1),
+//       padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+//       child: TextFormField(
+//         keyboardType: TextInputType.multiline,
+//         maxLines: null,
+//         onSaved: (input) => _commentController.text = input,
+//         autofocus: false,
+//         controller: _commentController,
+//         decoration: InputDecoration(
+//           hasFloatingPlaceholder: false,
+//           filled: true,
+//           fillColor: Colors.white,
+//           suffixIcon: IconButton(
+//             icon: Icon(Icons.send),
+//             color: CustomColors.bagcGreen,
+//             onPressed: () {
+//               if (_commentController.text.trim().isNotEmpty) {
+//                 createComment(context, widget.user,
+//                     _commentController.text.trim(), widget.announcement.id);
+//                 _commentController.text = "";
+//                 scrollController.animateTo(
+//                   scrollController.position.maxScrollExtent,
+//                   duration: const Duration(milliseconds: 300),
+//                   curve: Curves.easeOut,
+//                 );
+//               }
+//             },
+//           ),
+//           labelText: 'Type a message...',
+//           contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+//           enabledBorder: OutlineInputBorder(
+//               borderRadius: BorderRadius.circular(6.0),
+//               borderSide: BorderSide(
+//                 color: Color.fromRGBO(123, 193, 67, 1),
+//                 width: 2,
+//               )),
+//           border: OutlineInputBorder(borderRadius: BorderRadius.circular(6.0)),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 // // ***BUILD Comments*** \\
 
@@ -356,4 +421,3 @@ class MessageInputBar extends StatelessWidget {
 //     );
 //   }
 // }
-
