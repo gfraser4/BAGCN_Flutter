@@ -1,4 +1,5 @@
 //STANDARD MATERIAL LIBRARY AND FIRESTORE LIBRARY
+import 'package:bagcndemo/Models/Users.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,13 +11,17 @@ import 'package:bagcndemo/MyClasses/navDrawer.dart';
 // MODELS
 import 'package:bagcndemo/Models/ClassesModel.dart';
 
+List<Classes> cls = new List<Classes>();
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
 //**MyClassList WIDGET - MY CLASSES PAGE CLASS -- HOW THE MAIN PAGE LOADS AND ITS CONTENT**\\
 
 class MyClassList extends StatefulWidget {
-  const MyClassList(this.user, this.isSuper);
+  const MyClassList(this.user, this.isSuper, this.loginUser);
   final FirebaseUser user;
   final bool isSuper;
-
+  final Users loginUser;
   @override
   _MyClassList createState() {
     return _MyClassList();
@@ -45,7 +50,7 @@ class _MyClassList extends State<MyClassList> {
         },
       ),
       drawer: navDrawer(context, widget.user,
-          widget.isSuper), //BUILDS MENU DRAWER BY CALLING navDrawer WIDGET
+          widget.isSuper, widget.loginUser, cls), //BUILDS MENU DRAWER BY CALLING navDrawer WIDGET
     );
   }
 }
@@ -123,9 +128,10 @@ class ClassTileWidget extends StatelessWidget {
   final List<String> userID;
   final FirebaseUser user;
   final bool isSuper;
-
+  
   @override
   Widget build(BuildContext context) {
+    cls.add(classes);
     return ListTile(
       contentPadding: const EdgeInsets.fromLTRB(5, 5, 2, 5),
       // CLASS TITLE AND CODE
