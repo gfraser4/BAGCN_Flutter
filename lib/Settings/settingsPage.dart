@@ -207,7 +207,7 @@ ListView settingPage(){
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Settings")),
+      appBar: AppBar(title: Text("Profile Settings")),
       body: settingPage()
     );
   }
