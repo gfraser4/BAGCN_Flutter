@@ -30,7 +30,7 @@ Widget navDrawer(BuildContext context, FirebaseUser user, bool isSuper, Users lo
           Divider(
             color: Color.fromRGBO(123, 193, 67, 1),
           ),
-          new SettingsTile(user,loginUser,classes),
+          new ProfileSettingsTile(user,loginUser,classes),
           Divider(
             color: Color.fromRGBO(123, 193, 67, 1),
           ),
@@ -144,8 +144,8 @@ class AboutTile extends StatelessWidget {
 }
 
 // SETTINGS TILE
-class SettingsTile extends StatelessWidget {
-  const SettingsTile(this.user, this.loginUser, this.classes, {
+class ProfileSettingsTile extends StatelessWidget {
+  const ProfileSettingsTile(this.user, this.loginUser, this.classes, {
     Key key,
   }) : super(key: key);
   
@@ -158,7 +158,7 @@ class SettingsTile extends StatelessWidget {
     return ListTile(
       leading:
           Icon(Icons.account_circle, color: Color.fromRGBO(28, 165, 229, 1)),
-      title: Text('Settings'),
+      title: Text('Profile Settings'),
       onTap: () {
         Navigator.push(
           context,
