@@ -30,18 +30,7 @@ Widget navDrawer(BuildContext context, FirebaseUser user, bool isSuper, Users lo
           Divider(
             color: Color.fromRGBO(123, 193, 67, 1),
           ),
-          ListTile(
-            leading: Icon(Icons.account_circle,
-                color: Color.fromRGBO(28, 165, 229, 1)),
-            title: Text('Settings'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SettingsPage(user,loginUser,classes)),
-              );
-            },
-          ),
-//           new ProfileSettingsTile(),
+          new SettingsTile(user,loginUser,classes),
           Divider(
             color: Color.fromRGBO(123, 193, 67, 1),
           ),
@@ -154,22 +143,26 @@ class AboutTile extends StatelessWidget {
   }
 }
 
-// PROFILE SETTINGS TILE
-class ProfileSettingsTile extends StatelessWidget {
-  const ProfileSettingsTile({
+// SETTINGS TILE
+class SettingsTile extends StatelessWidget {
+  const SettingsTile(this.user, this.loginUser, this.classes, {
     Key key,
   }) : super(key: key);
+  
+  final FirebaseUser user;
+  final Users loginUser;
+  final List<Classes> classes;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       leading:
           Icon(Icons.account_circle, color: Color.fromRGBO(28, 165, 229, 1)),
-      title: Text('Profile Settings'),
+      title: Text('Settings'),
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => SettingsPage()),
+          MaterialPageRoute(builder: (context) => SettingsPage(user,loginUser,classes)),
         );
       },
     );

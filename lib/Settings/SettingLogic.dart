@@ -8,12 +8,12 @@ class SettingLogic {
     List<String> userID = [user.uid];
       for(Classes cls in classes){
         Firestore.instance.runTransaction((transaction) async {
-          final freshSnapshot = await transaction.get(cls.reference);
-          final fresh = Classes.fromSnapshot(freshSnapshot);
-          if (fresh.notifyUsers.contains(user.uid) == false||!isMute) {
+          // final freshSnapshot = await transaction.get(cls.reference);
+          // final fresh = Classes.fromSnapshot(freshSnapshot);
+          if (!isMute) {
             await transaction.update(
                 cls.reference, {"notifyUsers": FieldValue.arrayUnion(userID)});
-          } else if (fresh.notifyUsers.contains(user.uid) == true||isMute){
+          } else if (isMute){
             await transaction.update(
                 cls.reference, {"notifyUsers": FieldValue.arrayRemove(userID)});
           }

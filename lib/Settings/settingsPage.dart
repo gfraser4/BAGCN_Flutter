@@ -20,11 +20,6 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPage extends State<SettingsPage> {
 
 TextEditingController passcode = new TextEditingController();
-
-// AlertDialog _enterPassword(int page){
-//   return 
-// }
-
 AlertDialog _signOutAlert(){
   return AlertDialog(
     title: Text(
@@ -99,7 +94,7 @@ CheckboxListTile _darkMode(){
         activeColor: Color.fromRGBO(123, 193, 67, 1),
         onChanged:(bool){
           DynamicTheme.of(context).setBrightness(Theme.of(context).brightness == Brightness.dark? Brightness.light: Brightness.dark);
-        } ,
+        },
       );
     } 
 
@@ -187,24 +182,24 @@ ListView settingPage(){
             ),
             child: _changePassword()
           ),
-          Container(
-            decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.grey))
-            ),
-            child: _darkMode()
-          ),
+          // Container(
+          //   decoration: BoxDecoration(
+          //     border: Border(bottom: BorderSide(color: Colors.grey))
+          //   ),
+          //   child: _darkMode()
+          // ),
           Container(
             decoration: BoxDecoration(
               border: Border(bottom: BorderSide(color: Colors.grey))
             ),
             child: _muteNotification()
           ),
-          Container(
-            decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.grey))
-            ),
-            child: _signOut()
-          ),
+          // Container(
+          //   decoration: BoxDecoration(
+          //     border: Border(bottom: BorderSide(color: Colors.grey))
+          //   ),
+          //   child: _signOut()
+          // ),
         ]
       );
     }
