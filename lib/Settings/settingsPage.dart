@@ -1,96 +1,45 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:bagcndemo/Models/Users.dart';
-import 'package:bagcndemo/Settings/changePassword.dart';
-import 'package:bagcndemo/Settings/editProfile.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:bagcndemo/Settings/editProfile.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mailer/mailer.dart';
-import 'package:mailer/smtp_server/gmail.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage(this.user);
+  const SettingsPage(this.user,this.loginUser);
   final FirebaseUser user;
-
+  final Users loginUser;
   @override
   _SettingsPage createState() => new _SettingsPage();
 }
-
-Users user;
 
 class _SettingsPage extends State<SettingsPage> {
 
 bool isMute = false;
 TextEditingController email = new TextEditingController();
 TextEditingController passcode = new TextEditingController();
-String code = "123456";
-String _validation = '';
+Text _validation =Text("");
 
-@override
-void initState() {
-  super.initState();
-  getUser();
-}
-
-void _randomCode(){
-  Random random = new Random();
-  for (int i = 0; i < 6; i++){
-    code += random.nextInt(10).toString();
-  }
-}
-
-Future<void> sendCode() async {
-  // _randomCode();
-  // String username = 'bagcn2019@gmail.com';
-  // String password = 'boysandgirls2019';
-  String username = 'leeczwkey@gmail.com';
-  String password = 'leeczw9201554=';
-
-  final smtpServer = gmail(username, password);
-  
-  final message = new Message()
-    ..from = new Address(username, 'Boys&Girls Club')
-    ..recipients.add(email.text)
-    ..subject = 'Your pass code to change your password'
-    ..text = code;
-  try{
-    await send(message, smtpServer);
-    print('sent successful');
-  }
-  catch(ex){
-    print('fail');
-  }
-}
-  
-Future<void> getUser() async {
-    DocumentSnapshot snapshot = await Firestore.instance
-        .collection('users')
-        .document('${widget.user.uid}')
-        .get();
-    user = Users.fromSnapshot(snapshot);
+Future<void> _sendChangePasswordEmail(String email) async {
+  await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
 }
 
 AlertDialog _enterPassword(int page){
   return AlertDialog(
     title: Text(
-      'Enter Your PassCode',
+      'Enter Your Email',
       style: TextStyle(
           fontSize: 30,
           fontStyle: FontStyle.normal,
           color: Color.fromRGBO(0, 162, 162, 1)),
     ),
     content: Container(
-      width: 300,
+      width: 250,
       child:ListView(
         shrinkWrap: true,
         children: <Widget>[
-          Row(
-            children: <Widget>[
               Container(
-                width: 210,
                 child: TextFormField(
                   textInputAction: TextInputAction.done,
                   controller:email,
@@ -118,84 +67,37 @@ AlertDialog _enterPassword(int page){
                         ),
                 ),
               ),
-              Container(
-                width: 70,
-                child: RaisedButton(
-                  color: Colors.green,
-                  child: Text('Send',style: TextStyle(color: Colors.white)),
-                  shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10.0)),
-                  onPressed: () {
-                    // email.text==user.email
-                    true?sendCode():_validation="Wrong Email";
-                    setState(() {});
-                  },
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 15.0),
-        TextFormField(
-          textInputAction: TextInputAction.done,
-          controller:passcode,
-          autofocus: true,
-          style: TextStyle(color: Colors.black),
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          labelText: 'Passcode',
-                          prefixIcon: Icon(
-                            Icons.lock,
-                            color: Color.fromRGBO(123, 193, 67, 1),
-                          ),
-                          //hintText: 'Password',
-                          contentPadding:
-                              EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                            borderSide: BorderSide(
-                              color: Color.fromRGBO(123, 193, 67, 1),
-                              width: 2,
-                            ),
-                          ),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20.0)),
-                        ),
-        ),
-        Text('$_validation',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.red),)
-        ],
+              SizedBox(height: 5,),
+              _validation
+            ]
       )
     ),
     actions: <Widget>[
       FlatButton(
         child: Text("Cancel"),
         onPressed: () {
+          email.clear();
+          _validation =Text("");
           Navigator.of(context).pop();
         },
       ),
       FlatButton(
-        child: Text("Ok"),
+        child: Text("Send"),
         onPressed: () {
-          if(code.length!=6){
+          if(email.text==widget.user.email&&widget.user.isEmailVerified){
+            _sendChangePasswordEmail(email.text);
             setState(() {
-              _validation = "Please enter your email to get your pass code";
+              _validation = Text("A password change email has been sent to your email address.",style:TextStyle(color:Colors.green));
             });
-          }
-          else if(passcode.text==code){
-            page==1?
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => EditProfile(user,widget.user))
-            ):
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ChangePassword(widget.user))
-            );
+          Future.delayed(Duration(seconds: 2),(){
+            email.clear();
+            _validation =Text("");
+            Navigator.of(context).pop();
+          });
           }
           else{
             setState(() {
-              _validation = "Wrong code";
+              _validation = Text("Wrong email address.",style:TextStyle(color:Colors.red));
             });
           } 
         },
@@ -242,17 +144,17 @@ AlertDialog _signOutAlert(){
 
 ListTile _editProfile(){
   return ListTile(
-        title: Text("Edit Profile",style:TextStyle(fontSize: 18),maxLines: 1,overflow: TextOverflow.ellipsis,),
-        subtitle: Text(user.firstName+" "+user.lastName,style:TextStyle(fontSize: 16),maxLines: 1,overflow: TextOverflow.ellipsis,),
-        trailing: Icon(Icons.chevron_right),
-        onTap: (){
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return _enterPassword(1);
-            }
-          );
-        },
+        title: Text("Current User",style:TextStyle(fontSize: 18),maxLines: 1,overflow: TextOverflow.ellipsis,),
+        subtitle: Text(widget.loginUser.firstName+" "+widget.loginUser.lastName,style:TextStyle(fontSize: 16),maxLines: 1,overflow: TextOverflow.ellipsis,),
+        // trailing: Icon(Icons.chevron_right),
+        // onTap: (){
+        //   showDialog(
+        //     context: context,
+        //     builder: (BuildContext context) {
+        //       return _enterPassword(1);
+        //     }
+        //   );
+        // },
       );
     } 
     

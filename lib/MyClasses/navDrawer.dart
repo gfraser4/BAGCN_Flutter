@@ -1,3 +1,4 @@
+import 'package:bagcndemo/Models/Users.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:validators/validators.dart';
@@ -16,7 +17,7 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 //**HAMBURGER DRAWER MENU WIDGET**\\
 ////////////////////////////////////
 
-Widget navDrawer(BuildContext context, FirebaseUser user, bool isSuper) {
+Widget navDrawer(BuildContext context, FirebaseUser user, bool isSuper, Users loginUser) {
   return Drawer(
     elevation: 50,
     child: Container(
@@ -75,7 +76,7 @@ Widget navDrawer(BuildContext context, FirebaseUser user, bool isSuper) {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SettingsPage(user)),
+                MaterialPageRoute(builder: (context) => SettingsPage(user,loginUser)),
               );
             },
           ),

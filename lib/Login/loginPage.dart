@@ -1,3 +1,4 @@
+import 'package:bagcndemo/Models/Users.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:bagcndemo/MyClasses/myClasses.dart';
@@ -252,10 +253,16 @@ Future<bool> checkRole(FirebaseUser user) async {
 bool isSuper = await checkRole(user);
 print(isSuper);
 
+DocumentSnapshot snapshot = await Firestore.instance
+        .collection('users')
+        .document(user.uid)
+        .get();
+   Users loginUser = Users.fromSnapshot(snapshot);
+
         await Navigator.pushReplacement(
             context,
             new MaterialPageRoute(
-                builder: (BuildContext context) => new MyClassList(user, isSuper)));
+                builder: (BuildContext context) => new MyClassList(user, isSuper,loginUser)));
       } catch (ex) {
         setState(() {
           _validation = ex.message.toString();
