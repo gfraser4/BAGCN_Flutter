@@ -3,20 +3,20 @@ import 'package:bagcndemo/Models/Users.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-//IMPORT OTHER PAGES SO CAN BE NAVIGATED TO
+// LOGIC
 import 'package:bagcndemo/AddClasses/addClassesLogic.dart';
 import 'package:bagcndemo/MyClasses/myClassesLogic.dart';
+// PAGES
 import 'package:bagcndemo/MyClasses/navDrawer.dart';
-
-//Imported Models
+// MODELS
 import 'package:bagcndemo/Models/ClassesModel.dart';
 
 List<Classes> cls = new List<Classes>();
 
 ////////////////////////////////////////////////////////////////////////////////////////////
+
 //**MyClassList WIDGET - MY CLASSES PAGE CLASS -- HOW THE MAIN PAGE LOADS AND ITS CONTENT**\\
-////////////////////////////////////////////////////////////////////////////////////////////
+
 class MyClassList extends StatefulWidget {
   const MyClassList(this.user, this.isSuper, this.loginUser);
   final FirebaseUser user;
@@ -28,18 +28,18 @@ class MyClassList extends StatefulWidget {
   }
 }
 
-//LAYOUT OF MY CLASSES PAGE --> CALLS WIDGETS BELOW IT
+// LAYOUT OF MY CLASSES PAGE --> CALLS WIDGETS BELOW IT
+
 class _MyClassList extends State<MyClassList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title:
-              Text('My Classes ${widget.user.email}')), //PAGE APP BAR AND TITLE
+        title: Text('My Classes ${widget.user.email}'),
+      ),
       body: _buildBody(context, widget.user,
           widget.isSuper), //PAGE CONTENT --> CALLING _buildBody WIDGET
       floatingActionButton: FloatingActionButton(
-        //FLOATING ACTION BUTTON TO ADD CLASSES
         child: Icon(Icons.add),
         onPressed: () {
           if (!widget.isSuper) {
@@ -47,8 +47,6 @@ class _MyClassList extends State<MyClassList> {
           } else {
             MyClassesLogic.navToAddClasses(context, widget.user);
           }
-
-          //BUTTON PRESSED EVENT --> NAVIGATES TO AddClassesPAGE()
         },
       ),
       drawer: navDrawer(context, widget.user,
@@ -57,26 +55,14 @@ class _MyClassList extends State<MyClassList> {
   }
 }
 
-//////////////////////////////////////////////
-/*MAIN PAGE Build Sequence*/
-/////////////////////////////////////////////
+// MAIN PAGE Build //
 
-//QUERY FIRESTORE FOR ALL CLASSES FOR A USER --> currently using hardcoded userid 'lj@gmail.com' in where clause, this will need to be dynamic for userid
+// QUERY FIRESTORE FOR ALL CLASSES FOR A USER
 Widget _buildBody(BuildContext context, FirebaseUser user, bool isSuper) {
   String userID = user.uid;
 
   return StreamBuilder<QuerySnapshot>(
-    stream: isSuper == true
-        ? Firestore.instance
-            .collection('class')
-            .where('supervisors', arrayContains: userID)
-            //.orderBy('clsName')
-            .snapshots()
-        : Firestore.instance
-            .collection('class')
-            .where('enrolledUsers', arrayContains: userID)
-            //.orderBy('clsName')
-            .snapshots(),
+    stream: MyClassesLogic.buildStream(userID, isSuper),
     builder: (context, snapshot) {
       if (!snapshot.hasData) return LinearProgressIndicator();
       //call to build map of database query --> see next widget
@@ -96,7 +82,7 @@ Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot,
   );
 }
 
-// Widget to build individual item for each class from original query
+// LIST ITEM CONTAINER
 Widget _buildListItem(BuildContext context, DocumentSnapshot data,
     FirebaseUser user, bool isSuper) {
   final classes = Classes.fromSnapshot(data);
@@ -112,7 +98,7 @@ Widget _buildListItem(BuildContext context, DocumentSnapshot data,
               color: Colors.grey,
               offset: new Offset(3.0, 3.0),
               blurRadius: 1,
-            )
+            ),
           ],
           borderRadius: new BorderRadius.all(Radius.circular(10.0)),
         ),
@@ -128,7 +114,7 @@ Widget _buildListItem(BuildContext context, DocumentSnapshot data,
   );
 }
 
-// Individual class tile widget layout
+// CLASS TILE LAYOUT
 class ClassTileWidget extends StatelessWidget {
   const ClassTileWidget({
     Key key,
@@ -148,34 +134,12 @@ class ClassTileWidget extends StatelessWidget {
     cls.add(classes);
     return ListTile(
       contentPadding: const EdgeInsets.fromLTRB(5, 5, 2, 5),
+      // CLASS TITLE AND CODE
       title: Text('${classes.clsName} - ${classes.code}',
           style: TextStyle(
               fontWeight: FontWeight.w700,
               color: Color.fromRGBO(41, 60, 62, 1))),
-      subtitle: RichText(
-        text: new TextSpan(
-          // Note: Styles for TextSpans must be explicitly defined.
-          // Child text spans will inherit styles from parent
-          style: new TextStyle(
-            fontSize: 14.0,
-            color: Color.fromRGBO(41, 60, 62, 1).withAlpha(180),
-          ),
-          children: <TextSpan>[
-            new TextSpan(
-                text: 'Dates: ',
-                style: new TextStyle(fontWeight: FontWeight.bold)),
-            new TextSpan(text: '${classes.dates}'),
-            new TextSpan(
-                text: '\nTimes: ',
-                style: new TextStyle(fontWeight: FontWeight.bold)),
-            new TextSpan(text: '${classes.times}'),
-            new TextSpan(
-                text: '\nLocation: ',
-                style: new TextStyle(fontWeight: FontWeight.bold)),
-            new TextSpan(text: '${classes.location}'),
-          ],
-        ),
-      ),
+      subtitle: new ClassDescriptionArea(classes: classes),
       leading: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -191,34 +155,11 @@ class ClassTileWidget extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text(
-                            'Remove Class?',
-                            style: TextStyle(
-                                fontSize: 30,
-                                fontStyle: FontStyle.normal,
-                                color: Color.fromRGBO(0, 162, 162, 1)),
-                          ),
-                          content: Text(
-                              'Are you sure you want to remove ${classes.clsName} - ${classes.code} from your class list?'),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text("Cancel"),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                            FlatButton(
-                              child: Text("Accept"),
-                              onPressed: () {
-                                isSuper
-                                    ? ClassMGMTLogic.closeClass(context, classes, userID)
-                                    : ClassMGMTLogic.removeClass(context, classes, userID, user);
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        );
+                        return new RemoveClassAlert(
+                            classes: classes,
+                            isSuper: isSuper,
+                            userID: userID,
+                            user: user);
                       },
                     );
                   },
@@ -239,6 +180,92 @@ class ClassTileWidget extends StatelessWidget {
       onTap: () {
         MyClassesLogic.navToAnnouncements(context, user, classes, isSuper);
       },
+    );
+  }
+}
+
+// CLASS DESCRIPTION AREA (SUBTITLE OF LIST TILE)
+class ClassDescriptionArea extends StatelessWidget {
+  const ClassDescriptionArea({
+    Key key,
+    @required this.classes,
+  }) : super(key: key);
+
+  final Classes classes;
+
+  @override
+  Widget build(BuildContext context) {
+    return RichText(
+      text: new TextSpan(
+        // Note: Styles for TextSpans must be explicitly defined.
+        // Child text spans will inherit styles from parent
+        style: new TextStyle(
+          fontSize: 14.0,
+          color: Color.fromRGBO(41, 60, 62, 1).withAlpha(180),
+        ),
+        children: <TextSpan>[
+          new TextSpan(
+              text: 'Dates: ',
+              style: new TextStyle(fontWeight: FontWeight.bold)),
+          new TextSpan(text: '${classes.dates}'),
+          new TextSpan(
+              text: '\nTimes: ',
+              style: new TextStyle(fontWeight: FontWeight.bold)),
+          new TextSpan(text: '${classes.times}'),
+          new TextSpan(
+              text: '\nLocation: ',
+              style: new TextStyle(fontWeight: FontWeight.bold)),
+          new TextSpan(text: '${classes.location}'),
+        ],
+      ),
+    );
+  }
+}
+
+// REMOVE CLASS ALERT DIALOG BOX
+class RemoveClassAlert extends StatelessWidget {
+  const RemoveClassAlert({
+    Key key,
+    @required this.classes,
+    @required this.isSuper,
+    @required this.userID,
+    @required this.user,
+  }) : super(key: key);
+
+  final Classes classes;
+  final bool isSuper;
+  final List<String> userID;
+  final FirebaseUser user;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(
+        'Remove Class?',
+        style: TextStyle(
+            fontSize: 30,
+            fontStyle: FontStyle.normal,
+            color: Color.fromRGBO(0, 162, 162, 1)),
+      ),
+      content: Text(
+          'Are you sure you want to remove ${classes.clsName} - ${classes.code} from your class list?'),
+      actions: <Widget>[
+        FlatButton(
+          child: Text("Cancel"),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        FlatButton(
+          child: Text("Accept"),
+          onPressed: () {
+            isSuper
+                ? ClassMGMTLogic.closeClass(context, classes, userID, user)
+                : ClassMGMTLogic.removeClass(context, classes, userID, user);
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
     );
   }
 }

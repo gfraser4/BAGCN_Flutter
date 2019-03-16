@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+// MODELS
+import 'package:bagcndemo/Models/ClassesModel.dart';
+// PAGES
 import 'package:bagcndemo/AddClasses/joinClassesPage.dart';
 import 'package:bagcndemo/Announcements/announcementPage.dart';
 import 'package:bagcndemo/AddClasses/addClassesPage.dart';
-import 'package:bagcndemo/Models/ClassesModel.dart';
+
 
 class MyClassesLogic {
   // Notification Toggle for class
@@ -26,7 +28,7 @@ class MyClassesLogic {
     });
   }
 
-  // Nav to add classes page for supervisors
+  // Navigation to add classes page for supervisors
   static void navToAddClasses(BuildContext context, FirebaseUser user) {
     Navigator.push(
       context,
@@ -34,7 +36,7 @@ class MyClassesLogic {
     );
   }
 
-  // Nav to add classes page for parents
+  // Navigation to add classes page for parents
   static void navToJoinClasses(BuildContext context, FirebaseUser user) {
     Navigator.push(
       context,
@@ -50,10 +52,11 @@ class MyClassesLogic {
       MaterialPageRoute(
         builder: (context) =>
             ClassAnnouncementPage(classes.clsName, classes.code, user, isSuper),
-      ), //ICON BUTTON NAVIGATES TO ANNOUNCEMENT PAGE AND PASSES THE CLASSNAME AND CODE
+      ), 
     );
   }
 
+// RENDER DIRRENT NOTIFICATION ICON BASED ON WHETHER USER WANTS NOTIFICATIOSN OR NOT
   static Widget notifyButtonRender(FirebaseUser user, Classes classes) {
     if (classes.notifyUsers.contains(user.uid) == true) {
       return IconButton(
@@ -71,6 +74,23 @@ class MyClassesLogic {
           MyClassesLogic.notifyClick(user, classes);
         },
       );
+    }
+  }
+
+// BUILDS STREAM DEPENDING ON SUPERVISOR OR ENROLLED USER
+  static Stream buildStream(String userID, bool isSuper) {
+    if (isSuper == true) {
+      return Firestore.instance
+          .collection('class')
+          .where('supervisors', arrayContains: userID)
+          //.orderBy('clsName')
+          .snapshots();
+    } else {
+      return Firestore.instance
+          .collection('class')
+          .where('enrolledUsers', arrayContains: userID)
+          //.orderBy('clsName')
+          .snapshots();
     }
   }
 }
