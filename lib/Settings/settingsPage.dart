@@ -251,7 +251,7 @@ class _MyDialogContentState extends State<MyDialogContent> {
                           filled: true,
                           labelText: 'Email',
                           prefixIcon: Icon(
-                            Icons.lock,
+                            Icons.email,
                             color: Color.fromRGBO(123, 193, 67, 1),
                           ),
                           contentPadding:
