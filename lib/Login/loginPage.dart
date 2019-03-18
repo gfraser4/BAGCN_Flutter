@@ -23,6 +23,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String _email;
   String _password;
+  String userToken;
   FirebaseUser _user;
   bool isRemember = false;
   String _validation = '';
@@ -45,19 +46,21 @@ class _LoginPageState extends State<LoginPage> {
       if (!fileExist) {
         jsonFile.createSync();
         fileExist = true;
-        writeToFile(null,false);
+        writeToFile("",false);
       }
       fileContent = json.decode(jsonFile.readAsStringSync());
-      // _email = fileContent['_email'];
-      // _password = fileContent['_password'];
-      _user = fileContent['_user'];
       isRemember = fileContent['isRemember'];
+      _email = fileContent['email'];
+      if(_email!=""){
+        signIn(true);
+      }
+      setState(() {});
     });
   }
 
-  void writeToFile(FirebaseUser user, bool isRemember) {
-    jsonFile.writeAsStringSync(json
-        .encode({'isRemember': isRemember, '_user': user}));
+  void writeToFile (String email, bool isRemember) async {
+    await jsonFile.writeAsString(json
+        .encode({ 'email': email,'isRemember': isRemember}));
     print("write successful");
   }
 
@@ -82,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
       onFieldSubmitted: (String value) {
         FocusScope.of(context).requestFocus(_passwordFocus);
       },
-      initialValue: _user==null?"":_user.email,
+      initialValue: _email,
       onSaved: (input) => _email = input,
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
@@ -114,7 +117,6 @@ class _LoginPageState extends State<LoginPage> {
       },
       textInputAction: TextInputAction.done,
       focusNode: _passwordFocus,
-      initialValue: isRemember?"111111":"",
       onSaved: (input) => _password = input,
       autofocus: false,
       obscureText: true,
@@ -154,7 +156,7 @@ class _LoginPageState extends State<LoginPage> {
       padding: EdgeInsets.symmetric(vertical: 14),
       child: RaisedButton(
           onPressed: () {
-            signIn();
+            signIn(false);
           },
           padding: EdgeInsets.all(12),
           color: CustomColors.bagcBlue,
@@ -232,7 +234,10 @@ class _LoginPageState extends State<LoginPage> {
   }
 
 //future waiting for database response
-  Future<void> signIn() async {
+  Future<void> signIn(bool isAuto) async {
+    //wether user choose to auto login or not
+    
+
     final formState = _formKey.currentState;
 
     //validate fields
@@ -240,6 +245,9 @@ class _LoginPageState extends State<LoginPage> {
       //login to firebase
       formState.save();
       try {
+        isAuto?
+        _user = await FirebaseAuth.instance
+            .currentUser():
         _user = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: _email, password: _password);
 
@@ -251,6 +259,7 @@ DocumentSnapshot snapshot = await Firestore.instance
         .document(_user.uid)
         .get();
    Users loginUser = Users.fromSnapshot(snapshot);
+    isRemember ? writeToFile(_email,true) : writeToFile("", false);
 
         await Navigator.pushReplacement(
             context,
@@ -262,10 +271,7 @@ DocumentSnapshot snapshot = await Firestore.instance
         });
       }
     }
-    //wether user choose to auto login or not
-    isRemember
-        ? writeToFile(_user, true)
-        : writeToFile(null, false);
+    
   }
   
 }
