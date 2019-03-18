@@ -23,6 +23,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String _email;
   String _password;
+  FirebaseUser _user;
   bool isRemember = false;
   String _validation = '';
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -39,27 +40,25 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     getApplicationDocumentsDirectory().then((Directory directory) {
       dir = directory;
-      jsonFile = new File(dir.path + "/" + fileName);
+      jsonFile = new File(dir.path + '/' + fileName);
       fileExist = jsonFile.existsSync();
       if (!fileExist) {
-        jsonFile = new File(dir.path + '/' + fileName);
         jsonFile.createSync();
         fileExist = true;
-        jsonFile.writeAsStringSync(
-            json.encode({'isRemember': false, '_email': '', '_password': ''}));
+        writeToFile(null,false);
       }
-      setState(() {
-        fileContent = json.decode(jsonFile.readAsStringSync());
-        _email = fileContent['_email'];
-        _password = fileContent['_password'];
-        isRemember = fileContent['isRemember'];
-      });
+      fileContent = json.decode(jsonFile.readAsStringSync());
+      // _email = fileContent['_email'];
+      // _password = fileContent['_password'];
+      _user = fileContent['_user'];
+      isRemember = fileContent['isRemember'];
     });
   }
 
-  void writeToFile(String email, String paw, bool isRemember) {
+  void writeToFile(FirebaseUser user, bool isRemember) {
     jsonFile.writeAsStringSync(json
-        .encode({'isRemember': isRemember, '_email': email, '_password': paw}));
+        .encode({'isRemember': isRemember, '_user': user}));
+    print("write successful");
   }
 
 // LOGIN PAGE BUILD - SEPERATED BY WIDGET
@@ -83,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
       onFieldSubmitted: (String value) {
         FocusScope.of(context).requestFocus(_passwordFocus);
       },
-      initialValue: _email,
+      initialValue: _user==null?"":_user.email,
       onSaved: (input) => _email = input,
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
@@ -115,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
       },
       textInputAction: TextInputAction.done,
       focusNode: _passwordFocus,
-      initialValue: _password,
+      initialValue: isRemember?"111111":"",
       onSaved: (input) => _password = input,
       autofocus: false,
       obscureText: true,
@@ -241,22 +240,22 @@ class _LoginPageState extends State<LoginPage> {
       //login to firebase
       formState.save();
       try {
-        FirebaseUser user = await FirebaseAuth.instance
+        _user = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: _email, password: _password);
 
-        bool isSuper = await checkRole(user);
+        bool isSuper = await checkRole(_user);
         print(isSuper);
 
 DocumentSnapshot snapshot = await Firestore.instance
         .collection('users')
-        .document(user.uid)
+        .document(_user.uid)
         .get();
    Users loginUser = Users.fromSnapshot(snapshot);
 
         await Navigator.pushReplacement(
             context,
             new MaterialPageRoute(
-  builder: (BuildContext context) => new MyClassList(user, isSuper,loginUser)));
+  builder: (BuildContext context) => new MyClassList(_user, isSuper,loginUser)));
       } catch (ex) {
         setState(() {
           _validation = ex.message.toString();
@@ -265,7 +264,8 @@ DocumentSnapshot snapshot = await Firestore.instance
     }
     //wether user choose to auto login or not
     isRemember
-        ? writeToFile(_email, _password, true)
-        : writeToFile('', '', false);
+        ? writeToFile(_user, true)
+        : writeToFile(null, false);
   }
+  
 }
