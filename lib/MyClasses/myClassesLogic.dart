@@ -1,28 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// MODELS
-import 'package:bagcndemo/Models/ClassesModel.dart';
-// PAGES
+import 'package:bagcndemo/Models/Users.dart';
 import 'package:bagcndemo/AddClasses/joinClassesPage.dart';
 import 'package:bagcndemo/Announcements/announcementPage.dart';
 import 'package:bagcndemo/AddClasses/addClassesPage.dart';
-
+import 'package:bagcndemo/Models/ClassesModel.dart';
 
 class MyClassesLogic {
   // Notification Toggle for class
   static void notifyClick(FirebaseUser user, Classes classes) {
     List<String> userID = ['${user.uid}'];
+    Firestore db = Firestore.instance;
     Firestore.instance.runTransaction((transaction) async {
       final freshSnapshot = await transaction.get(classes.reference);
       final fresh = Classes.fromSnapshot(freshSnapshot);
-      if (fresh.notifyUsers.contains(user.uid) == false) {
+
+      QuerySnapshot _query = await db
+          .collection('users')
+          .where('id', isEqualTo: user.uid)
+          .getDocuments();
+
+      _query.documents.toList();
+
+      // var test = db.collection('users').document(user.uid).get()
+      // .updateData({
+      // "enrolledPending": FieldValue.arrayRemove(clsCode),
+      // "enrolledIn": FieldValue.arrayUnion(clsCode),
+
+      //final freshSnap= await transaction.get(_query.reference);
+      final classesx = Users.fromSnapshot(_query.documents.first);
+       List<String> token = [classesx.token];
+      // token.add(classesx.token);
+      print(token);
+
+      if (fresh.notifyUsers.contains(token) == false) {
         await transaction.update(
-            classes.reference, {"notifyUsers": FieldValue.arrayUnion(userID)});
+            classes.reference, {"notifyUsers": FieldValue.arrayUnion(token)});
         print('added');
       } else {
         await transaction.update(
-            classes.reference, {"notifyUsers": FieldValue.arrayRemove(userID)});
+            classes.reference, {"notifyUsers": FieldValue.arrayRemove(token)});
         print('removed');
       }
     });
