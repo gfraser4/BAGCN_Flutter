@@ -23,6 +23,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String _email;
   String _password;
+  String userToken;
+  FirebaseUser _user;
   bool isRemember = false;
   String _validation = '';
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -39,27 +41,27 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     getApplicationDocumentsDirectory().then((Directory directory) {
       dir = directory;
-      jsonFile = new File(dir.path + "/" + fileName);
+      jsonFile = new File(dir.path + '/' + fileName);
       fileExist = jsonFile.existsSync();
       if (!fileExist) {
-        jsonFile = new File(dir.path + '/' + fileName);
         jsonFile.createSync();
         fileExist = true;
-        jsonFile.writeAsStringSync(
-            json.encode({'isRemember': false, '_email': '', '_password': ''}));
+        writeToFile("",false);
       }
-      setState(() {
-        fileContent = json.decode(jsonFile.readAsStringSync());
-        _email = fileContent['_email'];
-        _password = fileContent['_password'];
-        isRemember = fileContent['isRemember'];
-      });
+      fileContent = json.decode(jsonFile.readAsStringSync());
+      isRemember = fileContent['isRemember'];
+      _email = fileContent['email'];
+      if(_email!=""){
+        signIn(true);
+      }
+      setState(() {});
     });
   }
 
-  void writeToFile(String email, String paw, bool isRemember) {
-    jsonFile.writeAsStringSync(json
-        .encode({'isRemember': isRemember, '_email': email, '_password': paw}));
+  void writeToFile (String email, bool isRemember) async {
+    await jsonFile.writeAsString(json
+        .encode({ 'email': email,'isRemember': isRemember}));
+    print("write successful");
   }
 
 // LOGIN PAGE BUILD - SEPERATED BY WIDGET
@@ -115,7 +117,6 @@ class _LoginPageState extends State<LoginPage> {
       },
       textInputAction: TextInputAction.done,
       focusNode: _passwordFocus,
-      initialValue: _password,
       onSaved: (input) => _password = input,
       autofocus: false,
       obscureText: true,
@@ -155,7 +156,7 @@ class _LoginPageState extends State<LoginPage> {
       padding: EdgeInsets.symmetric(vertical: 14),
       child: RaisedButton(
           onPressed: () {
-            signIn();
+            signIn(false);
           },
           padding: EdgeInsets.all(12),
           color: CustomColors.bagcBlue,
@@ -233,7 +234,10 @@ class _LoginPageState extends State<LoginPage> {
   }
 
 //future waiting for database response
-  Future<void> signIn() async {
+  Future<void> signIn(bool isAuto) async {
+    //wether user choose to auto login or not
+    
+
     final formState = _formKey.currentState;
 
     //validate fields
@@ -241,31 +245,33 @@ class _LoginPageState extends State<LoginPage> {
       //login to firebase
       formState.save();
       try {
-        FirebaseUser user = await FirebaseAuth.instance
+        isAuto?
+        _user = await FirebaseAuth.instance
+            .currentUser():
+        _user = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: _email, password: _password);
 
-        bool isSuper = await checkRole(user);
+        bool isSuper = await checkRole(_user);
         print(isSuper);
 
 DocumentSnapshot snapshot = await Firestore.instance
         .collection('users')
-        .document(user.uid)
+        .document(_user.uid)
         .get();
    Users loginUser = Users.fromSnapshot(snapshot);
+    isRemember ? writeToFile(_email,true) : writeToFile("", false);
 
         await Navigator.pushReplacement(
             context,
             new MaterialPageRoute(
-  builder: (BuildContext context) => new MyClassList(user, isSuper,loginUser)));
+  builder: (BuildContext context) => new MyClassList(_user, isSuper,loginUser)));
       } catch (ex) {
         setState(() {
           _validation = ex.message.toString();
         });
       }
     }
-    //wether user choose to auto login or not
-    isRemember
-        ? writeToFile(_email, _password, true)
-        : writeToFile('', '', false);
+    
   }
+  
 }
