@@ -7,6 +7,7 @@ import "package:bagcndemo/MyClasses/myClassesLogic.dart";
 // PAGES
 import 'package:bagcndemo/About/aboutPage.dart';
 import 'package:bagcndemo/Settings/settingsPage.dart';
+import 'package:bagcndemo/Walkthrough/parentWalkthrough.dart';
 
 //DYNAMIC CHANGE THEME
 import 'package:dynamic_theme/dynamic_theme.dart';
@@ -35,6 +36,10 @@ Widget navDrawer(BuildContext context, FirebaseUser user, bool isSuper, Users lo
             color: Color.fromRGBO(123, 193, 67, 1),
           ),
           new AboutTile(),
+          Divider(
+            color: Color.fromRGBO(123, 193, 67, 1),
+          ),
+          new HelpTile(),
           Divider(
             color: Color.fromRGBO(123, 193, 67, 1),
           ),
@@ -133,6 +138,27 @@ class AboutTile extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => AboutPage()),
+        );
+      },
+    );
+  }
+}
+
+// Help Tile
+class HelpTile extends StatelessWidget {
+  const HelpTile({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(Icons.help, color: Color.fromRGBO(28, 165, 229, 1)),
+      title: Text('Help'),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ParentWalkthrough()),
         );
       },
     );
