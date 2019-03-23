@@ -70,7 +70,7 @@ class MyClassesLogic {
       context,
       MaterialPageRoute(
         builder: (context) =>
-            ClassAnnouncementPage(classes.clsName, classes.code, user, isSuper),
+            ClassAnnouncementPage(classes.clsName, classes.code, user, isSuper,classes),
       ),
     );
   }

@@ -2,7 +2,6 @@ import 'package:bagcndemo/Models/ClassesModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 class SettingLogic {
 
   static void muteNotification(FirebaseUser user, List<Classes> classes, bool isMute){
@@ -25,6 +24,8 @@ class SettingLogic {
   static Future<void> sendChangePasswordEmail(String email) async {
     await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
   }
+
+  
 }
 
 class MyDialogContent extends StatefulWidget {

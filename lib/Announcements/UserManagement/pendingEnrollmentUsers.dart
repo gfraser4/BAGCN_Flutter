@@ -1,3 +1,5 @@
+import 'package:bagcndemo/Announcements/announcementLogic.dart';
+import 'package:bagcndemo/Models/ClassesModel.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,9 +10,10 @@ import 'package:bagcndemo/Models/Users.dart';
 
 // SEE PENDING USERS PAGE
 class PendingUsersPage extends StatefulWidget {
-  const PendingUsersPage(this.user, this.code);
+  const PendingUsersPage(this.user, this.code, this.classes);
   final FirebaseUser user;
   final int code;
+  final Classes classes;
 
   @override
   _PendingUsersPage createState() {
@@ -67,7 +70,7 @@ class _PendingUsersPage extends State<PendingUsersPage> {
     return Padding(
         key: ValueKey(users.id),
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: UserCard(users: users, userID: userID, user: user, code: code));
+        child: UserCard(users: users, userID: userID, user: user, code: code,classes:widget.classes));
   }
 }
 
@@ -78,13 +81,15 @@ class UserCard extends StatelessWidget {
     @required this.users,
     @required this.userID,
     @required this.user,
-     @required this.code,
+    @required this.code,
+    @required this.classes,
   }) : super(key: key);
 
   final FirebaseUser user;
   final Users users;
   final List<String> userID;
   final int code;
+  final Classes classes;
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +115,7 @@ class UserCard extends StatelessWidget {
               ),
               backgroundColor: Colors.transparent,
             ),
-            AllowButton(users: users, userID: userID, code: code),
+            AllowButton(users: users, userID: userID, code: code, classes: classes,),
           ],
         ),
       ),
@@ -125,12 +130,14 @@ class AllowButton extends StatelessWidget {
     @required this.users,
     @required this.userID,
     @required this.code,
+    @required this.classes,
   }) : super(key: key);
 
   final Users users;
   final List<String> userID;
   final int code;
-  
+  final Classes classes;
+
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
@@ -164,7 +171,7 @@ class AllowButton extends StatelessWidget {
                 FlatButton(
                   child: Text("Yes"),
                   onPressed: () {
-
+                    AnnouncementLogic.sendPasscode(classes.clsName, "bagcn2019@gmail.com", classes.passcode);
                     // SEND EMAIL WITH PASSCODE \\
 
                     // users.reference.updateData({

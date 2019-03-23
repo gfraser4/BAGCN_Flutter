@@ -1,3 +1,4 @@
+import 'package:bagcndemo/Models/ClassesModel.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,7 +27,8 @@ class ClassAnnouncementPage extends StatefulWidget {
   final String title;
   final int code;
   final bool isSuper;
-  ClassAnnouncementPage(this.title, this.code, this.user, this.isSuper);
+  final Classes classes;
+  ClassAnnouncementPage(this.title, this.code, this.user, this.isSuper, this.classes);
   @override
   _ClassAnnouncementPage createState() {
     return _ClassAnnouncementPage();
@@ -119,7 +121,7 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
                 widget.user,
               ),
               EnrolledUsersPage(widget.user, widget.code),
-              PendingUsersPage(widget.user, widget.code),
+              PendingUsersPage(widget.user, widget.code,widget.classes),
             ],
           ),
 
