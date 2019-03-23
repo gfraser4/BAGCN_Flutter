@@ -189,27 +189,31 @@ Widget buildAnnouncementBody(
   );
 }
 
-
-
 // widget to build list of announcements based on class and class code
-Widget _buildList(
-    BuildContext context, List<DocumentSnapshot> snapshot, FirebaseUser user, int code) {
-      // return horizaontal scroll for homepage else return vertical scroll
-  return code != 0 ? ListView(
-    padding: const EdgeInsets.only(top: 8.0),
-    children:
-        snapshot.map((data) => _buildListItem(context, data, user)).toList(),
-  ) : ListView(
-    scrollDirection: Axis.horizontal,
-    padding: const EdgeInsets.only(top: 8.0),
-    children:
-        snapshot.map((data) => _buildListItem(context, data, user)).toList(),
-  );  
+Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot,
+    FirebaseUser user, int code) {
+  // return horizaontal scroll for homepage else return vertical scroll
+  return code != 0
+      ? ListView(
+          padding: const EdgeInsets.only(top: 8.0),
+          children: snapshot
+              .map((data) => _buildListItem(context, data, user))
+              .toList(),
+        )
+      : ListView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.only(top: 8.0),
+          children: snapshot
+              .map((data) => _buildListItem(context, data, user))
+              .toList(),
+        );
 }
 
 // widget to build individual card item for each announcement from original query
 Widget _buildListItem(
     BuildContext context, DocumentSnapshot data, FirebaseUser user) {
+  MediaQueryData queryData;
+  queryData = MediaQuery.of(context);
   final announcements = Announcements.fromSnapshot(data);
   var formatter = new DateFormat.yMd().add_jm();
   String formattedDate = formatter.format(announcements.created);
@@ -291,12 +295,13 @@ Widget _buildListItem(
     key: ValueKey(announcements.clsName),
     padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 2.0),
     child: Card(
-      
       margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
       elevation: 5.0,
       color: Colors.white,
       child: Container(
-        width: announcements.clsName == 'Boys and Girls Club Niagara' ? 400.0 : null,
+        width: announcements.clsName == 'Boys and Girls Club Niagara'
+            ? queryData.size.width - 20
+            : null,
         child: Column(
           children: <Widget>[
             new AnouncementText(
@@ -304,7 +309,11 @@ Widget _buildListItem(
             SizedBox(
               height: 16,
             ),
-            announcements.clsName == 'Boys and Girls Club Niagara' ? Expanded(child: Container(),) : Text(''),
+            announcements.clsName == 'Boys and Girls Club Niagara'
+                ? Expanded(
+                    child: Container(),
+                  )
+                : Text(''),
             Container(
               color: Color.fromRGBO(41, 60, 62, 0.15),
               child: Row(
@@ -313,36 +322,39 @@ Widget _buildListItem(
                   new LikeButton(announcements: announcements, user: user),
                   new CommentsButton(announcements: announcements, user: user),
                   // POP UP FOR SUPERVISORS OR NOTIFICATION BUTTON FOR PARENTS
-                  announcements.clsName == 'Boys and Girls Club Niagara' ? Expanded(child: Container(),) : 
-                  role == true
-                      ? IconButton(
-                          icon: Icon(Icons.more_horiz),
-                          color: Color(0xFF1ca5e5),
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return supervisorMenu;
-                                });
-                          },
+                  announcements.clsName == 'Boys and Girls Club Niagara'
+                      ? Expanded(
+                          child: Container(),
                         )
-                      : announcements.notifyUsers.contains(user.uid) == true
+                      : role == true
                           ? IconButton(
-                              icon: Icon(Icons.notifications_active),
+                              icon: Icon(Icons.more_horiz),
                               color: Color(0xFF1ca5e5),
                               onPressed: () {
-                                AnnouncementLogic.notifyClick(
-                                    user, announcements);
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return supervisorMenu;
+                                    });
                               },
                             )
-                          : IconButton(
-                              icon: Icon(Icons.notifications_off),
-                              color: Colors.grey,
-                              onPressed: () {
-                                AnnouncementLogic.notifyClick(
-                                    user, announcements);
-                              },
-                            ),
+                          : announcements.notifyUsers.contains(user.uid) == true
+                              ? IconButton(
+                                  icon: Icon(Icons.notifications_active),
+                                  color: Color(0xFF1ca5e5),
+                                  onPressed: () {
+                                    AnnouncementLogic.notifyClick(
+                                        user, announcements);
+                                  },
+                                )
+                              : IconButton(
+                                  icon: Icon(Icons.notifications_off),
+                                  color: Colors.grey,
+                                  onPressed: () {
+                                    AnnouncementLogic.notifyClick(
+                                        user, announcements);
+                                  },
+                                ),
                 ],
               ),
             ),

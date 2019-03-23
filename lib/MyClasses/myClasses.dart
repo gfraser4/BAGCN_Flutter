@@ -16,22 +16,8 @@ import 'package:bagcndemo/Announcements/announcementPage.dart';
 import 'package:bagcndemo/Models/ClassesModel.dart';
 
 List<Classes> cls = new List<Classes>();
-//ExpandableController expandedController = new ExpandableController();
-bool expandedController;
-// ExpandablePanel(
-//   header: Text(
-//     "Lorem ipsum",
-//     style: Theme.of(context).textTheme.body2,
-//   ),
-//   expanded: Text(
-//     'loremIpsum',
-//     softWrap: true,
-//   ),
-//   tapHeaderToExpand: true,
-//   hasIcon: true,
-// ),
-
-////////////////////////////////////////////////////////////////////////////////////////////
+bool expandedClassesController = false;
+bool expandedNewsController = true;
 
 //**MyClassList WIDGET - MY CLASSES PAGE CLASS -- HOW THE MAIN PAGE LOADS AND ITS CONTENT**\\
 
@@ -50,66 +36,188 @@ class MyClassList extends StatefulWidget {
 // LAYOUT OF MY CLASSES PAGE --> CALLS WIDGETS BELOW IT
 
 class _MyClassList extends State<MyClassList> {
-  
+  @override
+  void initState() {
+    expandedClassesController = false;
+    expandedNewsController = true;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    print(expandedController);
+    MediaQueryData queryData;
+queryData = MediaQuery.of(context);
     return Scaffold(
+      backgroundColor: CustomColors.bagcBlue,
       appBar: AppBar(
         title: Text('My Classes ${widget.user.email}'),
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        //crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            margin: EdgeInsets.fromLTRB(5, 10, 0, 0),
+            color: Colors.white,
             child: ExpandablePanel(
-              header: Text(
-                'Latest News ...',
-                style: TextStyle(
-                    color: CustomColors.bagcBlue,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700),
+              initialExpanded: expandedClassesController == true ? false : true,
+              header: Container(
+                child: Row(
+                  children: <Widget>[
+                    FlatButton(
+                      onPressed: () {
+                        if (expandedNewsController == false)
+                          setState(() {
+                            expandedClassesController = false;
+                            expandedNewsController = true;
+                          });
+                        else {
+                          setState(() {
+                            expandedClassesController = true;
+                            expandedNewsController = false;
+                          });
+                        }
+                        print(expandedNewsController);
+                      },
+                      child: Text(
+                        'Latest News',
+                        style: TextStyle(
+                            color: CustomColors.bagcBlue,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        if (expandedClassesController == false)
+                          setState(() {
+                            expandedClassesController = true;
+                            expandedNewsController = false;
+                          });
+                        else {
+                          setState(() {
+                            expandedClassesController = false;
+                            expandedNewsController = true;
+                          });
+                        }
+                      },
+                      icon: expandedClassesController == false
+                          ? Icon(Icons.keyboard_arrow_up, color: CustomColors.bagcBlue)
+                          : Icon(Icons.keyboard_arrow_down, color: CustomColors.bagcBlue),
+                    ),
+                  ],
+                ),
               ),
               expanded: Container(
                 //margin: EdgeInsets.symmetric(vertical: 10.0),
-                height: 400.0,
+                height: queryData.size.height - 200,
                 child: buildAnnouncementBody(
                     context, 'Boys and Girls Club Niagara', 0, widget.user),
               ),
-              tapHeaderToExpand: true,
-              hasIcon: true,
+              tapHeaderToExpand: false,
+              hasIcon: false,
             ),
           ),
           Expanded(
-            child:  Container(
-              color: CustomColors.bagcBlue,
-              child: ExpandablePanel(
-                header: Container(
-                  margin: EdgeInsets.fromLTRB(5, 10, 0, 0),
-                  child: Text(
-                    'My Kids',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700),
-                  ),
-                ),
-                expanded: Container(
-                  height: 300,
-                  // color: CustomColors.bagcBlue,
-                  child: Column(
-                    children: <Widget>[
-                      Expanded(
-                        child: _buildBody(context, widget.user, widget.isSuper),
+            child: ListView(
+              children: <Widget>[
+                Container(
+                  color: CustomColors.bagcBlue,
+                  child: ExpandablePanel(
+                    initialExpanded:
+                        expandedNewsController == true ? false : true,
+                    header: Container(
+                      //margin: EdgeInsets.fromLTRB(5, 10, 0, 0),
+                      child: Row(
+                        children: <Widget>[
+                          widget.isSuper == false && widget.isAdmin == false
+                              ? FlatButton(
+                                  onPressed: () {
+                                    if (expandedClassesController == false)
+                                      setState(() {
+                                        expandedClassesController = true;
+                                        expandedNewsController = false;
+                                      });
+                                    else {
+                                      setState(() {
+                                        expandedClassesController = false;
+                                        expandedNewsController = true;
+                                      });
+                                    }
+                                  },
+                                  child: Text(
+                                    'My Kids',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                )
+                              : FlatButton(
+                                  onPressed: () {
+                                    if (expandedClassesController == false)
+                                      setState(() {
+                                        expandedClassesController = true;
+                                        expandedNewsController = false;
+                                      });
+                                    else {
+                                      setState(() {
+                                        expandedClassesController = false;
+                                        expandedNewsController = true;
+                                      });
+                                    }
+                                  },
+                                  child: Text(
+                                    'My Classes',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                ),
+                          Expanded(
+                            child: Container(),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              if (expandedClassesController == false)
+                                setState(() {
+                                  expandedClassesController = true;
+                                  expandedNewsController = false;
+                                });
+                              else {
+                                setState(() {
+                                  expandedClassesController = false;
+                                  expandedNewsController = true;
+                                });
+                              }
+                            },
+                            icon: expandedClassesController == true
+                                ? Icon(Icons.keyboard_arrow_down, color: Colors.white)
+                                : Icon(Icons.keyboard_arrow_up, color: Colors.white),
+                          ),
+                        ],
                       ),
-                      addChildButton(widget.isSuper, widget.isAdmin),
-                    ],
+                    ),
+                    expanded:
+                        Container(
+                      height: queryData.size.height - 200,
+                      child: Column(
+                        children: <Widget>[
+                          Expanded(
+                            child: _buildBody(
+                                context, widget.user, widget.isSuper),
+                          ),
+                          addChildButton(widget.isSuper, widget.isAdmin),
+                        ],
+                      ),
+                    ),
+                    tapHeaderToExpand: false,
+                    hasIcon: false,
                   ),
                 ),
-                tapHeaderToExpand: true,
-                hasIcon: true,
-              ),
+              ],
             ),
           ),
         ],
@@ -190,9 +298,8 @@ Widget addChildButton(bool isSuper, bool isAdmin) {
               margin: EdgeInsets.symmetric(horizontal: 60),
               child: RaisedButton(
                 onPressed: () {
-                  
-                  expandedController = true;
-                  print(expandedController);
+                  // expandedController = true;
+                  // print(expandedController);
                 },
                 child: Text('Add Child'),
               ),
