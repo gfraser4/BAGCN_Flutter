@@ -33,13 +33,31 @@ class ClassMGMTLogic {
 
 // ADD USER TO ENROLLED STATUS - UPDATES CLASS AND USERS TABLES
   static addClassEnrolled(BuildContext context, Classes classes,
-    List<String> userID, FirebaseUser user) async {
+    List<String> userID, FirebaseUser user, String childName ) async {
     List<int> clsCode = [classes.code];
+    String childID; 
     Firestore db = Firestore.instance;
     try {
+
+      QuerySnapshot _queryChildren = await db
+          .collection('children')
+          .where('parentID', isEqualTo: user.uid)
+          .where('Name', isEqualTo: childName)
+          .getDocuments();
+      _queryChildren.documents.forEach((doc) {
+        childID = doc.documentID;
+        db.collection('children').document(doc.documentID).updateData({
+          "enrolledIn": FieldValue.arrayUnion(clsCode),
+        });
+      });
+     
+
+
+
       await classes.reference.updateData({
         "pendingUsers": FieldValue.arrayRemove(userID),
         "enrolledUsers": FieldValue.arrayUnion(userID),
+        "enrolledChildren": FieldValue.arrayUnion([childID]),
       });
 
       QuerySnapshot _query = await db
@@ -64,10 +82,29 @@ class ClassMGMTLogic {
       FirebaseUser user) async {
     Firestore db = Firestore.instance;
     List<int> clsCode = [classes.code];
-    try {
+    String childID; 
+    
+
+      QuerySnapshot _queryChildren = await db
+          .collection('children')
+          .where('parentID', isEqualTo: user.uid)
+          .where('enrolledIn', arrayContains: classes.code)
+          .getDocuments();
+          if (_queryChildren.documents.length > 0)
+          print('true');
+          else
+          print('false');
+      _queryChildren.documents.forEach((doc) {
+        childID = doc.documentID;
+        db.collection('children').document(doc.documentID).updateData({
+          "enrolledIn": FieldValue.arrayRemove(clsCode),
+        });
+      });
+try {
       await classes.reference.updateData({
         "enrolledUsers": FieldValue.arrayRemove(userID),
         "pendingUsers": FieldValue.arrayRemove(userID),
+        "enrolledChildren": FieldValue.arrayRemove([childID]),
       });
       QuerySnapshot _query = await db
           .collection('users')
@@ -143,4 +180,6 @@ class ClassMGMTLogic {
       print(e.toString());
     }
   }
+
+
 }

@@ -9,6 +9,7 @@ class Classes {
   final String passcode;
   final int code;
   final bool isActive;
+  final List<dynamic> enrolledChildren;
   final List<dynamic> enrolledUsers;
   final List<dynamic> pendingUsers;
   final List<dynamic> supervisors;
@@ -24,6 +25,7 @@ class Classes {
         clsName = map['clsName'],
         passcode = map['passcode'],
         isActive = map['isActive'],
+        enrolledChildren = map['enrolledChildren'],
         enrolledUsers = map['enrolledUsers'],
         supervisors = map['supervisors'],
         notifyUsers = map['notifyUsers'],

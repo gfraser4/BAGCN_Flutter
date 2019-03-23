@@ -4,13 +4,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:validators/validators.dart';
 // LOGIC
 import 'package:bagcndemo/AddClasses/addClassesLogic.dart';
+import 'package:bagcndemo/MyClasses/myClassesLogic.dart';
 // MODELS
 import 'package:bagcndemo/Models/ClassesModel.dart';
+import 'package:bagcndemo/Models/Children.dart';
 
 String _search = '';
 String _passcode;
+String _childName = '';
 
-// VERIFY CODE PAGE - FOR PARENTS 
+
+
+// VERIFY CODE PAGE - FOR PARENTS
 class VerifyCodePage extends StatefulWidget {
   const VerifyCodePage(this.user);
   final FirebaseUser user;
@@ -22,12 +27,11 @@ class VerifyCodePage extends StatefulWidget {
 }
 
 class _VerifyCodePage extends State<VerifyCodePage> {
-
-
-
   @override
   Widget build(BuildContext context) {
 
+
+    
 //*********** PAGE SCAFFOLD *****************\\
     return Scaffold(
       appBar: null,
@@ -39,6 +43,7 @@ class _VerifyCodePage extends State<VerifyCodePage> {
     );
   }
 
+
 // JOIN CLASSES //
 
 // Search querey dynamic based on search criteria
@@ -48,7 +53,7 @@ class _VerifyCodePage extends State<VerifyCodePage> {
           .collection('class')
           .where('pendingUsers', arrayContains: user.uid)
           //.orderBy('clsName')
-          .snapshots(), 
+          .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
         return _buildList(context, snapshot.data.documents, user);
@@ -66,7 +71,7 @@ class _VerifyCodePage extends State<VerifyCodePage> {
     );
   }
 
-// WIDGET TO BUILD WACH CLASS ITEM 
+// WIDGET TO BUILD WACH CLASS ITEM
   Widget _buildListItem(
       BuildContext context, DocumentSnapshot data, FirebaseUser user) {
     final classes = Classes.fromSnapshot(data);
@@ -114,7 +119,12 @@ class ClassCard extends StatelessWidget {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return new CodeAlertBox(formKey: _formKey, classes: classes, passcodeFocus: _passcodeFocus, userID: userID, user: user);
+                  return new CodeAlertBox(
+                      formKey: _formKey,
+                      classes: classes,
+                      passcodeFocus: _passcodeFocus,
+                      userID: userID,
+                      user: user);
                 },
               );
             }),
@@ -132,7 +142,9 @@ class CodeAlertBox extends StatelessWidget {
     @required FocusNode passcodeFocus,
     @required this.userID,
     @required this.user,
-  }) : _formKey = formKey, _passcodeFocus = passcodeFocus, super(key: key);
+  })  : _formKey = formKey,
+        _passcodeFocus = passcodeFocus,
+        super(key: key);
 
   final GlobalKey<FormState> _formKey;
   final Classes classes;
@@ -155,16 +167,19 @@ class CodeAlertBox extends StatelessWidget {
         width: 300,
         child: Form(
           key: _formKey,
-          child: ListView(
-            shrinkWrap: true,
+          child: Column(
+            //shrinkWrap: true,
             children: <Widget>[
               Text(
-                  "Enter the code you recieved by email to access class."),
+                  "Choose which child belongs to this class and enter the code to access this class."),
               SizedBox(height: 30.0),
+              Expanded(
+                child: buildChildListBody(context, user),
+              ),
+              Text('$_childName'),
               TextFormField(
                 validator: (input) {
-                  if (input != classes.passcode)
-                    return 'Incorrect passcode.';
+                  if (input != classes.passcode) return 'Incorrect passcode.';
                 },
                 textInputAction: TextInputAction.done,
                 focusNode: _passcodeFocus,
@@ -180,8 +195,7 @@ class CodeAlertBox extends StatelessWidget {
                     Icons.lock,
                     color: Color.fromRGBO(123, 193, 67, 1),
                   ),
-                  contentPadding:
-                      EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
+                  contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20.0),
                     borderSide: BorderSide(
@@ -212,12 +226,148 @@ class CodeAlertBox extends StatelessWidget {
               //login to firebase
               formState.save();
               if (_passcode == classes.passcode) {
-                ClassMGMTLogic.addClassEnrolled(context, classes, userID, user);
+                ClassMGMTLogic.addClassEnrolled(context, classes, userID, user, _childName);
               }
             }
           },
         ),
       ],
+    );
+  }
+}
+
+//??????????????????\\
+// BUILD CHILD LIST \\
+//??????????????????\\
+
+Widget buildChildListBody(BuildContext context, FirebaseUser user) {
+  //String userID = user.uid;
+
+  return StreamBuilder<QuerySnapshot>(
+    stream: MyClassesLogic.buildChildStream(user),
+    builder: (context, snapshot) {
+      if (!snapshot.hasData) return LinearProgressIndicator();
+      //call to build map of database query --> see next widget
+      return _buildChildList(context, snapshot.data.documents, user);
+    },
+  );
+}
+
+// Widget to build list of classes for user based on previous widget query
+Widget _buildChildList(
+    BuildContext context, List<DocumentSnapshot> snapshot, FirebaseUser user) {
+  return ListView(
+    padding: const EdgeInsets.only(top: 8.0),
+    children: snapshot
+        .map((data) => _buildChildListItem(context, data, user))
+        .toList(),
+  );
+}
+
+// LIST ITEM CONTAINER
+Widget _buildChildListItem(
+    BuildContext context, DocumentSnapshot data, FirebaseUser user) {
+  final children = Children.fromSnapshot(data);
+  List<String> userID = ['${user.uid}'];
+  return FlatButton(
+    child: Text('${children.name}'),
+    onPressed: () {
+      _childName = children.name;
+    },
+  );
+  // Column(
+  //   children: <Widget>[
+  //     Container(
+  //       margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+  //       decoration: new BoxDecoration(
+  //         color: Colors.white,
+  //         boxShadow: [
+  //           new BoxShadow(
+  //             color: Colors.grey,
+  //             offset: new Offset(3.0, 3.0),
+  //             blurRadius: 1,
+  //           ),
+  //         ],
+  //         borderRadius: new BorderRadius.all(Radius.circular(10.0)),
+  //       ),
+  //       child: Column(
+  //         children: <Widget>[
+  //           new ChildTileWidget(
+  //               children: children, userID: userID, user: user),
+  //         ],
+  //       ),
+  //     ),
+  //   ],
+  //   key: ValueKey(user.uid),
+  // );
+}
+
+// CLASS TILE LAYOUT
+class ChildTileWidget extends StatelessWidget {
+  const ChildTileWidget({
+    Key key,
+    @required this.children,
+    @required this.userID,
+    @required this.user,
+  }) : super(key: key);
+
+  final Children children;
+  final List<String> userID;
+  final FirebaseUser user;
+
+  @override
+  Widget build(BuildContext context) {
+    print(children);
+    //cls.add(classes);
+    return ListTile(
+      contentPadding: const EdgeInsets.fromLTRB(5, 5, 2, 5),
+      // CLASS TITLE AND CODE
+      title: Text('${children.name}',
+          style: TextStyle(
+              fontWeight: FontWeight.w700,
+              color: Color.fromRGBO(41, 60, 62, 1))),
+      leading: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                //MyClassesLogic.notifyButtonRender(user, classes),
+                IconButton(
+                  icon: Icon(Icons.delete),
+                  color: Colors.grey,
+                  onPressed: () {
+                    // showDialog(
+                    //   context: context,
+                    //   builder: (BuildContext context) {
+                    //     return new RemoveChildAlert(
+                    //         classes: classes,
+                    //         isSuper: isSuper,
+                    //         userID: userID,
+                    //         user: user);
+                    //   },
+                    // );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      trailing: IconButton(
+        padding: EdgeInsets.all(0),
+        icon: Icon(Icons.chevron_right),
+        color: Color(0xFF1ca5e5),
+        onPressed: () {
+          // MyClassesLogic.navToAnnouncements(
+          //     context, user, classes, isSuper);
+        },
+      ),
+      onTap: () {
+        // MyClassesLogic.navToAnnouncements(
+        //     context, user, classes, isSuper);
+      },
     );
   }
 }

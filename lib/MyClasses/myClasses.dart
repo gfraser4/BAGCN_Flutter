@@ -14,10 +14,12 @@ import 'package:bagcndemo/Announcements/CreateAnnouncement/createAnnouncement.da
 import 'package:bagcndemo/Announcements/announcementPage.dart';
 // MODELS
 import 'package:bagcndemo/Models/ClassesModel.dart';
+import 'package:bagcndemo/Models/Children.dart';
 
 List<Classes> cls = new List<Classes>();
 bool expandedClassesController = false;
 bool expandedNewsController = true;
+String _childName;
 
 //**MyClassList WIDGET - MY CLASSES PAGE CLASS -- HOW THE MAIN PAGE LOADS AND ITS CONTENT**\\
 
@@ -46,7 +48,7 @@ class _MyClassList extends State<MyClassList> {
   @override
   Widget build(BuildContext context) {
     MediaQueryData queryData;
-queryData = MediaQuery.of(context);
+    queryData = MediaQuery.of(context);
     return Scaffold(
       backgroundColor: CustomColors.bagcBlue,
       appBar: AppBar(
@@ -103,8 +105,10 @@ queryData = MediaQuery.of(context);
                         }
                       },
                       icon: expandedClassesController == false
-                          ? Icon(Icons.keyboard_arrow_up, color: CustomColors.bagcBlue)
-                          : Icon(Icons.keyboard_arrow_down, color: CustomColors.bagcBlue),
+                          ? Icon(Icons.keyboard_arrow_up,
+                              color: CustomColors.bagcBlue)
+                          : Icon(Icons.keyboard_arrow_down,
+                              color: CustomColors.bagcBlue),
                     ),
                   ],
                 ),
@@ -194,22 +198,27 @@ queryData = MediaQuery.of(context);
                               }
                             },
                             icon: expandedClassesController == true
-                                ? Icon(Icons.keyboard_arrow_down, color: Colors.white)
-                                : Icon(Icons.keyboard_arrow_up, color: Colors.white),
+                                ? Icon(Icons.keyboard_arrow_down,
+                                    color: Colors.white)
+                                : Icon(Icons.keyboard_arrow_up,
+                                    color: Colors.white),
                           ),
                         ],
                       ),
                     ),
-                    expanded:
-                        Container(
+                    expanded: Container(
                       height: queryData.size.height - 200,
                       child: Column(
                         children: <Widget>[
                           Expanded(
-                            child: _buildBody(
-                                context, widget.user, widget.isSuper),
+                            child: 
+                                    widget.isSuper == false
+                                ? buildChildListBody(context, widget.user)
+                                : _buildClassListBody(
+                                    context, widget.user, widget.isSuper),
                           ),
-                          addChildButton(widget.isSuper, widget.isAdmin),
+                          addChildButton(context, widget.isSuper,
+                              widget.isAdmin, widget.user),
                         ],
                       ),
                     ),
@@ -264,7 +273,11 @@ Widget floatingButton(
 }
 
 // add child button is user is parent
-Widget addChildButton(bool isSuper, bool isAdmin) {
+Widget addChildButton(
+    BuildContext context, bool isSuper, bool isAdmin, FirebaseUser user) {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final FocusNode _childNameFocus = FocusNode();
+  final List<String> userID = [user.uid];
   if (isSuper == true) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -298,8 +311,86 @@ Widget addChildButton(bool isSuper, bool isAdmin) {
               margin: EdgeInsets.symmetric(horizontal: 60),
               child: RaisedButton(
                 onPressed: () {
-                  // expandedController = true;
-                  // print(expandedController);
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text(
+                          'Enter your Child...',
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontStyle: FontStyle.normal,
+                            color: Color.fromRGBO(0, 162, 162, 1),
+                          ),
+                        ),
+                        content: Container(
+                          width: 300,
+                          child: Form(
+                            key: _formKey,
+                            child: ListView(
+                              shrinkWrap: true,
+                              children: <Widget>[
+                                Text("Enter a first name or nickname."),
+                                SizedBox(height: 30.0),
+                                TextFormField(
+                                  validator: (input) {
+                                    if (input.length <= 0)
+                                      return 'Name must not be empty.';
+                                  },
+                                  textInputAction: TextInputAction.done,
+                                  focusNode: _childNameFocus,
+                                  onSaved: (input) => _childName = input,
+                                  autofocus: false,
+                                  style: TextStyle(color: Colors.black),
+                                  decoration: InputDecoration(
+                                    fillColor: Colors.white,
+                                    filled: true,
+                                    labelText: 'First Name',
+                                    prefixIcon: Icon(
+                                      Icons.child_care,
+                                      color: Color.fromRGBO(123, 193, 67, 1),
+                                    ),
+                                    contentPadding: EdgeInsets.fromLTRB(
+                                        25.0, 15.0, 20.0, 15.0),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                      borderSide: BorderSide(
+                                        color: Color.fromRGBO(123, 193, 67, 1),
+                                        width: 2,
+                                      ),
+                                    ),
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20.0)),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text("Cancel"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          FlatButton(
+                            child: Text("Yes"),
+                            onPressed: () async {
+                              final formState = _formKey.currentState;
+                              if (formState.validate()) {
+                                //login to firebase
+                                formState.save();
+                                await MyClassesLogic.createChild(
+                                    context, userID, user, _childName);
+                              }
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
                 child: Text('Add Child'),
               ),
@@ -314,32 +405,34 @@ Widget addChildButton(bool isSuper, bool isAdmin) {
 // MAIN PAGE Build //
 
 // QUERY FIRESTORE FOR ALL CLASSES FOR A USER
-Widget _buildBody(BuildContext context, FirebaseUser user, bool isSuper) {
+Widget _buildClassListBody(
+    BuildContext context, FirebaseUser user, bool isSuper,
+    [Children children]) {
   String userID = user.uid;
 
   return StreamBuilder<QuerySnapshot>(
-    stream: MyClassesLogic.buildStream(userID, isSuper),
+    stream: MyClassesLogic.buildStream(userID, isSuper, user, children),
     builder: (context, snapshot) {
       if (!snapshot.hasData) return LinearProgressIndicator();
       //call to build map of database query --> see next widget
-      return _buildList(context, snapshot.data.documents, user, isSuper);
+      return _buildClassList(context, snapshot.data.documents, user, isSuper);
     },
   );
 }
 
 // Widget to build list of classes for user based on previous widget query
-Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot,
+Widget _buildClassList(BuildContext context, List<DocumentSnapshot> snapshot,
     FirebaseUser user, bool isSuper) {
   return ListView(
     padding: const EdgeInsets.only(top: 8.0),
     children: snapshot
-        .map((data) => _buildListItem(context, data, user, isSuper))
+        .map((data) => _buildClassListItem(context, data, user, isSuper))
         .toList(),
   );
 }
 
 // LIST ITEM CONTAINER
-Widget _buildListItem(BuildContext context, DocumentSnapshot data,
+Widget _buildClassListItem(BuildContext context, DocumentSnapshot data,
     FirebaseUser user, bool isSuper) {
   final classes = Classes.fromSnapshot(data);
   List<String> userID = ['${user.uid}'];
@@ -522,6 +615,216 @@ class RemoveClassAlert extends StatelessWidget {
             isSuper
                 ? ClassMGMTLogic.closeClass(context, classes, userID, user)
                 : ClassMGMTLogic.removeClass(context, classes, userID, user);
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+  }
+}
+
+//??????????????????\\
+// BUILD CHILD LIST \\
+//??????????????????\\
+
+Widget buildChildListBody(BuildContext context, FirebaseUser user) {
+  //String userID = user.uid;
+
+  return StreamBuilder<QuerySnapshot>(
+    stream: MyClassesLogic.buildChildStream(user),
+    builder: (context, snapshot) {
+      if (!snapshot.hasData) return LinearProgressIndicator();
+      //call to build map of database query --> see next widget
+      return _buildChildList(context, snapshot.data.documents, user);
+    },
+  );
+}
+
+// Widget to build list of classes for user based on previous widget query
+Widget _buildChildList(
+    BuildContext context, List<DocumentSnapshot> snapshot, FirebaseUser user) {
+  return ListView(
+    padding: const EdgeInsets.only(top: 8.0),
+    children: snapshot
+        .map((data) => _buildChildListItem(context, data, user))
+        .toList(),
+  );
+}
+
+// LIST ITEM CONTAINER
+Widget _buildChildListItem(
+    BuildContext context, DocumentSnapshot data, FirebaseUser user) {
+  final children = Children.fromSnapshot(data);
+  List<String> userID = ['${user.uid}'];
+  return Column(
+    children: <Widget>[
+      Container(
+        margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+        decoration: new BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            new BoxShadow(
+              color: Colors.grey,
+              offset: new Offset(3.0, 3.0),
+              blurRadius: 1,
+            ),
+          ],
+          borderRadius: new BorderRadius.all(Radius.circular(10.0)),
+        ),
+        child: Column(
+          children: <Widget>[
+            new ChildTileWidget(children: children, userID: userID, user: user),
+          ],
+        ),
+      ),
+    ],
+    key: ValueKey(user.uid),
+  );
+}
+
+// CLASS TILE LAYOUT
+class ChildTileWidget extends StatelessWidget {
+  const ChildTileWidget({
+    Key key,
+    @required this.children,
+    @required this.userID,
+    @required this.user,
+  }) : super(key: key);
+
+  final Children children;
+  final List<String> userID;
+  final FirebaseUser user;
+
+  @override
+  Widget build(BuildContext context) {
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
+    bool isSuper = false;
+    return ExpandablePanel(
+      initialExpanded: false,
+      header: Container(
+        // color: Colors.white //CustomColors.bagcGreen,
+        child: ListTile(
+          leading: 
+              
+                IconButton(
+                  icon: Icon(Icons.delete),
+                  color: Colors.grey,
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return new RemoveChildAlert(
+                            children: children, userID: userID, user: user);
+                      },
+                    );
+                  },
+                ),
+
+trailing: IconButton(
+                  icon: Icon(Icons.add),
+                  color: CustomColors.bagcBlue,
+                  onPressed: () {
+                    MyClassesLogic.navToJoinClasses(context, user);
+                  },
+                ),
+          title: Text(
+            '${children.name}',
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              color: CustomColors.bagcBlue,
+            ),
+          ),
+        ),
+      ),
+      expanded: Container(
+          //margin: EdgeInsets.symmetric(vertical: 10.0),
+          height: queryData.size.height - 400,
+          child: _buildClassListBody(context, user, isSuper, children)),
+      tapHeaderToExpand: true,
+      hasIcon: true,
+    );
+
+    //  ListTile(
+    //   contentPadding: const EdgeInsets.fromLTRB(5, 5, 2, 5),
+    //   title: Text('${children.name}',
+    //       style: TextStyle(
+    //           fontWeight: FontWeight.w700,
+    //           color: Color.fromRGBO(41, 60, 62, 1))),
+    //   leading: Column(
+    //     crossAxisAlignment: CrossAxisAlignment.start,
+    //     children: <Widget>[
+    //       Container(
+    //         child: Column(
+    //           crossAxisAlignment: CrossAxisAlignment.start,
+    //           children: <Widget>[
+    //             IconButton(
+    //               icon: Icon(Icons.delete),
+    //               color: Colors.grey,
+    //               onPressed: () {
+    //                 showDialog(
+    //                   context: context,
+    //                   builder: (BuildContext context) {
+    //                     return new RemoveChildAlert(
+    //                         children: children, userID: userID, user: user);
+    //                   },
+    //                 );
+    //               },
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    //   trailing: IconButton(
+    //     padding: EdgeInsets.all(0),
+    //     icon: Icon(Icons.chevron_right),
+    //     color: Color(0xFF1ca5e5),
+    //     onPressed: () {
+    //     },
+    //   ),
+    //   onTap: () {
+
+    //   },
+    // );
+  }
+}
+
+// REMOVE CLASS ALERT DIALOG BOX
+class RemoveChildAlert extends StatelessWidget {
+  const RemoveChildAlert({
+    Key key,
+    @required this.children,
+    @required this.userID,
+    @required this.user,
+  }) : super(key: key);
+
+  final Children children;
+  final List<String> userID;
+  final FirebaseUser user;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(
+        'Remove Class?',
+        style: TextStyle(
+            fontSize: 30,
+            fontStyle: FontStyle.normal,
+            color: Color.fromRGBO(0, 162, 162, 1)),
+      ),
+      content: Text('Are you sure you want to remove ${children.name}?'),
+      actions: <Widget>[
+        FlatButton(
+          child: Text("Cancel"),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        FlatButton(
+          child: Text("Accept"),
+          onPressed: () {
+            MyClassesLogic.removeChild(context, userID, user, children);
             Navigator.of(context).pop();
           },
         ),

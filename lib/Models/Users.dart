@@ -9,6 +9,7 @@ class Users {
   final String role;
   final String profileColor;
   final String token;
+  final List<dynamic> children;
   final List<dynamic> enrolledIn;
   final List<dynamic> enrolledPending;
   final DocumentReference reference;
@@ -21,6 +22,7 @@ class Users {
         assert(map['profileColor'] != null),
         assert(map['id'] != null),
         firstName = map['firstName'],
+        children = map['children'],
         enrolledIn = map['enrolledIn'],
         enrolledPending = map['enrolledPending'],
         lastName = map['lastName'],
