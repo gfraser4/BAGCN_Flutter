@@ -165,7 +165,9 @@ class ClassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return 
+    classes.clsName == 'Boys and Girls Club Niagara' ? Text('') :
+    Card(
       elevation: 5.0,
       child: ListTile(
         title: Text(classes.clsName),

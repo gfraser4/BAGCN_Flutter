@@ -1,3 +1,4 @@
+import 'package:bagcndemo/Models/Children.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,7 +31,7 @@ class MyClassesLogic {
 
       //final freshSnap= await transaction.get(_query.reference);
       final classesx = Users.fromSnapshot(_query.documents.first);
-       List<String> token = [classesx.token];
+      List<String> token = [classesx.token];
       // token.add(classesx.token);
       print(token);
 
@@ -70,7 +71,7 @@ class MyClassesLogic {
       MaterialPageRoute(
         builder: (context) =>
             ClassAnnouncementPage(classes.clsName, classes.code, user, isSuper),
-      ), 
+      ),
     );
   }
 
@@ -96,19 +97,118 @@ class MyClassesLogic {
   }
 
 // BUILDS STREAM DEPENDING ON SUPERVISOR OR ENROLLED USER
-  static Stream buildStream(String userID, bool isSuper) {
+  static Stream buildStream(String userID, bool isSuper, FirebaseUser user, Children children) {
     if (isSuper == true) {
       return Firestore.instance
           .collection('class')
-          .where('supervisors', arrayContains: userID)
+          .where('supervisors', arrayContains: user.uid)
           //.orderBy('clsName')
           .snapshots();
+          
     } else {
+      
       return Firestore.instance
           .collection('class')
-          .where('enrolledUsers', arrayContains: userID)
+          //.where('enrolledUsers', arrayContains: userID)
+          .where('enrolledChildren', arrayContains: children.childID)
           //.orderBy('clsName')
           .snapshots();
+    }
+  }
+
+  // BUILDS STREAM DEPENDING ON SUPERVISOR OR ENROLLED USER
+  static Stream buildChildStream(FirebaseUser user) {
+    return Firestore.instance
+        .collection('children')
+        .where('parentID', isEqualTo: user.uid)
+        //.orderBy('clsName')
+        .snapshots();
+  }
+
+  // ADD USER TO ENROLLED STATUS - UPDATES CLASS AND USERS TABLES
+  static createChild(BuildContext context, List<String> userID,
+      FirebaseUser user, String childName) async {
+    Firestore db = Firestore.instance;
+    String childID;
+    try {
+      Firestore.instance
+          .collection('children')
+          .document()
+          .setData({'parentID': user.uid, 'Name': childName});
+      QuerySnapshot _queryChildren = await db
+          .collection('children')
+          .where('parentID', isEqualTo: user.uid)
+          .where('Name', isEqualTo: childName)
+          .getDocuments();
+      _queryChildren.documents.forEach((doc) {
+        childID = doc.documentID;
+        db.collection('children').document(doc.documentID).updateData({
+          "childID": doc.documentID,
+        });
+      });
+
+      // await Firestore.instance.collection('class').document('D64bbReCYndo789B8dbK').updateData({
+      //   "enrolledUsers": FieldValue.arrayUnion([user.uid])
+      // });
+
+      QuerySnapshot _query = await db
+          .collection('users')
+          .where('id', isEqualTo: user.uid)
+          .getDocuments();
+      _query.documents.forEach((doc) {
+        db.collection('users').document(doc.documentID).updateData({
+          "children": FieldValue.arrayUnion([childID]),
+        });
+      });
+      Navigator.of(context).pop();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  // DELETE CHILD AND CLASSES
+  static removeChild(BuildContext context, List<String> userID,
+      FirebaseUser user, Children children) async {
+    Firestore db = Firestore.instance;
+
+    try {
+
+      // REMOVE CHILD FROM CLASS
+      QuerySnapshot _queryChildren = await db
+          .collection('class')
+          .where('enrolledChildren', arrayContains: children.childID)
+          .getDocuments();
+      _queryChildren.documents.forEach((doc) {
+        db.collection('class').document(doc.documentID).updateData({
+          "enrolledChildren": FieldValue.arrayRemove([children.childID]),
+          "enrolledUsers": FieldValue.arrayRemove([user.uid]),
+        });
+      });
+
+      // await Firestore.instance.collection('class').document('D64bbReCYndo789B8dbK').updateData({
+      //   "enrolledUsers": FieldValue.arrayUnion([user.uid])
+      // });
+
+      // REMOVE CHILD FROM PARENT
+      QuerySnapshot _query = await db
+          .collection('users')
+          .where('id', isEqualTo: user.uid)
+          .getDocuments();
+      _query.documents.forEach((doc) {
+        db.collection('users').document(user.uid).updateData({
+          "children": FieldValue.arrayUnion([children.childID]),
+        });
+      });
+
+      // DELETE CHILD
+      await Firestore.instance
+          .collection('children')
+          .document(children.childID)
+          .delete();
+
+     Navigator.of(context).pop();
+    } catch (e) {
+      print(e.toString());
     }
   }
 }
