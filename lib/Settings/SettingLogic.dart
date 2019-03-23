@@ -8,14 +8,14 @@ class SettingLogic {
   static void muteNotification(FirebaseUser user, List<Classes> classes, bool isMute){
     List<String> userID = [user.uid];
       for(Classes cls in classes){
-        Firestore.instance.runTransaction((transaction) async {
+        Firestore.instance.runTransaction((transaction) {
           // final freshSnapshot = await transaction.get(cls.reference);
           // final fresh = Classes.fromSnapshot(freshSnapshot);
           if (!isMute) {
-            await transaction.update(
+            transaction.update(
                 cls.reference, {"notifyUsers": FieldValue.arrayUnion(userID)});
           } else if (isMute){
-            await transaction.update(
+            transaction.update(
                 cls.reference, {"notifyUsers": FieldValue.arrayRemove(userID)});
           }
         });
@@ -101,9 +101,10 @@ class _MyDialogContentState extends State<MyDialogContent> {
         onPressed: () {
           // if(email.text==widget.user.email&&widget.user.isEmailVerified){
             try
-            {SettingLogic.sendChangePasswordEmail(email.text);
+            {
+              SettingLogic.sendChangePasswordEmail(email.text);
               setState(() {
-                _validation = Text("A password change email has been sent to your email address.",style:TextStyle(color:Colors.green));
+                _validation = Text("A password change email has been sent to the email address.",style:TextStyle(color:Colors.green));
               });
               Future.delayed(Duration(seconds: 10),(){
                 email.clear();
