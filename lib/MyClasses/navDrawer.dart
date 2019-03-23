@@ -38,10 +38,6 @@ Widget navDrawer(BuildContext context, FirebaseUser user, bool isSuper, Users lo
           Divider(
             color: Color.fromRGBO(123, 193, 67, 1),
           ),
-          // new DarkModeTile(),
-          Divider(
-            color: Color.fromRGBO(123, 193, 67, 1),
-          ),
           new SignOutTile(),
           Divider(
             color: Color.fromRGBO(123, 193, 67, 1),

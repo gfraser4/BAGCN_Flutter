@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
-
 // LOGIC
 import 'package:bagcndemo/Announcements/announcementLogic.dart';
 // MODELS
@@ -73,7 +72,7 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
             // ),
           ],
         ),
-        body: _buildBody(
+        body: buildAnnouncementBody(
           context,
           title,
           code,
@@ -113,7 +112,7 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
           // TABS
           body: TabBarView(
             children: <Widget>[
-              _buildBody(
+              buildAnnouncementBody(
                 context,
                 widget.title,
                 widget.code,
@@ -178,35 +177,46 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
 }
 
 //QUERY FIRESTORE FOR ALL ANNOUNCEMENTS FOR A CLASS --> WHERE CLAUSE SEARCHES FOR title OF CLASS AND code FOR CLASS
-Widget _buildBody(
+Widget buildAnnouncementBody(
     BuildContext context, String title, int code, FirebaseUser user) {
   return StreamBuilder<QuerySnapshot>(
     stream: AnnouncementLogic.announcementStream(title, code),
     builder: (context, snapshot) {
       if (!snapshot.hasData) return LinearProgressIndicator();
 
-      return _buildList(context, snapshot.data.documents, user);
+      return _buildList(context, snapshot.data.documents, user, code);
     },
   );
 }
 
 // widget to build list of announcements based on class and class code
-Widget _buildList(
-    BuildContext context, List<DocumentSnapshot> snapshot, FirebaseUser user) {
-  return ListView(
-    padding: const EdgeInsets.only(top: 8.0),
-    children:
-        snapshot.map((data) => _buildListItem(context, data, user)).toList(),
-  );
+Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot,
+    FirebaseUser user, int code) {
+  // return horizaontal scroll for homepage else return vertical scroll
+  return code != 0
+      ? ListView(
+          padding: const EdgeInsets.only(top: 8.0),
+          children: snapshot
+              .map((data) => _buildListItem(context, data, user))
+              .toList(),
+        )
+      : ListView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.only(top: 8.0),
+          children: snapshot
+              .map((data) => _buildListItem(context, data, user))
+              .toList(),
+        );
 }
 
 // widget to build individual card item for each announcement from original query
 Widget _buildListItem(
     BuildContext context, DocumentSnapshot data, FirebaseUser user) {
+  MediaQueryData queryData;
+  queryData = MediaQuery.of(context);
   final announcements = Announcements.fromSnapshot(data);
   var formatter = new DateFormat.yMd().add_jm();
   String formattedDate = formatter.format(announcements.created);
-
 // SUPERVISOR POP UP MENU
   final supervisorMenu = AlertDialog(
     content: Container(
@@ -289,6 +299,9 @@ Widget _buildListItem(
       elevation: 5.0,
       color: Colors.white,
       child: Container(
+        width: announcements.clsName == 'Boys and Girls Club Niagara'
+            ? queryData.size.width - 20
+            : null,
         child: Column(
           children: <Widget>[
             new AnouncementText(
@@ -296,6 +309,11 @@ Widget _buildListItem(
             SizedBox(
               height: 16,
             ),
+            announcements.clsName == 'Boys and Girls Club Niagara'
+                ? Expanded(
+                    child: Container(),
+                  )
+                : Text(''),
             Container(
               color: Color.fromRGBO(41, 60, 62, 0.15),
               child: Row(
@@ -304,35 +322,39 @@ Widget _buildListItem(
                   new LikeButton(announcements: announcements, user: user),
                   new CommentsButton(announcements: announcements, user: user),
                   // POP UP FOR SUPERVISORS OR NOTIFICATION BUTTON FOR PARENTS
-                  role == true
-                      ? IconButton(
-                          icon: Icon(Icons.more_horiz),
-                          color: Color(0xFF1ca5e5),
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return supervisorMenu;
-                                });
-                          },
+                  announcements.clsName == 'Boys and Girls Club Niagara'
+                      ? Expanded(
+                          child: Container(),
                         )
-                      : announcements.notifyUsers.contains(user.uid) == true
+                      : role == true
                           ? IconButton(
-                              icon: Icon(Icons.notifications_active),
+                              icon: Icon(Icons.more_horiz),
                               color: Color(0xFF1ca5e5),
                               onPressed: () {
-                                AnnouncementLogic.notifyClick(
-                                    user, announcements);
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return supervisorMenu;
+                                    });
                               },
                             )
-                          : IconButton(
-                              icon: Icon(Icons.notifications_off),
-                              color: Colors.grey,
-                              onPressed: () {
-                                AnnouncementLogic.notifyClick(
-                                    user, announcements);
-                              },
-                            ),
+                          : announcements.notifyUsers.contains(user.uid) == true
+                              ? IconButton(
+                                  icon: Icon(Icons.notifications_active),
+                                  color: Color(0xFF1ca5e5),
+                                  onPressed: () {
+                                    AnnouncementLogic.notifyClick(
+                                        user, announcements);
+                                  },
+                                )
+                              : IconButton(
+                                  icon: Icon(Icons.notifications_off),
+                                  color: Colors.grey,
+                                  onPressed: () {
+                                    AnnouncementLogic.notifyClick(
+                                        user, announcements);
+                                  },
+                                ),
                 ],
               ),
             ),
@@ -364,6 +386,7 @@ class AnouncementText extends StatelessWidget {
         style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87),
       ),
       subtitle: RichText(
+        overflow: TextOverflow.ellipsis,
         text: new TextSpan(
           style: TextStyle(color: Colors.black54),
           children: <TextSpan>[

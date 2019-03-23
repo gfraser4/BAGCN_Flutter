@@ -8,6 +8,7 @@ class Users {
   final String email;
   final String role;
   final String profileColor;
+  final String token;
   final List<dynamic> enrolledIn;
   final List<dynamic> enrolledPending;
   final DocumentReference reference;
@@ -26,7 +27,8 @@ class Users {
         id = map['id'],
         profileColor = map['profileColor'],
         email = map['email'],
-        role = map['role'];
+        role = map['role'],
+        token = map['token'];
 
   Users.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data, reference: snapshot.reference);
