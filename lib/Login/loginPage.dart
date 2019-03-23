@@ -1,4 +1,5 @@
 import 'package:bagcndemo/Models/Users.dart';
+import 'package:bagcndemo/Settings/SettingLogic.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:path_provider/path_provider.dart';
@@ -140,6 +141,23 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
+//FORGET PASSWORD BUTTON
+    FlatButton forgetPassword = FlatButton(
+          child: Text(
+            'Forget Password',
+            style: TextStyle(color: CustomColors.bagcBlue),
+          ),
+          onPressed: () {
+            showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              // return MyDialogContent(widget.user);
+              return MyDialogContent();
+            }
+          );
+          },
+        );
+
 // CHECKBOX REMEMBER THE USER
     Checkbox checkButton = Checkbox(
       value: isRemember,
@@ -211,6 +229,7 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(color: Colors.red),
                 ),
                 loginButton,
+                forgetPassword,
                 signup
               ],
             ),

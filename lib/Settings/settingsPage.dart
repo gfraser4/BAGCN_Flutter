@@ -80,7 +80,8 @@ ListTile _changePassword(){
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              return MyDialogContent(widget.user);
+              // return MyDialogContent(widget.user);
+              return MyDialogContent();
             }
           );
         },
@@ -213,102 +214,3 @@ ListView settingPage(){
   }
 }
 
-class MyDialogContent extends StatefulWidget {
-  const MyDialogContent(this.user);
-  final FirebaseUser user;
-
-  @override
-  _MyDialogContentState createState() => new _MyDialogContentState();
-}
-
-class _MyDialogContentState extends State<MyDialogContent> {
-  Text _validation =Text("");
-  TextEditingController email = new TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-    title: Text(
-      'Enter Your Email',
-      style: TextStyle(
-          fontSize: 30,
-          fontStyle: FontStyle.normal,
-          color: Color.fromRGBO(0, 162, 162, 1)),
-    ),
-    content: Container(
-      width: 250,
-      child:ListView(
-        shrinkWrap: true,
-        children: <Widget>[
-              Container(
-                child: TextFormField(
-                  textInputAction: TextInputAction.done,
-                  controller:email,
-                  autofocus: true,
-                  style: TextStyle(color: Colors.black),
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          labelText: 'Email',
-                          prefixIcon: Icon(
-                            Icons.email,
-                            color: Color.fromRGBO(123, 193, 67, 1),
-                          ),
-                          contentPadding:
-                              EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                            borderSide: BorderSide(
-                              color: Color.fromRGBO(123, 193, 67, 1),
-                              width: 2,
-                            ),
-                          ),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20.0)),
-                        ),
-                ),
-              ),
-              SizedBox(height: 5,),
-              _validation
-            ]
-      )
-    ),
-    actions: <Widget>[
-      FlatButton(
-        child: Text("Cancel"),
-        onPressed: () {
-          email.clear();
-          _validation =Text("");
-          Navigator.of(context).pop();
-        },
-      ),
-      FlatButton(
-        child: Text("Send"),
-        onPressed: () {
-          if(email.text==widget.user.email&&widget.user.isEmailVerified){
-            SettingLogic.sendChangePasswordEmail(email.text);
-            setState(() {
-              _validation = Text("A password change email has been sent to your email address.",style:TextStyle(color:Colors.green));
-            });
-          Future.delayed(Duration(seconds: 10),(){
-            email.clear();
-            _validation =Text("");
-            Navigator.of(context).pop();
-          });
-          }
-          else if(email.text!=widget.user.email){
-            setState(() {
-              _validation = Text("Wrong email address.",style:TextStyle(color:Colors.red));
-            });
-          }
-          else{
-            setState(() {
-              _validation = Text("This email is not verified.",style:TextStyle(color:Colors.red));
-            });
-          }
-        },
-      ),
-    ],
-  );
-  }
-}
