@@ -11,14 +11,18 @@ class SignupLogic {
       String _password, String _firstName, String _lastName) async {
     RandomColor _randomColor = RandomColor();
     String token = _messaging.getToken().toString();
-    Firestore.instance.collection('users').document('${user.uid}').setData({
+    await Firestore.instance.collection('users').document('${user.uid}').setData({
       'id': user.uid,
       'firstName': _firstName,
       'lastName': _lastName,
       'email': _email,
       'role': 'super',
       'token': token,
+      'enrolledIn' : [0],
       'profileColor': _randomColor.randomColor().toString(),
+    });
+    await Firestore.instance.collection('class').document('D64bbReCYndo789B8dbK').updateData({
+      "enrolledUsers": FieldValue.arrayUnion([user.uid])
     });
   }
 
@@ -35,8 +39,13 @@ class SignupLogic {
         'email': _email,
         'role': 'parent',
         'token': token,
+        'enrolledPending': [],
+        'enrolledIn' : [0],
         'profileColor': _randomColor.randomColor().toString(),
       });
+    });
+    await Firestore.instance.collection('class').document('D64bbReCYndo789B8dbK').updateData({
+      "enrolledUsers": FieldValue.arrayUnion([user.uid])
     });
 
     print(_token);

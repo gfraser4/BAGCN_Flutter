@@ -24,6 +24,7 @@ dependencies:
   url_launcher: ^5.0.2
   firebase_messaging:
   path_provider: ^0.5.0+1
+  expandable: ^2.0.0
 
 
   # The following adds the Cupertino Icons font to your application.

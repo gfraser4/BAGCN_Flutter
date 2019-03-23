@@ -233,6 +233,19 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+    Future<bool> checkAdmin(FirebaseUser user) async {
+    DocumentSnapshot snapshot = await Firestore.instance
+        .collection('users')
+        .document('${user.uid}')
+        .get();
+    print('doc got');
+    if (snapshot['role'] == 'admin') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
 //future waiting for database response
   Future<void> signIn(bool isAuto) async {
     //wether user choose to auto login or not
@@ -251,6 +264,7 @@ class _LoginPageState extends State<LoginPage> {
         _user = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: _email, password: _password);
 
+        bool isAdmin =await checkAdmin(_user);
         bool isSuper = await checkRole(_user);
         print(isSuper);
 
@@ -264,7 +278,7 @@ DocumentSnapshot snapshot = await Firestore.instance
         await Navigator.pushReplacement(
             context,
             new MaterialPageRoute(
-  builder: (BuildContext context) => new MyClassList(_user, isSuper,loginUser)));
+  builder: (BuildContext context) => new MyClassList(_user, isSuper, isAdmin, loginUser)));
       } catch (ex) {
         setState(() {
           _validation = ex.message.toString();
