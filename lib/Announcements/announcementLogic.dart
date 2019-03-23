@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 // MODELS
 import 'package:bagcndemo/Models/AnnouncementsModel.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server/gmail.dart';
 
 class AnnouncementLogic {
 
@@ -127,5 +129,20 @@ class AnnouncementLogic {
     }
   }
 
+  static void sendPasscode(String className,String email,String passcode) {
+      String _username = "bagcn2019@gmail.com";
+      String _password = "boysandgirls2019";
 
+      final smtpServer = gmail(_username, _password);
+      
+      // Create our message.
+      final message = new Message()
+        ..from = new Address(_username, 'Boys and Girls Club in Niagara')
+        ..recipients.add(email)
+        ..subject = 'Verify to access the class '+className+' :: ${new DateTime.now()}'
+        ..text = 'Your passcode: '+passcode;
+    
+      send(message, smtpServer).then((message) => print('Email sent!'))
+      .catchError((e) => print('Error occurred: $e'));
+    }
 }
