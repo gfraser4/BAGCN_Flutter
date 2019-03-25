@@ -20,18 +20,25 @@ class _ParentWalkthrough extends State<ParentWalkthrough> {
   slides.add(
     new Slide(
       title: "Welcome!",
-      description: "Test",
+      description: "Hello World!",
       backgroundColor: CustomColors.bagcGreen,
-    )
+    ),
+  );
+  slides.add(
+    new Slide(
+      title: "Ipsum Lorem",
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed scelerisque nunc massa, id mattis ligula tincidunt eget. Curabitur ultrices urna velit, ac ultrices est aliquam eget. Aliquam vel quam erat. Fusce sollicitudin est vel tortor lacinia malesuada at quis turpis. Integer semper neque et massa lacinia blandit.",
+      backgroundColor: CustomColors.bagcGreen,
+    ),
   );
   }
 
   void onDonePress() {
-    // Do what you want
+    Navigator.of(context).pop();
   }
 
   void onSkipPress() {
-    // Do what you want
+    Navigator.of(context).pop();
   }
 
 
