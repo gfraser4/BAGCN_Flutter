@@ -10,18 +10,22 @@ class SignupLogic {
   static void createSupervisor(FirebaseUser user, String _email,
       String _password, String _firstName, String _lastName) async {
     RandomColor _randomColor = RandomColor();
-    String token = _messaging.getToken().toString();
-    await Firestore.instance.collection('users').document('${user.uid}').setData({
-      'id': user.uid,
-      'firstName': _firstName,
-      'lastName': _lastName,
-      'email': _email,
-      'role': 'super',
-      'token': token,
-      'enrolledIn' : [0],
-      'profileColor': _randomColor.randomColor().toString(),
+    _messaging.getToken().then((token) {
+      Firestore.instance.collection('users').document('${user.uid}').setData({
+        'id': user.uid,
+        'firstName': _firstName,
+        'lastName': _lastName,
+        'email': _email,
+        'role': 'super',
+        'token': token,
+        'enrolledIn': [0],
+        'profileColor': _randomColor.randomColor().toString(),
+      });
     });
-    await Firestore.instance.collection('class').document('D64bbReCYndo789B8dbK').updateData({
+    Firestore.instance
+        .collection('class')
+        .document('D64bbReCYndo789B8dbK')
+        .updateData({
       "enrolledUsers": FieldValue.arrayUnion([user.uid])
     });
   }
@@ -30,7 +34,6 @@ class SignupLogic {
   static void createParent(FirebaseUser user, String _email, String _password,
       String _firstName, String _lastName) async {
     RandomColor _randomColor = RandomColor();
-    String _token;
     _messaging.getToken().then((token) {
       Firestore.instance.collection('users').document('${user.uid}').setData({
         'id': user.uid,
@@ -40,14 +43,15 @@ class SignupLogic {
         'role': 'parent',
         'token': token,
         'enrolledPending': [],
-        'enrolledIn' : [0],
+        'enrolledIn': [0],
         'profileColor': _randomColor.randomColor().toString(),
       });
     });
-    await Firestore.instance.collection('class').document('D64bbReCYndo789B8dbK').updateData({
+    await Firestore.instance
+        .collection('class')
+        .document('D64bbReCYndo789B8dbK')
+        .updateData({
       "enrolledUsers": FieldValue.arrayUnion([user.uid])
     });
-
-    print(_token);
   }
 }
