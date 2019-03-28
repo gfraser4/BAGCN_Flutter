@@ -20,14 +20,23 @@ class _ParentWalkthrough extends State<ParentWalkthrough> {
   slides.add(
     new Slide(
       title: "Welcome!",
-      description: "Hello World!",
-      backgroundColor: CustomColors.bagcGreen,
+      pathImage: 'assets/BGC_Niagara_Vertical.png',
+      maxLineTitle: 5,
+      description: "Before you start, we would like to show a few things.",
+      backgroundColor: Colors.blueGrey,
     ),
   );
   slides.add(
     new Slide(
-      title: "Ipsum Lorem",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed scelerisque nunc massa, id mattis ligula tincidunt eget. Curabitur ultrices urna velit, ac ultrices est aliquam eget. Aliquam vel quam erat. Fusce sollicitudin est vel tortor lacinia malesuada at quis turpis. Integer semper neque et massa lacinia blandit.",
+      title: "Creating A Child Profile",
+      description: "To get started tap the "'"Add a Child"'" Button and enter a nickname or first name.",
+      backgroundColor: CustomColors.bagcBlue,
+    ),
+  );
+   slides.add(
+    new Slide(
+      title: "Adding A Class",
+      description: "Select "'"Manage Classes"'" and search for your class. Your program supervisor will verify and send you the passcode.",
       backgroundColor: CustomColors.bagcGreen,
     ),
   );
