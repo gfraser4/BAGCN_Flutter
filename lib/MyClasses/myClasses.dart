@@ -24,11 +24,10 @@ String _childName;
 //**MyClassList WIDGET - MY CLASSES PAGE CLASS -- HOW THE MAIN PAGE LOADS AND ITS CONTENT**\\
 
 class MyClassList extends StatefulWidget {
-  const MyClassList(this.user, this.isSuper, this.isAdmin, this.loginUser);
+  const MyClassList(this.user, this.isSuper, this.isAdmin);
   final FirebaseUser user;
   final bool isSuper;
   final bool isAdmin;
-  final Users loginUser;
   @override
   _MyClassList createState() {
     return _MyClassList();
@@ -233,7 +232,7 @@ class _MyClassList extends State<MyClassList> {
       ), //PAGE CONTENT --> CALLING _buildBody WIDGET
       floatingActionButton:
           floatingButton(context, widget.isSuper, widget.isAdmin, widget.user),
-      drawer: navDrawer(context, widget.user, widget.isSuper, widget.loginUser,
+      drawer: navDrawer(context, widget.user, widget.isSuper,
           cls), //BUILDS MENU DRAWER BY CALLING navDrawer WIDGET
     );
   }

@@ -1,5 +1,4 @@
-import 'dart:async';
-
+import 'package:bagcndemo/Comments/commentsLogic.dart';
 import 'package:bagcndemo/Models/ClassesModel.dart';
 import 'package:bagcndemo/Models/Users.dart';
 import 'package:bagcndemo/Settings/SettingLogic.dart';
@@ -7,6 +6,7 @@ import 'package:bagcndemo/Settings/SettingLogic.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage(this.user,this.loginUser,this.classes);
@@ -19,7 +19,14 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPage extends State<SettingsPage> {
 
+@override
+  void initState() {
+    super.initState();
+    pickerColor = hexToColor(widget.loginUser.profileColor);
+  }
+
 TextEditingController passcode = new TextEditingController();
+Color pickerColor;
 
 ListTile _editProfile(){
   return ListTile(
@@ -66,26 +73,51 @@ CheckboxListTile _darkMode(){
 
 ListTile _changeProfileColour(){
   return ListTile(
-        title: Text("Profile Color",style:TextStyle(fontSize: 18)),
-        trailing: DropdownButton<String>(
-          // value: widget.loginUser.profileColor,
-          items: <String>['yellow','black','red', 'green'].map((String value) {
-            return DropdownMenuItem<String>(
-              value: "Colors."+value,
-              child: Text(value),
-            );
-          }).toList(),
-          onChanged: (String newValue) {
-            SettingLogic.changeProfileColour(widget.loginUser,newValue);
-            setState(() {});
-          },
-        ),
+        title: Text("Change Profile Color",style:TextStyle(fontSize: 18)),
+        trailing: CircleAvatar(backgroundColor: pickerColor),
+        // trailing: Icon(Icons.chevron_right),
+        onTap: (){
+          showDialog(
+            context: context,
+            child: AlertDialog(
+              title: const Text('Pick a color',style: TextStyle(
+                          fontSize: 30,
+                          fontStyle: FontStyle.normal,
+                          color: Color.fromRGBO(0, 162, 162, 1)),),
+              content: SingleChildScrollView(
+              child:MaterialColorPicker(
+                allowShades: false, // default true
+                onMainColorChange: (Color color) {
+                    pickerColor = Color(color.value);
+                },
+                selectedColor: pickerColor
+              )
+              ),
+              actions: <Widget>[
+                FlatButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                FlatButton(
+                  child: const Text('Submit'),
+                  onPressed: () {
+                    SettingLogic.changeProfileColour(widget.loginUser,pickerColor.toString());
+                    setState((){});
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          );
+        },
       );
     } 
 
     ListTile _muteNotification(){
       return ListTile(
-            title: Text("Mute Notification",style:TextStyle(fontSize: 18),maxLines: 1,overflow: TextOverflow.ellipsis,),
+            title: Text("Change Notification Status",style:TextStyle(fontSize: 18),maxLines: 1,overflow: TextOverflow.ellipsis,),
             onTap:(){
               showDialog(
                 context: context,
