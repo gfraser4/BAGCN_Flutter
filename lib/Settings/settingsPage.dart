@@ -30,8 +30,8 @@ Color pickerColor;
 
 ListTile _editProfile(){
   return ListTile(
-        title: Text("Current User",style:TextStyle(fontSize: 18),maxLines: 1,overflow: TextOverflow.ellipsis,),
-        subtitle: Text(widget.loginUser.firstName+" "+widget.loginUser.lastName,style:TextStyle(fontSize: 16),maxLines: 1,overflow: TextOverflow.ellipsis,),
+        title: Text("Current User"),
+        subtitle: Text(widget.loginUser.firstName+" "+widget.loginUser.lastName,maxLines: 1,overflow: TextOverflow.ellipsis,),
         // trailing: Icon(Icons.chevron_right),
         // onTap: (){
         //   showDialog(
@@ -46,7 +46,8 @@ ListTile _editProfile(){
     
 ListTile _changePassword(){
   return ListTile(
-        title: Text("Change Password",style:TextStyle(fontSize: 18),maxLines: 1,overflow: TextOverflow.ellipsis,),
+        title: Text("Password"),
+        subtitle: Text("Reset your password"),
         trailing: Icon(Icons.chevron_right),
         onTap: (){
           showDialog(
@@ -60,27 +61,27 @@ ListTile _changePassword(){
       );
     } 
 
-CheckboxListTile _darkMode(){
-  return CheckboxListTile(
-        title: Text("Dark Mode",style:TextStyle(fontSize: 18),maxLines: 1,overflow: TextOverflow.ellipsis,),
-        value: Theme.of(context).brightness == Brightness.dark? true: false,
-        activeColor: Color.fromRGBO(123, 193, 67, 1),
-        onChanged:(bool){
-          DynamicTheme.of(context).setBrightness(Theme.of(context).brightness == Brightness.dark? Brightness.light: Brightness.dark);
-        },
-      );
-    } 
+// CheckboxListTile _darkMode(){
+//   return CheckboxListTile(
+//         title: Text("Dark Mode"),
+//         value: Theme.of(context).brightness == Brightness.dark? true: false,
+//         activeColor: Color.fromRGBO(123, 193, 67, 1),
+//         onChanged:(bool){
+//           DynamicTheme.of(context).setBrightness(Theme.of(context).brightness == Brightness.dark? Brightness.light: Brightness.dark);
+//         },
+//       );
+//     } 
 
 ListTile _changeProfileColour(){
   return ListTile(
-        title: Text("Change Profile Color",style:TextStyle(fontSize: 18)),
-        trailing: CircleAvatar(backgroundColor: pickerColor),
-        // trailing: Icon(Icons.chevron_right),
+        title: Text("Profile Color"),
+        subtitle: Text("Pick a color as your avatar's background"),
+        trailing: CircleColor (color: pickerColor,circleSize: 40),
         onTap: (){
           showDialog(
             context: context,
             child: AlertDialog(
-              title: const Text('Pick a color',style: TextStyle(
+              title: const Text('Pick A Color',style: TextStyle(
                           fontSize: 30,
                           fontStyle: FontStyle.normal,
                           color: Color.fromRGBO(0, 162, 162, 1)),),
@@ -117,7 +118,9 @@ ListTile _changeProfileColour(){
 
     ListTile _muteNotification(){
       return ListTile(
-            title: Text("Change Notification Status",style:TextStyle(fontSize: 18),maxLines: 1,overflow: TextOverflow.ellipsis,),
+            title: Text("Notification Status"),
+            subtitle: Text("Mute or un-mute notification alert"),
+            trailing: Icon(Icons.chevron_right),
             onTap:(){
               showDialog(
                 context: context,
@@ -180,6 +183,12 @@ ListTile _changeProfileColour(){
           decoration: BoxDecoration(
             border: Border(bottom: BorderSide(color: Colors.grey))
           ),
+          child: _changeProfileColour()
+        ),
+        Container(
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Colors.grey))
+          ),
           child: _changePassword()
         ),
         // Container(
@@ -188,12 +197,6 @@ ListTile _changeProfileColour(){
         //   ),
         //   child: _darkMode()
         // ),
-        Container(
-          decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(color: Colors.grey))
-          ),
-          child: _changeProfileColour()
-        ),
         Container(
           decoration: BoxDecoration(
             border: Border(bottom: BorderSide(color: Colors.grey))

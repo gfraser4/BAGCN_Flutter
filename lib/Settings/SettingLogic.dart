@@ -6,12 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:validators/validators.dart';
 class SettingLogic {
 
-  static void muteNotification(FirebaseUser user, List<Classes> classes, bool isMute){
-    List<String> userID = [user.uid];
+  static void muteNotification(FirebaseUser user, List<Classes> classes, bool isMute) async{
+    try{
+      List<String> userID = [user.uid];
       for(Classes cls in classes){
-        Firestore.instance.runTransaction((transaction) {
-          // final freshSnapshot = await transaction.get(cls.reference);
-          // final fresh = Classes.fromSnapshot(freshSnapshot);
+        await Firestore.instance.runTransaction((transaction) {
           if (!isMute) {
             transaction.update(
                 cls.reference, {"notifyUsers": FieldValue.arrayUnion(userID)});
@@ -21,6 +20,8 @@ class SettingLogic {
           }
         });
       }
+    }
+    catch(ex){ }
   }
 
   static void changeProfileColour(Users user,String color) async{
@@ -54,7 +55,7 @@ class SettingLogic {
       });
   }
 
-  static Future<void> sendChangePasswordEmail(String email) async {
+  static void sendChangePasswordEmail(String email) async {
     await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
   }
 
@@ -70,7 +71,7 @@ class MyDialogContent extends StatefulWidget {
 }
 
 class _MyDialogContentState extends State<MyDialogContent> {
-  Text _validation =Text("An email with reset password link will be sent to the address below.",style:TextStyle(color:Color.fromRGBO(0, 162, 162, 1)));
+  Text _validation =Text("An email with reset password link will be sent to the address above.",style:TextStyle(color:Color.fromRGBO(0, 162, 162, 1)));
   TextEditingController email = new TextEditingController();
 
   @override
@@ -126,7 +127,7 @@ class _MyDialogContentState extends State<MyDialogContent> {
         child: Text("Cancel"),
         onPressed: () {
           email.clear();
-          _validation =Text("An email with reset password link will be sent to the address below.",style:TextStyle(color:Color.fromRGBO(0, 162, 162, 1)));
+          _validation =Text("An email with reset password link will be sent to the address above.",style:TextStyle(color:Color.fromRGBO(0, 162, 162, 1)));
           Navigator.of(context).pop();
         },
       ),
