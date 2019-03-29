@@ -64,30 +64,26 @@ CheckboxListTile _darkMode(){
       );
     } 
 
-ListTile _muteNotification(){
+ListTile _changeProfileColour(){
   return ListTile(
-        title: Text("Mute Notification",style:TextStyle(fontSize: 18),maxLines: 1,overflow: TextOverflow.ellipsis,),
+        title: Text("Profile Color",style:TextStyle(fontSize: 18)),
         trailing: DropdownButton<String>(
-          value: widget.loginUser.profileColor,
-          iconSize: 50,
-          items: <String>['Yellow','Black','Red', 'Green'].map((String value) {
+          // value: widget.loginUser.profileColor,
+          items: <String>['yellow','black','red', 'green'].map((String value) {
             return DropdownMenuItem<String>(
-              value: value,
+              value: "Colors."+value,
               child: Text(value),
             );
           }).toList(),
           onChanged: (String newValue) {
-            SettingLogic.changeProfileColour(widget.loginUser,"Color."+newValue);
+            SettingLogic.changeProfileColour(widget.loginUser,newValue);
             setState(() {});
           },
         ),
-        onTap:(){
-          
-        } ,
       );
     } 
 
-    ListTile _changeProfileColour(){
+    ListTile _muteNotification(){
       return ListTile(
             title: Text("Mute Notification",style:TextStyle(fontSize: 18),maxLines: 1,overflow: TextOverflow.ellipsis,),
             onTap:(){
