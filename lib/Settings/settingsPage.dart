@@ -1,5 +1,4 @@
-import 'dart:async';
-
+import 'package:bagcndemo/Comments/commentsLogic.dart';
 import 'package:bagcndemo/Models/ClassesModel.dart';
 import 'package:bagcndemo/Models/Users.dart';
 import 'package:bagcndemo/Settings/SettingLogic.dart';
@@ -7,6 +6,7 @@ import 'package:bagcndemo/Settings/SettingLogic.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage(this.user,this.loginUser,this.classes);
@@ -19,42 +19,14 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPage extends State<SettingsPage> {
 
+@override
+  void initState() {
+    super.initState();
+    pickerColor = hexToColor(widget.loginUser.profileColor);
+  }
+
 TextEditingController passcode = new TextEditingController();
-AlertDialog _signOutAlert(){
-  return AlertDialog(
-    title: Text(
-      'Sign Out',
-      style: TextStyle(
-          fontSize: 30,
-          fontStyle: FontStyle.normal,
-          color: Color.fromRGBO(0, 162, 162, 1)),
-    ),
-    content: Text(
-      'Want to sign out? You will be directed to login page',
-      style: TextStyle(
-          fontSize: 18,
-          fontStyle: FontStyle.normal,
-          color: Color.fromRGBO(0, 162, 162, 1)),
-    ),
-    actions: <Widget>[
-      FlatButton(
-        child: Text("Cancel"),
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-      ),
-      FlatButton(
-        child: Text("Yes"),
-        onPressed: () {
-          Navigator.pop(context);
-          FirebaseAuth.instance.signOut();
-          Navigator.of(context)
-            .pushNamedAndRemoveUntil("/", ModalRoute.withName("/"));
-        },
-      ),
-    ],
-  );
-}
+Color pickerColor;
 
 ListTile _editProfile(){
   return ListTile(
@@ -99,111 +71,138 @@ CheckboxListTile _darkMode(){
       );
     } 
 
-ListTile _muteNotification(){
+ListTile _changeProfileColour(){
   return ListTile(
-        title: Text("Mute Notification",style:TextStyle(fontSize: 18),maxLines: 1,overflow: TextOverflow.ellipsis,),
-        onTap:(){
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text(
-                  'Notification',
-                  style: TextStyle(
-                      fontSize: 30,
-                      fontStyle: FontStyle.normal,
-                      color: Color.fromRGBO(0, 162, 162, 1)),
-                ),
-                content: Text(
-                  "Mute or Unmute all the classes' notification?",
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontStyle: FontStyle.normal,
-                      color: Color.fromRGBO(0, 162, 162, 1)),
-                ),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text("Cancel"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  FlatButton(
-                    child: Text("Mute All"),
-                    onPressed: () {
-                      SettingLogic.muteNotification(widget.user, widget.classes, true);
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  FlatButton(
-                    child: Text("Unmute All"),
-                    onPressed: () {
-                      SettingLogic.muteNotification(widget.user, widget.classes, false);
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            }
-          );
-        } ,
-      );
-    } 
-
-ListTile _signOut(){
-  return ListTile(
-        title: Text("Sign Out",style:TextStyle(fontSize: 18,color: Colors.red),maxLines: 1,overflow: TextOverflow.ellipsis,),
-        trailing: Icon(Icons.chevron_right),
+        title: Text("Change Profile Color",style:TextStyle(fontSize: 18)),
+        trailing: CircleAvatar(backgroundColor: pickerColor),
+        // trailing: Icon(Icons.chevron_right),
         onTap: (){
           showDialog(
             context: context,
-            builder: (BuildContext context) {
-              return _signOutAlert();
-            }
+            child: AlertDialog(
+              title: const Text('Pick a color',style: TextStyle(
+                          fontSize: 30,
+                          fontStyle: FontStyle.normal,
+                          color: Color.fromRGBO(0, 162, 162, 1)),),
+              content: SingleChildScrollView(
+              child:MaterialColorPicker(
+                allowShades: false, // default true
+                onMainColorChange: (Color color) {
+                    pickerColor = Color(color.value);
+                },
+                selectedColor: pickerColor
+              )
+              ),
+              actions: <Widget>[
+                FlatButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                FlatButton(
+                  child: const Text('Submit'),
+                  onPressed: () {
+                    SettingLogic.changeProfileColour(widget.loginUser,pickerColor.toString());
+                    setState((){});
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
           );
         },
       );
     } 
 
+    ListTile _muteNotification(){
+      return ListTile(
+            title: Text("Change Notification Status",style:TextStyle(fontSize: 18),maxLines: 1,overflow: TextOverflow.ellipsis,),
+            onTap:(){
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text(
+                      'Notification',
+                      style: TextStyle(
+                          fontSize: 30,
+                          fontStyle: FontStyle.normal,
+                          color: Color.fromRGBO(0, 162, 162, 1)),
+                    ),
+                    content: Text(
+                      "Mute or Unmute all the classes' notification?",
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontStyle: FontStyle.normal,
+                          color: Color.fromRGBO(0, 162, 162, 1)),
+                    ),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text("Cancel"),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      FlatButton(
+                        child: Text("Mute All"),
+                        onPressed: () {
+                          SettingLogic.muteNotification(widget.user, widget.classes, true);
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      FlatButton(
+                        child: Text("Unmute All"),
+                        onPressed: () {
+                          SettingLogic.muteNotification(widget.user, widget.classes, false);
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                }
+              );
+            } ,
+          );
+        } 
 
-ListView settingPage(){
-        return ListView(
-        // Important: Remove any padding from the ListView.
-        padding: EdgeInsets.zero,
-        children:<Widget>[
-          Container(
-            decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.grey))
-            ),
-            child: _editProfile()
+    ListView settingPage(){
+      return ListView(
+      padding: EdgeInsets.zero,
+      children:<Widget>[
+        Container(
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Colors.grey))
           ),
-          Container(
-            decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.grey))
-            ),
-            child: _changePassword()
+          child: _editProfile()
+        ),
+        Container(
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Colors.grey))
           ),
-          // Container(
-          //   decoration: BoxDecoration(
-          //     border: Border(bottom: BorderSide(color: Colors.grey))
-          //   ),
-          //   child: _darkMode()
-          // ),
-          Container(
-            decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.grey))
-            ),
-            child: _muteNotification()
+          child: _changePassword()
+        ),
+        // Container(
+        //   decoration: BoxDecoration(
+        //     border: Border(bottom: BorderSide(color: Colors.grey))
+        //   ),
+        //   child: _darkMode()
+        // ),
+        Container(
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Colors.grey))
           ),
-          // Container(
-          //   decoration: BoxDecoration(
-          //     border: Border(bottom: BorderSide(color: Colors.grey))
-          //   ),
-          //   child: _signOut()
-          // ),
-        ]
-      );
-    }
+          child: _changeProfileColour()
+        ),
+        Container(
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Colors.grey))
+          ),
+          child: _muteNotification()
+        ),
+      ]
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

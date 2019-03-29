@@ -287,17 +287,12 @@ class _LoginPageState extends State<LoginPage> {
         bool isSuper = await checkRole(_user);
         print(isSuper);
 
-DocumentSnapshot snapshot = await Firestore.instance
-        .collection('users')
-        .document(_user.uid)
-        .get();
-   Users loginUser = Users.fromSnapshot(snapshot);
     isRemember ? writeToFile(_email,true) : writeToFile("", false);
 
         await Navigator.pushReplacement(
             context,
             new MaterialPageRoute(
-  builder: (BuildContext context) => new MyClassList(_user, isSuper, isAdmin, loginUser)));
+  builder: (BuildContext context) => new MyClassList(_user, isSuper, isAdmin)));
       } catch (ex) {
         setState(() {
           _validation = ex.message.toString();

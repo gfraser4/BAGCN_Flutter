@@ -1,7 +1,9 @@
 import 'package:bagcndemo/Models/ClassesModel.dart';
+import 'package:bagcndemo/Models/Users.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:validators/validators.dart';
 class SettingLogic {
 
   static void muteNotification(FirebaseUser user, List<Classes> classes, bool isMute){
@@ -21,6 +23,37 @@ class SettingLogic {
       }
   }
 
+  static void changeProfileColour(Users user,String color) async{
+    Firestore db = Firestore.instance;
+    QuerySnapshot profColor = await db
+          .collection('users')
+          .where('id', isEqualTo: user.id)
+          .getDocuments();
+      profColor.documents.forEach((doc) {
+        db.collection('users').document(doc.documentID).updateData({
+          "profileColor": color
+        });
+      });
+    QuerySnapshot commColor = await db
+          .collection('comments')
+          .where('userID', isEqualTo: user.id)
+          .getDocuments();
+      commColor.documents.forEach((doc) {
+        db.collection('comments').document(doc.documentID).updateData({
+          "profileColor": color
+        });
+      });
+      QuerySnapshot replyColor = await db
+          .collection('replies')
+          .where('userID', isEqualTo: user.id)
+          .getDocuments();
+      replyColor.documents.forEach((doc) {
+        db.collection('replies').document(doc.documentID).updateData({
+          "profileColor": color
+        });
+      });
+  }
+
   static Future<void> sendChangePasswordEmail(String email) async {
     await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
   }
@@ -37,7 +70,7 @@ class MyDialogContent extends StatefulWidget {
 }
 
 class _MyDialogContentState extends State<MyDialogContent> {
-  Text _validation =Text("");
+  Text _validation =Text("An email with reset password link will be sent to the address below.",style:TextStyle(color:Color.fromRGBO(0, 162, 162, 1)));
   TextEditingController email = new TextEditingController();
 
   @override
@@ -93,19 +126,19 @@ class _MyDialogContentState extends State<MyDialogContent> {
         child: Text("Cancel"),
         onPressed: () {
           email.clear();
-          _validation =Text("");
+          _validation =Text("An email with reset password link will be sent to the address below.",style:TextStyle(color:Color.fromRGBO(0, 162, 162, 1)));
           Navigator.of(context).pop();
         },
       ),
       FlatButton(
         child: Text("Send"),
         onPressed: () {
-          // if(email.text==widget.user.email&&widget.user.isEmailVerified){
+          if(email.text.length>0 && isEmail(email.text)){
             try
             {
               SettingLogic.sendChangePasswordEmail(email.text);
               setState(() {
-                _validation = Text("A password change email has been sent to the email address.",style:TextStyle(color:Colors.green));
+                _validation = Text("The password reset email has been sent.",style:TextStyle(color:Color.fromRGBO(0, 162, 162, 1)));
               });
               Future.delayed(Duration(seconds: 10),(){
                 email.clear();
@@ -119,17 +152,12 @@ class _MyDialogContentState extends State<MyDialogContent> {
                 _validation = Text("Invalid email address.",style:TextStyle(color:Colors.red));
               });
             }
-          // }
-          // else if(email.text!=widget.user.email){
-          //   setState(() {
-          //     _validation = Text("Wrong email address.",style:TextStyle(color:Colors.red));
-          //   });
-          // }
-          // else{
-          //   setState(() {
-          //     _validation = Text("This email is not verified.",style:TextStyle(color:Colors.red));
-          //   });
-          // }
+          }
+          else{
+            setState(() {
+              _validation = Text("Invalid Email Address.",style:TextStyle(color:Colors.red));
+            });
+          }
         },
       ),
     ],

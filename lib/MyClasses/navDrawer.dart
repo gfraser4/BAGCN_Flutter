@@ -1,5 +1,6 @@
 import 'package:bagcndemo/Models/ClassesModel.dart';
 import 'package:bagcndemo/Models/Users.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 // LOGIC
@@ -14,7 +15,7 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 
 //**HAMBURGER DRAWER MENU WIDGET**\\
 
-Widget navDrawer(BuildContext context, FirebaseUser user, bool isSuper, Users loginUser, List<Classes> classes) {
+Widget navDrawer(BuildContext context, FirebaseUser user, bool isSuper, List<Classes> classes) {
   return Drawer(
     elevation: 50,
     child: Container(
@@ -31,7 +32,7 @@ Widget navDrawer(BuildContext context, FirebaseUser user, bool isSuper, Users lo
           Divider(
             color: Color.fromRGBO(123, 193, 67, 1),
           ),
-          new ProfileSettingsTile(user,loginUser,classes),
+          new ProfileSettingsTile(user,classes),
           Divider(
             color: Color.fromRGBO(123, 193, 67, 1),
           ),
@@ -87,9 +88,42 @@ class SignOutTile extends StatelessWidget {
       leading: Icon(Icons.exit_to_app, color: Color.fromRGBO(28, 165, 229, 1)),
       title: Text('Sign Out'),
       onTap: () {
-        FirebaseAuth.instance.signOut();
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil("/", ModalRoute.withName("/"));
+        showDialog(
+        context: context,
+        child: AlertDialog(
+          title: Text(
+            'Sign Out',
+            style: TextStyle(
+                fontSize: 30,
+                fontStyle: FontStyle.normal,
+                color: Color.fromRGBO(0, 162, 162, 1)),
+          ),
+          content: Text(
+            'Want to sign out? You will be directed to login page',
+            style: TextStyle(
+                fontSize: 18,
+                fontStyle: FontStyle.normal,
+                color: Color.fromRGBO(0, 162, 162, 1)),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text("Yes"),
+              onPressed: () {
+                Navigator.pop(context);
+                FirebaseAuth.instance.signOut();
+                Navigator.of(context)
+                  .pushNamedAndRemoveUntil("/", ModalRoute.withName("/"));
+              },
+            ),
+          ],
+        ),
+        );
       },
     );
   }
@@ -165,29 +199,38 @@ class HelpTile extends StatelessWidget {
   }
 }
 
+Users loginUser;
 // SETTINGS TILE
 class ProfileSettingsTile extends StatelessWidget {
-  const ProfileSettingsTile(this.user, this.loginUser, this.classes, {
+  const ProfileSettingsTile(this.user, this.classes, {
     Key key,
   }) : super(key: key);
   
   final FirebaseUser user;
-  final Users loginUser;
   final List<Classes> classes;
 
   @override
   Widget build(BuildContext context) {
+
     return ListTile(
       leading:
           Icon(Icons.account_circle, color: Color.fromRGBO(28, 165, 229, 1)),
       title: Text('Profile Settings'),
       onTap: () {
-        Navigator.push(
+        getUser().then((_){Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => SettingsPage(user,loginUser,classes)),
-        );
+        );});
       },
     );
+  }
+
+  Future<void> getUser() async{
+    DocumentSnapshot snapshot = await Firestore.instance
+        .collection('users')
+        .document(user.uid)
+        .get();
+   loginUser = Users.fromSnapshot(snapshot);
   }
 }
 
