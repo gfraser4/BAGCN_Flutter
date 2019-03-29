@@ -176,7 +176,30 @@ class CodeAlertBox extends StatelessWidget {
               Expanded(
                 child: buildChildListBody(context, user),
               ),
-              Text('$_childName'),
+              TextFormField(
+                enabled:false,
+                style: TextStyle(color: Colors.black),
+                decoration: InputDecoration(
+                  hintText: '$_childName',
+                  fillColor: Colors.white,
+                  filled: true,
+                  prefixIcon: Icon(
+                    Icons.child_care,
+                    color: Color.fromRGBO(123, 193, 67, 1),
+                  ),
+                  contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    borderSide: BorderSide(
+                      color: Color.fromRGBO(123, 193, 67, 1),
+                      width: 2,
+                    ),
+                  ),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0)),
+                ),
+              ),
+              SizedBox(height: 12.0),
               TextFormField(
                 validator: (input) {
                   if (input != classes.passcode) return 'Incorrect passcode.';
