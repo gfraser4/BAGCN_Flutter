@@ -336,6 +336,8 @@ Widget addChildButton(
                                   validator: (input) {
                                     if (input.length <= 0)
                                       return 'Name must not be empty.';
+                                    else if (input.length > 30)
+                                      return 'Name can only be 30 characters long.';
                                   },
                                   textInputAction: TextInputAction.done,
                                   focusNode: _childNameFocus,
