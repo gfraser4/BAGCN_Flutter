@@ -87,9 +87,39 @@ class SignOutTile extends StatelessWidget {
       leading: Icon(Icons.exit_to_app, color: Color.fromRGBO(28, 165, 229, 1)),
       title: Text('Sign Out'),
       onTap: () {
-        FirebaseAuth.instance.signOut();
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil("/", ModalRoute.withName("/"));
+        return AlertDialog(
+          title: Text(
+            'Sign Out',
+            style: TextStyle(
+                fontSize: 30,
+                fontStyle: FontStyle.normal,
+                color: Color.fromRGBO(0, 162, 162, 1)),
+          ),
+          content: Text(
+            'Want to sign out? You will be directed to login page',
+            style: TextStyle(
+                fontSize: 18,
+                fontStyle: FontStyle.normal,
+                color: Color.fromRGBO(0, 162, 162, 1)),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text("Yes"),
+              onPressed: () {
+                Navigator.pop(context);
+                FirebaseAuth.instance.signOut();
+                Navigator.of(context)
+                  .pushNamedAndRemoveUntil("/", ModalRoute.withName("/"));
+              },
+            ),
+          ],
+        );
       },
     );
   }

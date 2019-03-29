@@ -1,4 +1,5 @@
 import 'package:bagcndemo/Models/ClassesModel.dart';
+import 'package:bagcndemo/Models/Users.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,19 @@ class SettingLogic {
           }
         });
       }
+  }
+
+  static Future<void> changeProfileColour(Users user,String color) async{
+    Firestore db = Firestore.instance;
+    QuerySnapshot _query = await db
+          .collection('users')
+          .where('id', isEqualTo: user.id)
+          .getDocuments();
+      _query.documents.forEach((doc) {
+        db.collection('users').document(doc.documentID).updateData({
+          "profileColor": color
+        });
+      });
   }
 
   static Future<void> sendChangePasswordEmail(String email) async {
