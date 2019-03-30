@@ -742,7 +742,7 @@ class ChildTileWidget extends StatelessWidget {
             children: <Widget>[
               FlatButton(
                 child: Text(
-                  'Remove Classes',
+                  'Remove All Classes',
                   style: TextStyle(color: Colors.white),
                 ),
                 color: Colors.redAccent,

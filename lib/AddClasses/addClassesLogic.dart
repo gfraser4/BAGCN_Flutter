@@ -138,7 +138,7 @@ class ClassMGMTLogic {
         "enrolledIn": [],
         "childID" : children.childID,
         "parentID": user.uid,
-        "name":children.name,
+        "Name": children.name,
       });
 
       QuerySnapshot _query = await db

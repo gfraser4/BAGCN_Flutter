@@ -12,7 +12,7 @@ class Children {
   Children.fromMap(Map<String, dynamic> map, {this.reference})
       : //assert(map['childID'] != null),
         assert(map['parentID'] != null),
-        assert(map['Name'] != null),
+        // assert(map['Name'] != null),
         name = map['Name'],
         childID = map['childID'],
         enrolledIn = map['enrolledIn'],
