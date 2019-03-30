@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:validators/validators.dart';
 
 // PAGES
 import 'package:bagcndemo/MyClasses/myClasses.dart';
@@ -80,7 +81,10 @@ class _LoginPageState extends State<LoginPage> {
 // EMAIL INPUT
     final email = TextFormField(
       validator: (input) {
-        if (input.isEmpty) return 'Please enter a valid email.';
+        if (input.trim().isEmpty) 
+          return 'Please enter a valid email.';
+        else if (isEmail(input) == false)
+          return 'Please enter a valid email.';
       },
       textInputAction: TextInputAction.next,
       onFieldSubmitted: (String value) {
@@ -113,8 +117,8 @@ class _LoginPageState extends State<LoginPage> {
 // PASSWORD INPUT
     final password = TextFormField(
       validator: (input) {
-        if (input.length < 6)
-          return 'Your password needs\nto be at least 6 characters.';
+        if (input.isEmpty)
+          return 'Enter a password.';
       },
       textInputAction: TextInputAction.done,
       focusNode: _passwordFocus,

@@ -29,7 +29,7 @@ class _EditReplyPage extends State<EditReplyPage> {
       appBar: AppBar(
         title: Text('Edit Reply'),
       ),
-      resizeToAvoidBottomPadding: false,
+      //resizeToAvoidBottomPadding: false,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
@@ -46,7 +46,7 @@ class _EditReplyPage extends State<EditReplyPage> {
                     fontSize: 18),
               ),
               Divider(
-                color: Colors.grey,
+                color: Colors.transparent,
                 height: 10,
               ),
               Card(
@@ -58,21 +58,24 @@ class _EditReplyPage extends State<EditReplyPage> {
                   key: _formKey,
                   child: ListView(
                     shrinkWrap: true,
-                    padding: EdgeInsets.fromLTRB(20, 10.0, 20, 10),
+                    padding: EdgeInsets.fromLTRB(20, 20.0, 20, 10),
                     children: <Widget>[
-                      SizedBox(height: 10),
-                      SizedBox(height: 30.0),
+                      // SizedBox(height: 10),
+                      // SizedBox(height: 30.0),
                       TextFormField(
                         initialValue: _rContent,
                         textInputAction: TextInputAction.done,
                         focusNode: _descriptionFocus,
                         validator: (input) {
-                          if (input.isEmpty) return 'Please enter a reply.';
+                          if (input.trim().isEmpty)
+                            return 'Please enter the reply.';
+                          else if (input.length > 60)
+                            return 'Reply must be 60 characters or less.';
                         },
                         onSaved: (input) => _rContent = input,
                         autofocus: false,
                         keyboardType: TextInputType.multiline,
-                        maxLines: 8,
+                        maxLines: 5,
                         decoration: InputDecoration(
                           labelText: 'Reply',
                           contentPadding:
@@ -87,7 +90,7 @@ class _EditReplyPage extends State<EditReplyPage> {
                               borderRadius: BorderRadius.circular(6.0)),
                         ),
                       ),
-                      SizedBox(height: 30.0),
+                      SizedBox(height: 10.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
@@ -111,7 +114,7 @@ class _EditReplyPage extends State<EditReplyPage> {
                               final formState = _formKey.currentState;
                               if (formState.validate()) {
                                 formState.save();
-                                editReply(context, widget.user, _rContent,
+                                editReply(context, widget.user, _rContent.trim(),
                                     widget.replies.replyID);
                                 Navigator.of(context).pop();
                               }

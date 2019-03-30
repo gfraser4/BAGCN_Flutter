@@ -90,7 +90,7 @@ class MessageInputBar extends StatelessWidget {
       child: TextFormField(
         keyboardType: TextInputType.multiline,
         maxLines: null,
-        onSaved: (input) => _commentController.text = input,
+        onSaved: (input) => _commentController.text = input.trim(),
         autofocus: false,
         controller: _commentController,
         decoration: InputDecoration(
