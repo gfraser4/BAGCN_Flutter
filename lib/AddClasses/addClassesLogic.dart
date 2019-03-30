@@ -72,6 +72,7 @@ class ClassMGMTLogic {
       });
       print(userID);
       Navigator.of(context).pop();
+      Navigator.of(context).pop();
     } catch (e) {
       print(e.toString());
     }
