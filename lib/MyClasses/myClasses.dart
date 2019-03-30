@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:expandable/expandable.dart';
+import 'package:validators/validators.dart';
 // LOGIC
 import 'package:bagcndemo/AddClasses/addClassesLogic.dart';
 import 'package:bagcndemo/MyClasses/myClassesLogic.dart';
@@ -44,6 +45,34 @@ class _MyClassList extends State<MyClassList> {
     super.initState();
   }
 
+  newsToggle() {
+    if (expandedNewsController == false)
+      setState(() {
+        expandedClassesController = false;
+        expandedNewsController = true;
+      });
+    else {
+      setState(() {
+        expandedClassesController = true;
+        expandedNewsController = false;
+      });
+    }
+  }
+
+  kidsToggle() {
+    if (expandedClassesController == false)
+      setState(() {
+        expandedClassesController = true;
+        expandedNewsController = false;
+      });
+    else {
+      setState(() {
+        expandedClassesController = false;
+        expandedNewsController = true;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     MediaQueryData queryData;
@@ -65,17 +94,7 @@ class _MyClassList extends State<MyClassList> {
                   children: <Widget>[
                     FlatButton(
                       onPressed: () {
-                        if (expandedNewsController == false)
-                          setState(() {
-                            expandedClassesController = false;
-                            expandedNewsController = true;
-                          });
-                        else {
-                          setState(() {
-                            expandedClassesController = true;
-                            expandedNewsController = false;
-                          });
-                        }
+                        newsToggle();
                         print(expandedNewsController);
                       },
                       child: Text(
@@ -87,21 +106,16 @@ class _MyClassList extends State<MyClassList> {
                       ),
                     ),
                     Expanded(
-                      child: Container(),
+                      child: FlatButton(
+                        child: Text(''),
+                        onPressed: () {
+                          newsToggle();
+                        },
+                      ),
                     ),
                     IconButton(
                       onPressed: () {
-                        if (expandedClassesController == false)
-                          setState(() {
-                            expandedClassesController = true;
-                            expandedNewsController = false;
-                          });
-                        else {
-                          setState(() {
-                            expandedClassesController = false;
-                            expandedNewsController = true;
-                          });
-                        }
+                        newsToggle();
                       },
                       icon: expandedClassesController == false
                           ? Icon(Icons.keyboard_arrow_up,
@@ -137,17 +151,7 @@ class _MyClassList extends State<MyClassList> {
                           widget.isSuper == false && widget.isAdmin == false
                               ? FlatButton(
                                   onPressed: () {
-                                    if (expandedClassesController == false)
-                                      setState(() {
-                                        expandedClassesController = true;
-                                        expandedNewsController = false;
-                                      });
-                                    else {
-                                      setState(() {
-                                        expandedClassesController = false;
-                                        expandedNewsController = true;
-                                      });
-                                    }
+                                    kidsToggle();
                                   },
                                   child: Text(
                                     'My Kids',
@@ -159,17 +163,7 @@ class _MyClassList extends State<MyClassList> {
                                 )
                               : FlatButton(
                                   onPressed: () {
-                                    if (expandedClassesController == false)
-                                      setState(() {
-                                        expandedClassesController = true;
-                                        expandedNewsController = false;
-                                      });
-                                    else {
-                                      setState(() {
-                                        expandedClassesController = false;
-                                        expandedNewsController = true;
-                                      });
-                                    }
+                                    kidsToggle();
                                   },
                                   child: Text(
                                     'My Classes',
@@ -180,21 +174,16 @@ class _MyClassList extends State<MyClassList> {
                                   ),
                                 ),
                           Expanded(
-                            child: Container(),
+                            child: FlatButton(
+                              child: Text(''),
+                              onPressed: () {
+                                kidsToggle();
+                              },
+                            ),
                           ),
                           IconButton(
                             onPressed: () {
-                              if (expandedClassesController == false)
-                                setState(() {
-                                  expandedClassesController = true;
-                                  expandedNewsController = false;
-                                });
-                              else {
-                                setState(() {
-                                  expandedClassesController = false;
-                                  expandedNewsController = true;
-                                });
-                              }
+                              kidsToggle();
                             },
                             icon: expandedClassesController == true
                                 ? Icon(Icons.keyboard_arrow_down,
@@ -210,8 +199,7 @@ class _MyClassList extends State<MyClassList> {
                       child: Column(
                         children: <Widget>[
                           Expanded(
-                            child: 
-                                    widget.isSuper == false
+                            child: widget.isSuper == false
                                 ? buildChildListBody(context, widget.user)
                                 : _buildClassListBody(
                                     context, widget.user, widget.isSuper),
@@ -309,6 +297,10 @@ Widget addChildButton(
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 60),
               child: RaisedButton(
+                padding: EdgeInsets.all(12),
+                color: CustomColors.bagcGreen,
+                shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(30.0)),
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -333,8 +325,10 @@ Widget addChildButton(
                                 SizedBox(height: 30.0),
                                 TextFormField(
                                   validator: (input) {
-                                    if (input.length <= 0)
+                                    if (input.trim().isEmpty)
                                       return 'Name must not be empty.';
+                                    else if (isAlpha(input) == false)
+                                      return 'Name must only use letters (a-zA-Z)';
                                     else if (input.length > 30)
                                       return 'Name can only be 30 characters long.';
                                   },
@@ -393,7 +387,8 @@ Widget addChildButton(
                     },
                   );
                 },
-                child: Text('Add Child'),
+                child: Text('Add Child/Group',
+                    style: TextStyle(fontSize: 18, color: Colors.white)),
               ),
             ),
           ),
@@ -706,29 +701,27 @@ class ChildTileWidget extends StatelessWidget {
       header: Container(
         // color: Colors.white //CustomColors.bagcGreen,
         child: ListTile(
-          leading: 
-              
-                IconButton(
-                  icon: Icon(Icons.delete),
-                  color: Colors.grey,
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return new RemoveChildAlert(
-                            children: children, userID: userID, user: user);
-                      },
-                    );
-                  },
-                ),
+          leading: IconButton(
+            icon: Icon(Icons.cancel),
+            color: Colors.redAccent,
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return new RemoveChildAlert(
+                      children: children, userID: userID, user: user);
+                },
+              );
+            },
+          ),
 
-trailing: IconButton(
-                  icon: Icon(Icons.add),
-                  color: CustomColors.bagcBlue,
-                  onPressed: () {
-                    MyClassesLogic.navToJoinClasses(context, user);
-                  },
-                ),
+// trailing: IconButton(
+//                   icon: Icon(Icons.add),
+//                   color: CustomColors.bagcBlue,
+//                   onPressed: () {
+//                     MyClassesLogic.navToJoinClasses(context, user);
+//                   },
+//                 ),
           title: Text(
             '${children.name}',
             style: TextStyle(
@@ -808,7 +801,7 @@ class RemoveChildAlert extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(
-        'Remove Class?',
+        'Remove Child/Group?',
         style: TextStyle(
             fontSize: 30,
             fontStyle: FontStyle.normal,

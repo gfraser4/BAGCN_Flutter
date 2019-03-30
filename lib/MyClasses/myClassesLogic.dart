@@ -24,24 +24,16 @@ class MyClassesLogic {
 
       _query.documents.toList();
 
-      // var test = db.collection('users').document(user.uid).get()
-      // .updateData({
-      // "enrolledPending": FieldValue.arrayRemove(clsCode),
-      // "enrolledIn": FieldValue.arrayUnion(clsCode),
-
-      //final freshSnap= await transaction.get(_query.reference);
       final classesx = Users.fromSnapshot(_query.documents.first);
       List<String> token = [classesx.token];
-      // token.add(classesx.token);
-      print(token);
 
-      if (fresh.notifyUsers.contains(token) == false) {
+      if (fresh.notifyList.contains(user.uid) == false) {
         await transaction.update(
-            classes.reference, {"notifyUsers": FieldValue.arrayUnion(token)});
+            classes.reference, {"notifyUsers": FieldValue.arrayUnion(token), "notifyList": FieldValue.arrayUnion(userID)});
         print('added');
       } else {
         await transaction.update(
-            classes.reference, {"notifyUsers": FieldValue.arrayRemove(token)});
+            classes.reference, {"notifyUsers": FieldValue.arrayRemove(token), "notifyList": FieldValue.arrayRemove(userID)});
         print('removed');
       }
     });
@@ -77,7 +69,9 @@ class MyClassesLogic {
 
 // RENDER DIRRENT NOTIFICATION ICON BASED ON WHETHER USER WANTS NOTIFICATIOSN OR NOT
   static Widget notifyButtonRender(FirebaseUser user, Classes classes) {
-    if (classes.notifyUsers.contains(user.uid) == true) {
+
+    
+    if (classes.notifyList.contains(user.uid) == true) {
       return IconButton(
         icon: Icon(Icons.notifications_active),
         color: Color(0xFF1ca5e5),
@@ -196,7 +190,7 @@ class MyClassesLogic {
           .getDocuments();
       _query.documents.forEach((doc) {
         db.collection('users').document(user.uid).updateData({
-          "children": FieldValue.arrayUnion([children.childID]),
+          "children": FieldValue.arrayRemove([children.childID]),
         });
       });
 

@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 // MODELS 
 import 'package:bagcndemo/Models/ClassesModel.dart';
+import 'package:bagcndemo/Models/Users.dart';
 
 class ClassMGMTLogic {
   // ADD USER TO PENDING STATUS - UPDATES CLASS AND USERS TABLES
@@ -91,20 +92,28 @@ class ClassMGMTLogic {
           .where('parentID', isEqualTo: user.uid)
           .where('enrolledIn', arrayContains: classes.code)
           .getDocuments();
-          if (_queryChildren.documents.length > 0)
-          print('true');
-          else
-          print('false');
       _queryChildren.documents.forEach((doc) {
         childID = doc.documentID;
         db.collection('children').document(doc.documentID).updateData({
           "enrolledIn": FieldValue.arrayRemove(clsCode),
         });
       });
+
+    QuerySnapshot _query = await db
+          .collection('users')
+          .where('id', isEqualTo: user.uid)
+          .getDocuments();
+
+      _query.documents.toList();
+      final userToken = Users.fromSnapshot(_query.documents.first);
+      List<String> token = [userToken.token];
+
 try {
       await classes.reference.updateData({
         "enrolledUsers": FieldValue.arrayRemove(userID),
         "pendingUsers": FieldValue.arrayRemove(userID),
+        "notifyUsers": FieldValue.arrayRemove(token),
+        "notifyList": FieldValue.arrayRemove(userID),
         "enrolledChildren": FieldValue.arrayRemove([childID]),
       });
       QuerySnapshot _query = await db
