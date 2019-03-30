@@ -500,22 +500,22 @@ class ClassTileWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       MyClassesLogic.notifyButtonRender(user, classes),
-                      IconButton(
-                        icon: Icon(Icons.delete),
-                        color: Colors.grey,
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return new RemoveClassAlert(
-                                  classes: classes,
-                                  isSuper: isSuper,
-                                  userID: userID,
-                                  user: user);
-                            },
-                          );
-                        },
-                      ),
+                      // IconButton(
+                      //   icon: Icon(Icons.delete),
+                      //   color: Colors.grey,
+                      //   onPressed: () {
+                      //     showDialog(
+                      //       context: context,
+                      //       builder: (BuildContext context) {
+                      //         return new RemoveClassAlert(
+                      //             classes: classes,
+                      //             isSuper: isSuper,
+                      //             userID: userID,
+                      //             user: user);
+                      //       },
+                      //     );
+                      //   },
+                      // ),
                     ],
                   ),
                 ),
