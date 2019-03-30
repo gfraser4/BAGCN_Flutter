@@ -2,8 +2,8 @@ import 'package:bagcndemo/Comments/commentsLogic.dart';
 import 'package:bagcndemo/Models/ClassesModel.dart';
 import 'package:bagcndemo/Models/Users.dart';
 import 'package:bagcndemo/Settings/SettingLogic.dart';
-// import 'package:bagcndemo/Settings/editProfile.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:bagcndemo/Settings/editProfile.dart';
+// import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
@@ -28,7 +28,7 @@ class _SettingsPage extends State<SettingsPage> {
 TextEditingController passcode = new TextEditingController();
 Color pickerColor;
 
-ListTile _editProfile(){
+ListTile _profile(){
   return ListTile(
         title: Text("Current User"),
         subtitle: Text(widget.loginUser.firstName+" "+widget.loginUser.lastName,maxLines: 1,overflow: TextOverflow.ellipsis,),
@@ -42,8 +42,24 @@ ListTile _editProfile(){
         //   );
         // },
       );
-    } 
+    }  
     
+ListTile _eidtProfile(){
+  return ListTile(
+        title: Text("Profile"),
+        subtitle: Text("Edit user's profile"),
+        trailing: Icon(Icons.chevron_right),
+        onTap: (){
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return GetUserDialog();
+            }
+          );
+        },
+      );
+    }
+
 ListTile _changePassword(){
   return ListTile(
         title: Text("Password"),
@@ -53,7 +69,6 @@ ListTile _changePassword(){
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              // return MyDialogContent(widget.user);
               return MyDialogContent();
             }
           );
@@ -177,8 +192,15 @@ ListTile _changeProfileColour(){
           decoration: BoxDecoration(
             border: Border(bottom: BorderSide(color: Colors.grey))
           ),
-          child: _editProfile()
+          child: _profile()
         ),
+        widget.loginUser.role == "admin"?
+        Container(
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Colors.grey))
+          ),
+          child: _eidtProfile()
+        ):Container(),
         Container(
           decoration: BoxDecoration(
             border: Border(bottom: BorderSide(color: Colors.grey))
