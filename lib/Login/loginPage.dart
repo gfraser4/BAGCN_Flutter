@@ -48,21 +48,21 @@ class _LoginPageState extends State<LoginPage> {
       if (!fileExist) {
         jsonFile.createSync();
         fileExist = true;
-        writeToFile("",false);
+        writeToFile("", false);
       }
       fileContent = json.decode(jsonFile.readAsStringSync());
       isRemember = fileContent['isRemember'];
       _email = fileContent['email'];
-      if(_email!=""){
+      if (_email != "") {
         signIn(true);
       }
       setState(() {});
     });
   }
 
-  void writeToFile (String email, bool isRemember) async {
-    await jsonFile.writeAsString(json
-        .encode({ 'email': email,'isRemember': isRemember}));
+  void writeToFile(String email, bool isRemember) async {
+    await jsonFile
+        .writeAsString(json.encode({'email': email, 'isRemember': isRemember}));
     print("write successful");
   }
 
@@ -81,10 +81,9 @@ class _LoginPageState extends State<LoginPage> {
 // EMAIL INPUT
     final email = TextFormField(
       validator: (input) {
-        if (input.trim().isEmpty) 
+        if (input.trim().isEmpty)
           return 'Please enter a valid email.';
-        else if (isEmail(input) == false)
-          return 'Please enter a valid email.';
+        else if (isEmail(input) == false) return 'Please enter a valid email.';
       },
       textInputAction: TextInputAction.next,
       onFieldSubmitted: (String value) {
@@ -117,8 +116,7 @@ class _LoginPageState extends State<LoginPage> {
 // PASSWORD INPUT
     final password = TextFormField(
       validator: (input) {
-        if (input.isEmpty)
-          return 'Enter a password.';
+        if (input.isEmpty) return 'Enter a password.';
       },
       textInputAction: TextInputAction.done,
       focusNode: _passwordFocus,
@@ -147,20 +145,19 @@ class _LoginPageState extends State<LoginPage> {
 
 //FORGET PASSWORD BUTTON
     FlatButton forgetPassword = FlatButton(
-          child: Text(
-            'Forget Password',
-            style: TextStyle(color: CustomColors.bagcBlue),
-          ),
-          onPressed: () {
-            showDialog(
+      child: Text(
+        'Forget Password',
+        style: TextStyle(color: CustomColors.bagcBlue),
+      ),
+      onPressed: () {
+        showDialog(
             context: context,
             builder: (BuildContext context) {
               // return MyDialogContent(widget.user);
               return MyDialogContent();
-            }
-          );
-          },
-        );
+            });
+      },
+    );
 
 // CHECKBOX REMEMBER THE USER
     Checkbox checkButton = Checkbox(
@@ -256,7 +253,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-    Future<bool> checkAdmin(FirebaseUser user) async {
+  Future<bool> checkAdmin(FirebaseUser user) async {
     DocumentSnapshot snapshot = await Firestore.instance
         .collection('users')
         .document('${user.uid}')
@@ -272,7 +269,6 @@ class _LoginPageState extends State<LoginPage> {
 //future waiting for database response
   Future<void> signIn(bool isAuto) async {
     //wether user choose to auto login or not
-    
 
     final formState = _formKey.currentState;
 
@@ -281,29 +277,27 @@ class _LoginPageState extends State<LoginPage> {
       //login to firebase
       formState.save();
       try {
-        isAuto?
-        _user = await FirebaseAuth.instance
-            .currentUser():
-        _user = await FirebaseAuth.instance
-            .signInWithEmailAndPassword(email: _email, password: _password);
+        isAuto
+            ? _user = await FirebaseAuth.instance.currentUser()
+            : _user = await FirebaseAuth.instance
+                .signInWithEmailAndPassword(email: _email, password: _password);
 
-        bool isAdmin =await checkAdmin(_user);
+        bool isAdmin = await checkAdmin(_user);
         bool isSuper = await checkRole(_user);
         print(isSuper);
 
-    isRemember ? writeToFile(_email,true) : writeToFile("", false);
+        isRemember ? writeToFile(_email, true) : writeToFile("", false);
 
         await Navigator.pushReplacement(
             context,
             new MaterialPageRoute(
-  builder: (BuildContext context) => new MyClassList(_user, isSuper, isAdmin)));
+                builder: (BuildContext context) =>
+                    new MyClassList(_user, isSuper, isAdmin)));
       } catch (ex) {
         setState(() {
           _validation = ex.message.toString();
         });
       }
     }
-    
   }
-  
 }

@@ -212,7 +212,7 @@ Widget _buildChildListItem(BuildContext context, DocumentSnapshot data,
               width: 300,
               child: Form(
                 key: _formKey2,
-                child: Column(
+                child: ListView(
                   //shrinkWrap: true,
                   children: <Widget>[
                     Text("Enter the code to access this class."),

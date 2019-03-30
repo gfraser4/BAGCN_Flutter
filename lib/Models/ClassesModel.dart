@@ -14,6 +14,7 @@ class Classes {
   final List<dynamic> pendingUsers;
   final List<dynamic> supervisors;
   final List<dynamic> notifyUsers;
+  final List<dynamic> notifyList;
   final DocumentReference reference;
 
   Classes.fromMap(Map<String, dynamic> map, {this.reference})
@@ -29,6 +30,7 @@ class Classes {
         enrolledUsers = map['enrolledUsers'],
         supervisors = map['supervisors'],
         notifyUsers = map['notifyUsers'],
+        notifyList = map['notifyList'],
         pendingUsers = map['pendingUsers'],
         location = map['location'],
         dates = map['dates'],
