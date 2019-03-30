@@ -38,7 +38,7 @@ class _SignUpPage extends State<SignUpPage> {
 // FIRST NAME INPUT FIELD
     final firstName = TextFormField(
       validator: (input) {
-        if (input.isEmpty) 
+        if (input.trim().isEmpty) 
           return 'Please enter your first name.';
         else if (isAlpha(input) == false)
           return 'First name must only use letters (a-zA-Z)';
@@ -71,7 +71,7 @@ class _SignUpPage extends State<SignUpPage> {
 // LAST NAME INPUT FIELD
     final lastName = TextFormField(
       validator: (input) {
-        if (input.isEmpty) 
+        if (input.trim().isEmpty) 
           return 'Please enter your last name.';
         else if (isAlpha(input) == false)
           return 'Last name must only use letters (a-zA-Z)';
@@ -103,7 +103,7 @@ class _SignUpPage extends State<SignUpPage> {
 // EMAIL INPUT FIELD
     final email = TextFormField(
       validator: (input) {
-        if (input.isEmpty || isEmail(input) == false)
+        if (input.trim().isEmpty || isEmail(input) == false)
           return 'Please enter a valid email address.';
       },
       onSaved: (input) => _email = input,

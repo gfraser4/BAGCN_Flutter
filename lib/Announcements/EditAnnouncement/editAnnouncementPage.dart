@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:validators/validators.dart';
 // LOGIC
 import 'package:bagcndemo/Announcements/announcementLogic.dart';
 // MODELS
@@ -66,8 +67,14 @@ class _EditAnnouncementPage extends State<EditAnnouncementPage> {
                       TextFormField(
                         initialValue: widget.announcements.title,
                         validator: (input) {
-                          if (input.isEmpty)
+                          if (input.trim().isEmpty)
                             return 'Please enter a title for the announcement.';
+                          else if (isAscii(input) == false)
+                            return 'Title has invalid characters';
+                          else if(input.length <= 3)
+                            return 'Title must contain 3 characters or more.'; 
+                          else if(input.length > 20)
+                            return 'Title must be 20 characters or less.'; 
                         },
                         keyboardType: TextInputType.text,
                         onSaved: (input) => _aTitle = input,
@@ -96,8 +103,14 @@ class _EditAnnouncementPage extends State<EditAnnouncementPage> {
                         initialValue: widget.announcements.description,
                         focusNode: _descriptionFocus,
                         validator: (input) {
-                          if (input.isEmpty)
+                          if (input.trim().isEmpty)
                             return 'Please enter the announcement.';
+                          else if (isAscii(input) == false)
+                            return 'Description has invalid characters';
+                          else if(input.length <= 3)
+                            return 'Description must contain 3 characters or more.'; 
+                          else if(input.length > 200)
+                            return 'Description must be 200 characters or less.'; 
                         },
                         onSaved: (input) => _aDescription = input,
                         autofocus: false,

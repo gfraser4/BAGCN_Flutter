@@ -148,7 +148,15 @@ class ClassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return
+    classes.clsName == 'Boys and Girls Club Niagara' ? 
+    Card(
+      elevation: 5.0,
+      child: ListTile(
+        title: Text(classes.clsName),
+      ),
+    ) :
+     Card(
       elevation: 5.0,
       child: ListTile(
         title: Text(classes.clsName),
@@ -311,8 +319,12 @@ class OpenClassForm extends StatelessWidget {
           SizedBox(height: 30.0),
           TextFormField(
             validator: (input) {
-              if (input.length < 6)
-                return 'The passcode needs to be at least 6 characters.';
+              if (input.trim().isEmpty)
+                return 'Needs to be at least 6 characters.';
+              else if (isAscii(input) == false)
+                return 'Can only contain letters and numbers.';
+              else if (input.length < 6)
+                return 'Needs to be at least 6 characters.';
             },
             textInputAction: TextInputAction.done,
             focusNode: _passcodeFocus,

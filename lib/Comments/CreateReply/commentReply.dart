@@ -53,7 +53,7 @@ class _ReplyPage extends State<ReplyPage> {
                     fontStyle: FontStyle.italic),
               ),
               Divider(
-                color: Colors.grey,
+                color: Colors.transparent,
                 height: 10,
               ),
               Card(
@@ -65,18 +65,21 @@ class _ReplyPage extends State<ReplyPage> {
                   key: _formKey,
                   child: ListView(
                     shrinkWrap: true,
-                    padding: EdgeInsets.fromLTRB(20, 10.0, 20, 10),
+                    padding: EdgeInsets.fromLTRB(20, 20.0, 20, 10),
                     children: <Widget>[
-                      SizedBox(height: 10),
-                      SizedBox(height: 30.0),
+                      // SizedBox(height: 10),
+                      // SizedBox(height: 30.0),
                       TextFormField(
                         validator: (input) {
-                          if (input.isEmpty) return 'Please enter a reply.';
+                          if (input.trim().isEmpty)
+                            return 'Please enter the reply.';
+                          else if (input.length > 60)
+                            return 'Reply must be 60 characters or less.';
                         },
                         onSaved: (input) => _cContent = input,
                         autofocus: false,
                         keyboardType: TextInputType.multiline,
-                        maxLines: 8,
+                        maxLines: 5,
                         decoration: InputDecoration(
                           labelText: 'Reply',
                           contentPadding:
@@ -91,7 +94,7 @@ class _ReplyPage extends State<ReplyPage> {
                               borderRadius: BorderRadius.circular(6.0)),
                         ),
                       ),
-                      SizedBox(height: 30.0),
+                      SizedBox(height: 10.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
@@ -118,7 +121,7 @@ class _ReplyPage extends State<ReplyPage> {
                                 createReply(
                                     context,
                                     widget.user,
-                                    _cContent,
+                                    _cContent.trim(),
                                     widget.comments.commentID,
                                     widget.comments.announcementID);
                                 Navigator.of(context).pop();
