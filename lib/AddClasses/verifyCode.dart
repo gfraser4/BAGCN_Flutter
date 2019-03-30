@@ -13,8 +13,6 @@ String _search = '';
 String _passcode;
 String _childName = '';
 
-
-
 // VERIFY CODE PAGE - FOR PARENTS
 class VerifyCodePage extends StatefulWidget {
   const VerifyCodePage(this.user);
@@ -29,9 +27,6 @@ class VerifyCodePage extends StatefulWidget {
 class _VerifyCodePage extends State<VerifyCodePage> {
   @override
   Widget build(BuildContext context) {
-
-
-    
 //*********** PAGE SCAFFOLD *****************\\
     return Scaffold(
       appBar: null,
@@ -42,7 +37,6 @@ class _VerifyCodePage extends State<VerifyCodePage> {
       ),
     );
   }
-
 
 // JOIN CLASSES //
 
@@ -102,136 +96,62 @@ class ClassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-    final FocusNode _passcodeFocus = FocusNode();
+    // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    // final FocusNode _passcodeFocus = FocusNode();
     return Card(
       elevation: 5.0,
       child: ListTile(
         title: Text(classes.clsName),
         subtitle: Text('Course Code: ${classes.code}'),
         trailing: RaisedButton(
-            color: Color.fromRGBO(123, 193, 67, 1),
-            child: Text(
-              'VERIFY',
-              style: TextStyle(color: Colors.white),
-            ),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return new CodeAlertBox(
-                      formKey: _formKey,
-                      classes: classes,
-                      passcodeFocus: _passcodeFocus,
-                      userID: userID,
-                      user: user);
-                },
-              );
-            }),
-      ),
-    );
-  }
-}
-
-// ALERT BOX TO ENTER PASSCODE
-class CodeAlertBox extends StatelessWidget {
-  const CodeAlertBox({
-    Key key,
-    @required GlobalKey<FormState> formKey,
-    @required this.classes,
-    @required FocusNode passcodeFocus,
-    @required this.userID,
-    @required this.user,
-  })  : _formKey = formKey,
-        _passcodeFocus = passcodeFocus,
-        super(key: key);
-
-  final GlobalKey<FormState> _formKey;
-  final Classes classes;
-  final FocusNode _passcodeFocus;
-  final List<String> userID;
-  final FirebaseUser user;
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(
-        'Verify Class Code',
-        style: TextStyle(
-          fontSize: 30,
-          fontStyle: FontStyle.normal,
-          color: Color.fromRGBO(0, 162, 162, 1),
-        ),
-      ),
-      content: Container(
-        width: 300,
-        child: Form(
-          key: _formKey,
-          child: Column(
-            //shrinkWrap: true,
-            children: <Widget>[
-              Text(
-                  "Choose which child belongs to this class and enter the code to access this class."),
-              SizedBox(height: 30.0),
-              Expanded(
-                child: buildChildListBody(context, user),
-              ),
-              Text('$_childName'),
-              TextFormField(
-                validator: (input) {
-                  if (input != classes.passcode) return 'Incorrect passcode.';
-                },
-                textInputAction: TextInputAction.done,
-                focusNode: _passcodeFocus,
-                onSaved: (input) => _passcode = input,
-                autofocus: false,
-                obscureText: true,
-                style: TextStyle(color: Colors.black),
-                decoration: InputDecoration(
-                  fillColor: Colors.white,
-                  filled: true,
-                  labelText: 'Passcode',
-                  prefixIcon: Icon(
-                    Icons.lock,
-                    color: Color.fromRGBO(123, 193, 67, 1),
-                  ),
-                  contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                    borderSide: BorderSide(
-                      color: Color.fromRGBO(123, 193, 67, 1),
-                      width: 2,
+          color: Color.fromRGBO(123, 193, 67, 1),
+          child: Text(
+            'VERIFY',
+            style: TextStyle(color: Colors.white),
+          ),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text(
+                    'Choose Child',
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontStyle: FontStyle.normal,
+                      color: Color.fromRGBO(0, 162, 162, 1),
                     ),
                   ),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0)),
-                ),
-              )
-            ],
-          ),
+                  content: Container(
+                    width: 300,
+                    child: Form(
+                      //key: _formKey,
+                      child: Column(
+                        //shrinkWrap: true,
+                        children: <Widget>[
+                          Text("Choose which child belongs to this class."),
+                          SizedBox(height: 30.0),
+                          Expanded(
+                            child: buildChildListBody(context, user, classes),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text("Cancel"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          },
         ),
       ),
-      actions: <Widget>[
-        FlatButton(
-          child: Text("Cancel"),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        FlatButton(
-          child: Text("Yes"),
-          onPressed: () {
-            final formState = _formKey.currentState;
-            if (formState.validate()) {
-              //login to firebase
-              formState.save();
-              if (_passcode == classes.passcode) {
-                ClassMGMTLogic.addClassEnrolled(context, classes, userID, user, _childName);
-              }
-            }
-          },
-        ),
-      ],
     );
   }
 }
@@ -240,7 +160,8 @@ class CodeAlertBox extends StatelessWidget {
 // BUILD CHILD LIST \\
 //??????????????????\\
 
-Widget buildChildListBody(BuildContext context, FirebaseUser user) {
+Widget buildChildListBody(
+    BuildContext context, FirebaseUser user, Classes classes) {
   //String userID = user.uid;
 
   return StreamBuilder<QuerySnapshot>(
@@ -248,58 +169,142 @@ Widget buildChildListBody(BuildContext context, FirebaseUser user) {
     builder: (context, snapshot) {
       if (!snapshot.hasData) return LinearProgressIndicator();
       //call to build map of database query --> see next widget
-      return _buildChildList(context, snapshot.data.documents, user);
+      return _buildChildList(context, snapshot.data.documents, user, classes);
     },
   );
 }
 
 // Widget to build list of classes for user based on previous widget query
-Widget _buildChildList(
-    BuildContext context, List<DocumentSnapshot> snapshot, FirebaseUser user) {
+Widget _buildChildList(BuildContext context, List<DocumentSnapshot> snapshot,
+    FirebaseUser user, Classes classes) {
   return ListView(
     padding: const EdgeInsets.only(top: 8.0),
     children: snapshot
-        .map((data) => _buildChildListItem(context, data, user))
+        .map((data) => _buildChildListItem(context, data, user, classes))
         .toList(),
   );
 }
 
 // LIST ITEM CONTAINER
-Widget _buildChildListItem(
-    BuildContext context, DocumentSnapshot data, FirebaseUser user) {
+Widget _buildChildListItem(BuildContext context, DocumentSnapshot data,
+    FirebaseUser user, Classes classes) {
   final children = Children.fromSnapshot(data);
   List<String> userID = ['${user.uid}'];
+  final GlobalKey<FormState> _formKey2 = GlobalKey<FormState>();
+  final FocusNode _passcodeFocus = FocusNode();
   return FlatButton(
     child: Text('${children.name}'),
     onPressed: () {
       _childName = children.name;
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              'Verify Class Code',
+              style: TextStyle(
+                fontSize: 30,
+                fontStyle: FontStyle.normal,
+                color: Color.fromRGBO(0, 162, 162, 1),
+              ),
+            ),
+            content: Container(
+              width: 300,
+              child: Form(
+                key: _formKey2,
+                child: Column(
+                  //shrinkWrap: true,
+                  children: <Widget>[
+                    Text("Enter the code to access this class."),
+                    SizedBox(height: 30.0),
+                    TextFormField(
+                      enabled: false,
+                      style: TextStyle(color: Colors.black),
+                      decoration: InputDecoration(
+                        hintText: '$_childName',
+                        fillColor: Colors.white,
+                        filled: true,
+                        prefixIcon: Icon(
+                          Icons.child_care,
+                          color: Color.fromRGBO(123, 193, 67, 1),
+                        ),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                          borderSide: BorderSide(
+                            color: Color.fromRGBO(123, 193, 67, 1),
+                            width: 2,
+                          ),
+                        ),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0)),
+                      ),
+                    ),
+                    SizedBox(height: 12.0),
+                    TextFormField(
+                      validator: (input) {
+                        if (input != classes.passcode)
+                          return 'Incorrect passcode.';
+                      },
+                      textInputAction: TextInputAction.done,
+                      focusNode: _passcodeFocus,
+                      onSaved: (input) => _passcode = input,
+                      autofocus: false,
+                      obscureText: true,
+                      style: TextStyle(color: Colors.black),
+                      decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        labelText: 'Passcode',
+                        prefixIcon: Icon(
+                          Icons.lock,
+                          color: Color.fromRGBO(123, 193, 67, 1),
+                        ),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                          borderSide: BorderSide(
+                            color: Color.fromRGBO(123, 193, 67, 1),
+                            width: 2,
+                          ),
+                        ),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0)),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Cancel"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text("Yes"),
+                onPressed: () {
+                  final formState = _formKey2.currentState;
+                  if (formState.validate()) {
+                    //login to firebase
+                    formState.save();
+                    if (_passcode == classes.passcode) {
+                      ClassMGMTLogic.addClassEnrolled(
+                          context, classes, userID, user, _childName);
+                    }
+                  }
+                },
+              ),
+            ],
+          );
+        },
+      );
     },
   );
-  // Column(
-  //   children: <Widget>[
-  //     Container(
-  //       margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
-  //       decoration: new BoxDecoration(
-  //         color: Colors.white,
-  //         boxShadow: [
-  //           new BoxShadow(
-  //             color: Colors.grey,
-  //             offset: new Offset(3.0, 3.0),
-  //             blurRadius: 1,
-  //           ),
-  //         ],
-  //         borderRadius: new BorderRadius.all(Radius.circular(10.0)),
-  //       ),
-  //       child: Column(
-  //         children: <Widget>[
-  //           new ChildTileWidget(
-  //               children: children, userID: userID, user: user),
-  //         ],
-  //       ),
-  //     ),
-  //   ],
-  //   key: ValueKey(user.uid),
-  // );
 }
 
 // CLASS TILE LAYOUT
@@ -333,21 +338,11 @@ class ChildTileWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                //MyClassesLogic.notifyButtonRender(user, classes),
                 IconButton(
                   icon: Icon(Icons.delete),
                   color: Colors.grey,
                   onPressed: () {
-                    // showDialog(
-                    //   context: context,
-                    //   builder: (BuildContext context) {
-                    //     return new RemoveChildAlert(
-                    //         classes: classes,
-                    //         isSuper: isSuper,
-                    //         userID: userID,
-                    //         user: user);
-                    //   },
-                    // );
+
                   },
                 ),
               ],
@@ -360,13 +355,9 @@ class ChildTileWidget extends StatelessWidget {
         icon: Icon(Icons.chevron_right),
         color: Color(0xFF1ca5e5),
         onPressed: () {
-          // MyClassesLogic.navToAnnouncements(
-          //     context, user, classes, isSuper);
         },
       ),
       onTap: () {
-        // MyClassesLogic.navToAnnouncements(
-        //     context, user, classes, isSuper);
       },
     );
   }
