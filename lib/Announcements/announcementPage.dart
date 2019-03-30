@@ -16,6 +16,8 @@ import 'package:bagcndemo/Comments/CommentsPage.dart';
 import 'package:bagcndemo/Announcements/UserManagement/enrolledUsersPage.dart';
 import 'package:bagcndemo/Announcements/UserManagement/pendingEnrollmentUsers.dart';
 
+int enrolledCount;
+int pendingCount;
 bool role;
 // bool _isSearch;
 TextEditingController searchValueController = new TextEditingController();
@@ -28,7 +30,8 @@ class ClassAnnouncementPage extends StatefulWidget {
   final int code;
   final bool isSuper;
   final Classes classes;
-  ClassAnnouncementPage(this.title, this.code, this.user, this.isSuper, this.classes);
+  ClassAnnouncementPage(
+      this.title, this.code, this.user, this.isSuper, this.classes);
   @override
   _ClassAnnouncementPage createState() {
     return _ClassAnnouncementPage();
@@ -36,16 +39,74 @@ class ClassAnnouncementPage extends StatefulWidget {
 }
 
 class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
-// Announcements SEARCH BAR
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _isSearch = false;
-  // }
+  enrolledUserCount(int code) {
+    countEnrolledFuture(code).then((x) {
+      if (mounted) {
+        setState(() {
+          enrolledCount = x;
+        });
+      }
+    });
+  }
+
+  Future<int> countEnrolledFuture(int code) async {
+    Firestore db = Firestore.instance;
+    int n;
+    QuerySnapshot _queryClasses = await db
+        .collection('class')
+        .where('code', isEqualTo: code)
+        .getDocuments();
+    _queryClasses.documents.toList();
+    final users = Classes.fromSnapshot(_queryClasses.documents.first);
+    n = users.enrolledUsers.length;
+    return n;
+  }
+
+  pendingUserCount(int code) {
+    countPendingFuture(code).then((x) {
+      if (mounted) {
+        setState(() {
+          pendingCount = x;
+        });
+      }
+    });
+  }
+
+  Future<int> countPendingFuture(int code) async {
+    Firestore db = Firestore.instance;
+    int n;
+    QuerySnapshot _queryClasses = await db
+        .collection('class')
+        .where('code', isEqualTo: code)
+        .getDocuments();
+    _queryClasses.documents.toList();
+    final users = Classes.fromSnapshot(_queryClasses.documents.first);
+    n = users.pendingUsers.length;
+    return n;
+  }
+
+// @override
+//   void setState(fn) {
+//     if (mounted) {
+//     enrolledUserCount(widget.code);
+//     pendingUserCount(widget.code);
+//     super.setState(fn);
+//     }
+//   }
+
+// @override
+//   void initState() {
+//     enrolledUserCount(widget.code);
+//     pendingUserCount(widget.code);
+//     super.initState();
+//   }
 
   @override
   Widget build(BuildContext context) {
     role = widget.isSuper;
+    //get enrolled user count
+enrolledUserCount(widget.code);
+    pendingUserCount(widget.code);
 
     return buildScaffold(
         context, widget.title, widget.code, widget.user, widget.isSuper);
@@ -90,11 +151,34 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
           appBar: AppBar(
             bottom: TabBar(
               tabs: [
+                Tab(icon: Icon(Icons.announcement)),
                 Tab(
-                  text: 'Announcements',
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(Icons.group),
+                      Container(
+                        child: Text(
+                          '$enrolledCount',
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                Tab(text: 'Enrolled Users'),
-                Tab(text: 'Pending Users'),
+                Tab(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(Icons.group_add),
+                      Container(
+                        padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
+                        child: Text(
+                          '$pendingCount',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
             title:
@@ -121,7 +205,7 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
                 widget.user,
               ),
               EnrolledUsersPage(widget.user, widget.code),
-              PendingUsersPage(widget.user, widget.code,widget.classes),
+              PendingUsersPage(widget.user, widget.code, widget.classes),
             ],
           ),
 
@@ -215,10 +299,12 @@ Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot,
 Widget _buildListItem(
     BuildContext context, DocumentSnapshot data, FirebaseUser user) {
   MediaQueryData queryData;
+
   queryData = MediaQuery.of(context);
   final announcements = Announcements.fromSnapshot(data);
   var formatter = new DateFormat.yMd().add_jm();
   String formattedDate = formatter.format(announcements.created);
+
 // SUPERVISOR POP UP MENU
   final supervisorMenu = AlertDialog(
     content: Container(
@@ -388,6 +474,7 @@ class AnouncementText extends StatelessWidget {
         style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87),
       ),
       subtitle: RichText(
+        maxLines: 20,
         overflow: TextOverflow.ellipsis,
         text: new TextSpan(
           style: TextStyle(color: Colors.black54),

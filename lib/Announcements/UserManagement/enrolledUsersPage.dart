@@ -22,6 +22,7 @@ class EnrolledUsersPage extends StatefulWidget {
 class _EnrolledUsersPage extends State<EnrolledUsersPage> {
   @override
   Widget build(BuildContext context) {
+    
     //*********** PAGE SCAFFOLD *****************\\
     return Scaffold(
       resizeToAvoidBottomPadding: false,

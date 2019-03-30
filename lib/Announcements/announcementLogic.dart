@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// MODELS
-import 'package:bagcndemo/Models/AnnouncementsModel.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server/gmail.dart';
+// PAGES
+import 'package:bagcndemo/Announcements/announcementPage.dart';
+// MODELS
+import 'package:bagcndemo/Models/AnnouncementsModel.dart';
+import 'package:bagcndemo/Models/ClassesModel.dart';
 
 class AnnouncementLogic {
-
 // BUILD ANNOUNCEMENT STREAM
   static Stream<QuerySnapshot> announcementStream(String title, int code) {
     return Firestore.instance
@@ -35,7 +37,7 @@ class AnnouncementLogic {
     }
   }
 
-// ADD OR REMOVE USER TO LIKED LIST AND INCREASE OR DECREASE LIKE COUNT 
+// ADD OR REMOVE USER TO LIKED LIST AND INCREASE OR DECREASE LIKE COUNT
   static void likeButtonClick(FirebaseUser user, Announcements announcements) {
     List<String> userID = ['${user.uid}'];
     Firestore.instance.runTransaction((transaction) async {
@@ -129,20 +131,89 @@ class AnnouncementLogic {
     }
   }
 
-  static void sendPasscode(String className,String email,String passcode) {
-      String _username = "bagcn2019@gmail.com";
-      String _password = "boysandgirls2019";
+  static void sendPasscode(String className, String email, String passcode) {
+    String _username = "bagcn2019@gmail.com";
+    String _password = "boysandgirls2019";
 
-      final smtpServer = gmail(_username, _password);
-      
-      // Create our message.
-      final message = new Message()
-        ..from = new Address(_username, 'Boys and Girls Club in Niagara')
-        ..recipients.add(email)
-        ..subject = 'Verify to access the class '+className+' :: ${new DateTime.now()}'
-        ..text = 'Your passcode: '+passcode;
+    final smtpServer = gmail(_username, _password);
+
+    // Create our message.
+    final message = new Message()
+      ..from = new Address(_username, 'Boys and Girls Club in Niagara')
+      ..recipients.add(email)
+      ..subject = 'Verify to access the class ' +
+          className +
+          ' :: ${new DateTime.now()}'
+      ..text = 'Your passcode: ' + passcode;
+
+    send(message, smtpServer)
+        .then((message) => print('Email sent!'))
+        .catchError((e) => print('Error occurred: $e'));
+  }
+
+  
+
+//   static int countUsers(int count){
+//     print(count);
+// return count;
+//   }
+
+//   static void enrolledUserCount(int code) {
+//     countReturn(code).then((n) {
+//       countUsers(n);
+//     });
     
-      send(message, smtpServer).then((message) => print('Email sent!'))
-      .catchError((e) => print('Error occurred: $e'));
-    }
+    
+//   }
+
+//   static Future<int> countReturn(int code) async {
+//     Firestore db = Firestore.instance;
+// int n;
+//       QuerySnapshot _queryClasses = await db
+//           .collection('class')
+//           .where('code', isEqualTo: code)
+//           .getDocuments();
+// _queryClasses.documents.toList();
+//       final users = Classes.fromSnapshot(_queryClasses.documents.first);
+//       n = users.enrolledUsers.length;
+//     return n;
+//   }
 }
+
+// enrolledUserCount(int code) {
+//     countEnrolledFuture(code).then((x) {
+//       enrolledCount = x;
+//     });
+//   }
+
+//   Future<int> countEnrolledFuture(int code) async {
+//     Firestore db = Firestore.instance;
+//     int n;
+//     QuerySnapshot _queryClasses = await db
+//         .collection('class')
+//         .where('code', isEqualTo: code)
+//         .getDocuments();
+//     _queryClasses.documents.toList();
+//     final users = Classes.fromSnapshot(_queryClasses.documents.first);
+//     n = users.enrolledUsers.length;
+//     return n;
+//   }
+
+  // pendingUserCount(int code) {
+  //   countPendingFuture(code).then((x) {
+  //     pendingCount = x;
+  //   });
+  // }
+
+  // Future<int> countPendingFuture(int code) async {
+  //   Firestore db = Firestore.instance;
+  //   int n;
+  //   QuerySnapshot _queryClasses = await db
+  //       .collection('class')
+  //       .where('code', isEqualTo: code)
+  //       .getDocuments();
+  //   _queryClasses.documents.toList();
+  //   final users = Classes.fromSnapshot(_queryClasses.documents.first);
+  //   n = users.pendingUsers.length;
+  //   return n;
+  // }
