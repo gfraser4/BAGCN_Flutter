@@ -5,7 +5,7 @@ class Children {
   final String childID;
   final String parentID;
   final String name;
-    final List<dynamic> enrolledIn;
+  final List<dynamic> enrolledIn;
 
   final DocumentReference reference;
 
@@ -20,5 +20,4 @@ class Children {
 
   Children.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data, reference: snapshot.reference);
-
 }

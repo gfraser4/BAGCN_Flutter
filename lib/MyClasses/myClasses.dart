@@ -731,10 +731,71 @@ class ChildTileWidget extends StatelessWidget {
           ),
         ),
       ),
-      expanded: Container(
-          //margin: EdgeInsets.symmetric(vertical: 10.0),
-          height: queryData.size.height - 400,
-          child: _buildClassListBody(context, user, isSuper, children)),
+      expanded: Column(
+        children: <Widget>[
+          Container(
+              //margin: EdgeInsets.symmetric(vertical: 10.0),
+              height: queryData.size.height - 400,
+              child: _buildClassListBody(context, user, isSuper, children)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              FlatButton(
+                child: Text(
+                  'Remove Classes',
+                  style: TextStyle(color: Colors.white),
+                ),
+                color: Colors.redAccent,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text(
+                          'Remove Class?',
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontStyle: FontStyle.normal,
+                            color: Color.fromRGBO(0, 162, 162, 1),
+                          ),
+                        ),
+                        content:
+                            Text('Remove ${children.name} from all classes?'),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text("Cancel"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          FlatButton(
+                            child: Text("Remove"),
+                            onPressed: () {
+                              ClassMGMTLogic.removeChildFromAllClass(
+                                  context, userID, user, children);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                  
+                },
+              ),
+              FlatButton(
+                    child: Text(
+                      'Manage Classes',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    color: CustomColors.bagcBlue,
+                    onPressed: () {
+                      MyClassesLogic.navToJoinClasses(context, user);
+                    },
+                  ),
+            ],
+          ),
+        ],
+      ),
       tapHeaderToExpand: true,
       hasIcon: true,
     );
