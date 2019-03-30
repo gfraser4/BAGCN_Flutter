@@ -38,7 +38,12 @@ class _SignUpPage extends State<SignUpPage> {
 // FIRST NAME INPUT FIELD
     final firstName = TextFormField(
       validator: (input) {
-        if (input.isEmpty) return 'Please enter your first name.';
+        if (input.isEmpty) 
+          return 'Please enter your first name.';
+        else if (isAlpha(input) == false)
+          return 'First name must only use letters (a-zA-Z)';
+        else if(input.length > 30)
+          return 'First name must be 30 characters or less.';
       },
       onSaved: (input) => _firstName = input,
       keyboardType: TextInputType.emailAddress,
@@ -66,7 +71,12 @@ class _SignUpPage extends State<SignUpPage> {
 // LAST NAME INPUT FIELD
     final lastName = TextFormField(
       validator: (input) {
-        if (input.isEmpty) return 'Please enter your last name.';
+        if (input.isEmpty) 
+          return 'Please enter your last name.';
+        else if (isAlpha(input) == false)
+          return 'Last name must only use letters (a-zA-Z)';
+        else if(input.length > 30)
+          return 'Last name must be 30 characters or less.';
       },
       onSaved: (input) => _lastName = input,
       autofocus: false,
@@ -124,6 +134,8 @@ class _SignUpPage extends State<SignUpPage> {
       validator: (input) {
         if (input.length < 6)
           return 'Your password needs to be at least 6 characters.';
+        else if(input.length > 30)
+          return 'Password must be 30 characters or less.';
       },
       onSaved: (input) => _password = input,
       autofocus: false,
@@ -273,7 +285,7 @@ class _SignUpPage extends State<SignUpPage> {
             .createUserWithEmailAndPassword(email: _email, password: _password);
         // CREATE PARENT
         SignupLogic.createParent(
-            user, _email, _password, _firstName, _lastName);
+            user, _email, _password, _firstName.trim(), _lastName.trim());
         if (user != null) {
           // Sign in Successful: Navigate to home
           await Navigator.pushReplacement(
@@ -299,7 +311,7 @@ class _SignUpPage extends State<SignUpPage> {
             .createUserWithEmailAndPassword(email: _email, password: _password);
         // CREATE SUPERVISOR
         SignupLogic.createSupervisor(
-            user, _email, _password, _firstName, _lastName);
+            user, _email, _password, _firstName.trim(), _lastName.trim());
         if (user != null) {
           // Sign in Successful: Navigate to home
           await Navigator.pushReplacement(
@@ -326,7 +338,7 @@ class _SignUpPage extends State<SignUpPage> {
     } else {
       setState(() {
         _validation =
-            'Only valid supervisor email addresses can be used to create a supervisor account.';
+            'Unable to create account, please contact the adminstrator.';
       });
     }
   }
