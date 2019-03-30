@@ -474,7 +474,7 @@ class AnouncementText extends StatelessWidget {
         style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87),
       ),
       subtitle: RichText(
-        maxLines: 20,
+        maxLines: 17,
         overflow: TextOverflow.ellipsis,
         text: new TextSpan(
           style: TextStyle(color: Colors.black54),
