@@ -2,7 +2,6 @@ import 'package:bagcndemo/Comments/commentsLogic.dart';
 import 'package:bagcndemo/Models/ClassesModel.dart';
 import 'package:bagcndemo/Models/Users.dart';
 import 'package:bagcndemo/Settings/SettingLogic.dart';
-import 'package:bagcndemo/Settings/editProfile.dart';
 // import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -46,8 +45,8 @@ ListTile _profile(){
     
 ListTile _eidtProfile(){
   return ListTile(
-        title: Text("Profile"),
-        subtitle: Text("Edit user's profile"),
+        title: Text("User's Profile"),
+        subtitle: Text("Edit user's infomation"),
         trailing: Icon(Icons.chevron_right),
         onTap: (){
           showDialog(
