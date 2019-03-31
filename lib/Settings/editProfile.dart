@@ -1,18 +1,21 @@
 import 'package:bagcndemo/Models/Users.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:bagcndemo/Settings/SettingLogic.dart';
 import 'package:flutter/material.dart';
+import 'package:validators/validators.dart';
 
 class EditProfile extends StatefulWidget {
-  const EditProfile(this.user,this.firebaseUser);
+  const EditProfile(this.user);
   final Users user;
-  final FirebaseUser firebaseUser;
   @override
   _EditProfile createState() => new _EditProfile();
 }
 
 class _EditProfile extends State<EditProfile> {
-  
-TextEditingController _email;
+final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+String email;
+String firstName;
+String lastName;
+Text result = new Text("");
 
 ListView changeProfile(){
         return ListView(
@@ -59,6 +62,26 @@ ListView changeProfile(){
                     ),
                     children: <TextSpan>[
                       new TextSpan(
+                          text: 'Role:',
+                          style: new TextStyle(fontWeight: FontWeight.bold)),
+                      new TextSpan(text: widget.user.role == "parent"?" Parent":" Supervisor"), //ADD REAL NAME FROM DATABASE HERE
+                    ],
+                  ),
+                ),
+                ),
+                Container(
+                  margin: EdgeInsets.all(5),
+                  child: RichText(
+                  textAlign: TextAlign.center,
+                  text: new TextSpan(
+                    // Note: Styles for TextSpans must be explicitly defined.
+                    // Child text spans will inherit styles from parent
+                    style: new TextStyle(
+                      fontSize: 20.0,
+                      color: Colors.black,
+                    ),
+                    children: <TextSpan>[
+                      new TextSpan(
                           text: 'Email Address: ',
                           style: new TextStyle(fontWeight: FontWeight.bold)),
                       new TextSpan(text: "${widget.user.email}"), //ADD Email FROM DATABASE HERE
@@ -72,7 +95,11 @@ ListView changeProfile(){
           SizedBox(height: 14,),
           ListTile(
             trailing: TextFormField(
+              validator: (input) {
+                if (input.isEmpty) return 'Please enter user first name.';
+              },
               style: TextStyle(color: Colors.black),
+              onSaved: (input) => firstName = input,
               decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
@@ -95,7 +122,11 @@ ListView changeProfile(){
           SizedBox(height: 14,),
           ListTile(
             trailing: TextFormField(
+              validator: (input) {
+                if (input.isEmpty) return 'Please enter user last name.';
+              },
               style: TextStyle(color: Colors.black),
+              onSaved: (input) => lastName = input,
               decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
@@ -118,6 +149,11 @@ ListView changeProfile(){
           SizedBox(height: 14,),
           ListTile(
             trailing: TextFormField(
+              validator: (input) {
+                if (input.isEmpty || isEmail(input) == false)
+                  return 'Please enter a valid email address.';
+              },
+              onSaved: (input) => email = input,
               style: TextStyle(color: Colors.black),
               decoration: InputDecoration(
                   filled: true,
@@ -138,7 +174,9 @@ ListView changeProfile(){
                   ),
             ),
           ),
-          SizedBox(height: 14,),
+          SizedBox(height: 10,),
+          Center(child: result,),
+          SizedBox(height: 10,),
           Container(
             margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
             child: RaisedButton(
@@ -149,7 +187,20 @@ ListView changeProfile(){
               ),
               shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10.0)),
               onPressed: () {
-                setState(() {});
+                final formState = _formKey.currentState;
+                if (formState.validate()) {
+                  formState.save();
+                  try{
+                    SettingLogic.editProfile(widget.user,email.trim(),firstName.trim(),lastName.trim()).then((_){
+                      result = Text("Update profile successful",style:TextStyle(fontSize:18, color:Color.fromRGBO(0, 162, 162, 1)));
+                      setState(() { });
+                    });
+                  }
+                  catch(ex){
+                      result = Text(ex.message.toString(),style:TextStyle(fontSize:18, color:Colors.red));
+                      setState(() { });
+                  }
+                }
               },
             ),
           ),
@@ -176,7 +227,10 @@ ListView changeProfile(){
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Change Profile")),
-      body: changeProfile()
+      body: Form(
+        key: _formKey,
+        child: changeProfile()
+      )
     );
   }
 }
