@@ -6,9 +6,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 // LOGIC
 import "package:bagcndemo/MyClasses/myClassesLogic.dart";
 // PAGES
+import 'package:bagcndemo/Login/loginPage.dart';
 import 'package:bagcndemo/About/aboutPage.dart';
 import 'package:bagcndemo/Settings/settingsPage.dart';
 import 'package:bagcndemo/Walkthrough/parentWalkthrough.dart';
+import 'package:bagcndemo/Walkthrough/superWalkthrough.dart';
 
 //DYNAMIC CHANGE THEME
 import 'package:dynamic_theme/dynamic_theme.dart';
@@ -40,7 +42,7 @@ Widget navDrawer(BuildContext context, FirebaseUser user, bool isSuper, List<Cla
           Divider(
             color: Color.fromRGBO(123, 193, 67, 1),
           ),
-          new HelpTile(),
+          helpTile(isSuper, context, user),
           Divider(
             color: Color.fromRGBO(123, 193, 67, 1),
           ),
@@ -178,14 +180,20 @@ class AboutTile extends StatelessWidget {
   }
 }
 
-// Help Tile
-class HelpTile extends StatelessWidget {
-  const HelpTile({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
+Widget helpTile(
+    bool isSuper, BuildContext context, FirebaseUser user) {
+  if (isSuper == true) {
+    return ListTile(
+      leading: Icon(Icons.help, color: Color.fromRGBO(28, 165, 229, 1)),
+      title: Text('Help'),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => SuperWalkthrough()),
+        );
+      },
+    );
+  } else {
     return ListTile(
       leading: Icon(Icons.help, color: Color.fromRGBO(28, 165, 229, 1)),
       title: Text('Help'),

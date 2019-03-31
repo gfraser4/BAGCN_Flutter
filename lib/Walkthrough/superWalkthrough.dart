@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:bagcndemo/Style/customColors.dart';
 //https://medium.com/flutterpub/setting-intro-slider-screen-in-fastest-way-adc8c6c145c4
 
-class ParentWalkthrough extends StatefulWidget {
+class SuperWalkthrough extends StatefulWidget {
   @override
-  _ParentWalkthrough createState() {
-    return _ParentWalkthrough();
+  _SuperWalkthrough createState() {
+    return _SuperWalkthrough();
   }
 }
 
-class _ParentWalkthrough extends State<ParentWalkthrough> {
+class _SuperWalkthrough extends State<SuperWalkthrough> {
   List<Slide> slides = new List();
 
   @override
@@ -19,7 +19,7 @@ class _ParentWalkthrough extends State<ParentWalkthrough> {
 
   slides.add(
     new Slide(
-      title: "Welcome!",
+      title: "Welcome !",
       pathImage: 'assets/BGC_Niagara_Vertical.png',
       maxLineTitle: 5,
       description: "Before you start, we would like to show a few things.",
@@ -28,28 +28,21 @@ class _ParentWalkthrough extends State<ParentWalkthrough> {
   );
   slides.add(
     new Slide(
-      title: "Creating A Child Profile",
-      description: "To get started tap the "'"Add a Child"'" button and enter a nickname or first name for your child/children.",
+      title: "Creating Your Class",
+      description: "To get started tap the add button (or "'"Manage Classes"'" button) and select your class.",
       backgroundColor: CustomColors.bagcBlue,
+    ),
+  );
+  slides.add(
+    new Slide(
+      description: "Create a 6 character passcode to open the class. Give your students this passcode during your program. This will be how children enter your class.",
+      backgroundColor: CustomColors.bagcGreen,
     ),
   );
    slides.add(
     new Slide(
-      title: "Adding A Class",
-      description: "Select "'"Manage Classes"'" and search for your class. Your program supervisor will verify and send you the passcode.",
-      backgroundColor: CustomColors.bagcGreen,
-    ),
-  );
-  slides.add(
-    new Slide(
-      title: "Your Home Page",
-      description: "In the "'"Lastest News"'" section, you will be able to see global announcements.",
-      backgroundColor: CustomColors.bagcGreen,
-    ),
-  );
-  slides.add(
-    new Slide(
-      description: "In the "'"My Kids"'" section, you can check class annoucements for the classes your child is participating in.",
+      title: "Managing Your Class",
+      description: "As students are joining your class, make sure to verify that these children are in your program.",
       backgroundColor: CustomColors.bagcGreen,
     ),
   );
