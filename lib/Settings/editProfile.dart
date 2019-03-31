@@ -19,7 +19,6 @@ Text result = new Text("");
 
 ListView changeProfile(){
         return ListView(
-        // Important: Remove any padding from the ListView.
         padding: EdgeInsets.zero,
         children:<Widget>[
           Container(
@@ -34,8 +33,6 @@ ListView changeProfile(){
                   child: RichText(
                   textAlign: TextAlign.center,
                   text: new TextSpan(
-                    // Note: Styles for TextSpans must be explicitly defined.
-                    // Child text spans will inherit styles from parent
                     style: new TextStyle(
                       fontSize: 20.0,
                       color: Colors.black,
@@ -54,8 +51,6 @@ ListView changeProfile(){
                   child: RichText(
                   textAlign: TextAlign.center,
                   text: new TextSpan(
-                    // Note: Styles for TextSpans must be explicitly defined.
-                    // Child text spans will inherit styles from parent
                     style: new TextStyle(
                       fontSize: 20.0,
                       color: Colors.black,
@@ -64,7 +59,7 @@ ListView changeProfile(){
                       new TextSpan(
                           text: 'Role:',
                           style: new TextStyle(fontWeight: FontWeight.bold)),
-                      new TextSpan(text: widget.user.role == "parent"?" Parent":" Supervisor"), //ADD REAL NAME FROM DATABASE HERE
+                      new TextSpan(text: widget.user.role == "parent"?" Parent":widget.user.role == "suoer"?" Supervisor":"Administrator"),
                     ],
                   ),
                 ),
@@ -74,8 +69,6 @@ ListView changeProfile(){
                   child: RichText(
                   textAlign: TextAlign.center,
                   text: new TextSpan(
-                    // Note: Styles for TextSpans must be explicitly defined.
-                    // Child text spans will inherit styles from parent
                     style: new TextStyle(
                       fontSize: 20.0,
                       color: Colors.black,
@@ -84,7 +77,7 @@ ListView changeProfile(){
                       new TextSpan(
                           text: 'Email Address: ',
                           style: new TextStyle(fontWeight: FontWeight.bold)),
-                      new TextSpan(text: "${widget.user.email}"), //ADD Email FROM DATABASE HERE
+                      new TextSpan(text: "${widget.user.email}"), 
                     ],
                   ),
                 ),
