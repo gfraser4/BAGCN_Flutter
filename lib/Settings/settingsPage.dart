@@ -148,7 +148,7 @@ ListTile _changeProfileColour(){
                           color: Color.fromRGBO(0, 162, 162, 1)),
                     ),
                     content: Text(
-                      "Mute or Unmute all the classes' notification?",
+                      "Mute or Unmute notifications",
                       style: TextStyle(
                           fontSize: 18,
                           fontStyle: FontStyle.normal,
@@ -162,14 +162,14 @@ ListTile _changeProfileColour(){
                         },
                       ),
                       FlatButton(
-                        child: Text("Mute All"),
+                        child: Text("Mute"),
                         onPressed: () {
                           SettingLogic.muteNotification(widget.user, widget.classes, true);
                           Navigator.of(context).pop();
                         },
                       ),
                       FlatButton(
-                        child: Text("Unmute All"),
+                        child: Text("Unmute"),
                         onPressed: () {
                           SettingLogic.muteNotification(widget.user, widget.classes, false);
                           Navigator.of(context).pop();

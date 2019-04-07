@@ -9,15 +9,25 @@ class SettingLogic {
 
   static void muteNotification(FirebaseUser user, List<Classes> classes, bool isMute) async{
     try{
+      Firestore db = Firestore.instance;
+      QuerySnapshot _query = await db
+          .collection('users')
+          .where('id', isEqualTo: user.uid)
+          .getDocuments();
+      _query.documents.toList();
+      final classesx = Users.fromSnapshot(_query.documents.first);
+      List<String> token = [classesx.token];
       List<String> userID = [user.uid];
       for(Classes cls in classes){
         await Firestore.instance.runTransaction((transaction) {
           if (!isMute) {
             transaction.update(
-                cls.reference, {"notifyUsers": FieldValue.arrayUnion(userID)});
+                cls.reference, {"notifyUsers": FieldValue.arrayUnion(token),
+                "notifyList": FieldValue.arrayUnion(userID),});
           } else if (isMute){
             transaction.update(
-                cls.reference, {"notifyUsers": FieldValue.arrayRemove(userID)});
+                cls.reference, {"notifyUsers": FieldValue.arrayRemove(token),
+                "notifyList": FieldValue.arrayRemove(userID),});
           }
         });
       }
