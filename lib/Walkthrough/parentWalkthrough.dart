@@ -64,7 +64,6 @@ class _ParentWalkthrough extends State<ParentWalkthrough> {
   }
 
   void onSkipPress() {
-    Navigator.of(context).pop();
   }
 
 
@@ -73,7 +72,6 @@ class _ParentWalkthrough extends State<ParentWalkthrough> {
     return IntroSlider(
       slides: this.slides,
       onDonePress: this.onDonePress,
-      onSkipPress: this.onSkipPress,
     );
   }
 }

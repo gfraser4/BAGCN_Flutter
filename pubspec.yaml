@@ -57,6 +57,9 @@ flutter:
     - assets/ParentWalkthrough/ManageClasses.png
     - assets/ParentWalkthrough/LatestNews.png
     - assets/ParentWalkthrough/MyKids.png
+    - assets/SuperWalkthrough/ManageClasses.png
+    - assets/SuperWalkthrough/Passcode.png
+    - assets/SuperWalkthrough/Verify.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

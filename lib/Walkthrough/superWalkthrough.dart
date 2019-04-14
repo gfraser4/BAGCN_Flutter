@@ -19,7 +19,7 @@ class _SuperWalkthrough extends State<SuperWalkthrough> {
 
   slides.add(
     new Slide(
-      title: "Welcome !",
+      title: "Welcome!",
       pathImage: 'assets/BGC_Niagara_Vertical.png',
       maxLineTitle: 5,
       description: "Before you start, we would like to show a few things.",
@@ -30,20 +30,26 @@ class _SuperWalkthrough extends State<SuperWalkthrough> {
     new Slide(
       title: "Creating Your Class",
       description: "To get started tap the add button (or "'"Manage Classes"'" button) and select your class.",
-      backgroundColor: CustomColors.bagcBlue,
+      backgroundColor: CustomColors.bagcOrange,
+      pathImage: "assets/SuperWalkthrough/ManageClasses.png"
     ),
   );
   slides.add(
     new Slide(
+      marginTitle: EdgeInsets.all(0),
       description: "Create a 6 character passcode to open the class. Give your students this passcode during your program. This will be how children enter your class.",
-      backgroundColor: CustomColors.bagcGreen,
+      backgroundColor: CustomColors.bagcRed,
+      pathImage: "assets/SuperWalkthrough/Passcode.png",
+      widthImage: 325,
+      heightImage: 325,
     ),
   );
    slides.add(
     new Slide(
       title: "Managing Your Class",
       description: "As students are joining your class, make sure to verify that these children are in your program.",
-      backgroundColor: CustomColors.bagcGreen,
+      backgroundColor: CustomColors.bagcTeal,
+      pathImage: "assets/SuperWalkthrough/Verify.png"
     ),
   );
   }
@@ -53,7 +59,6 @@ class _SuperWalkthrough extends State<SuperWalkthrough> {
   }
 
   void onSkipPress() {
-    Navigator.of(context).pop();
   }
 
 
@@ -62,7 +67,6 @@ class _SuperWalkthrough extends State<SuperWalkthrough> {
     return IntroSlider(
       slides: this.slides,
       onDonePress: this.onDonePress,
-      onSkipPress: this.onSkipPress,
     );
   }
 }
