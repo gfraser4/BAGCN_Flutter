@@ -30,6 +30,7 @@ class _ParentWalkthrough extends State<ParentWalkthrough> {
     new Slide(
       title: "Creating A Child Profile",
       description: "To get started tap the "'"Add a Child"'" button and enter a nickname or first name for your child/children.",
+      pathImage: "assets/ParentWalkthrough/AddChild.png",
       backgroundColor: CustomColors.bagcBlue,
     ),
   );
@@ -37,20 +38,23 @@ class _ParentWalkthrough extends State<ParentWalkthrough> {
     new Slide(
       title: "Adding A Class",
       description: "Select "'"Manage Classes"'" and search for your class. Your program supervisor will verify and send you the passcode.",
-      backgroundColor: CustomColors.bagcGreen,
+      pathImage: "assets/ParentWalkthrough/ManageClasses.png",
+      backgroundColor: CustomColors.bagcOrange,
     ),
   );
   slides.add(
     new Slide(
       title: "Your Home Page",
       description: "In the "'"Lastest News"'" section, you will be able to see global announcements.",
+      pathImage: "assets/ParentWalkthrough/LatestNews.png",
       backgroundColor: CustomColors.bagcGreen,
     ),
   );
   slides.add(
     new Slide(
       description: "In the "'"My Kids"'" section, you can check class annoucements for the classes your child is participating in.",
-      backgroundColor: CustomColors.bagcGreen,
+      pathImage: "assets/ParentWalkthrough/MyKids.png",
+      backgroundColor: CustomColors.bagcRed,
     ),
   );
   }
