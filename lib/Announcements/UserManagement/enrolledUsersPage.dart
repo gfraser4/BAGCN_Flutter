@@ -22,17 +22,12 @@ class EnrolledUsersPage extends StatefulWidget {
 class _EnrolledUsersPage extends State<EnrolledUsersPage> {
   @override
   Widget build(BuildContext context) {
-    
     //*********** PAGE SCAFFOLD *****************\\
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       backgroundColor: Color.fromRGBO(28, 165, 229, 1),
       appBar: null,
-      body: _buildEnrolledBody(
-        context,
-        widget.user,
-        widget.code
-      ),
+      body: _buildEnrolledBody(context, widget.user, widget.code),
     );
   }
 
@@ -61,8 +56,8 @@ class _EnrolledUsersPage extends State<EnrolledUsersPage> {
   }
 
 // WIDGET TO BUILD EACH USER ITEM
-  Widget _buildEnrolledListItem(
-      BuildContext context, DocumentSnapshot data, FirebaseUser user, int code) {
+  Widget _buildEnrolledListItem(BuildContext context, DocumentSnapshot data,
+      FirebaseUser user, int code) {
     final users = Users.fromSnapshot(data);
     List<String> userID = ['${user.uid}'];
     return Padding(
@@ -79,7 +74,7 @@ class UserCard extends StatelessWidget {
     @required this.users,
     @required this.userID,
     @required this.user,
-     @required this.code,
+    @required this.code,
   }) : super(key: key);
 
   final FirebaseUser user;
@@ -101,10 +96,11 @@ class UserCard extends StatelessWidget {
               padding: EdgeInsets.all(0),
               avatar: CircleAvatar(
                   backgroundColor: hexToColor(users.profileColor),
-                  child: Text('${users.firstName[0].toUpperCase()}${users.lastName[0].toUpperCase()}',
+                  child: Text(
+                      '${users.firstName[0].toUpperCase()}${users.lastName[0].toUpperCase()}',
                       style: TextStyle(color: Colors.white))),
               label: Text(
-                '${users.firstName} ${users.lastName}\n${users.email}',
+                '${users.firstName} ${users.lastName}',
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontWeight: FontWeight.w600),
@@ -131,7 +127,7 @@ class RemoveButton extends StatelessWidget {
   final Users users;
   final List<String> userID;
   final int code;
-  
+
   @override
   Widget build(BuildContext context) {
     List<int> codeList = [code];

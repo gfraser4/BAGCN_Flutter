@@ -80,7 +80,7 @@ class _MyClassList extends State<MyClassList> {
     return Scaffold(
       backgroundColor: CustomColors.bagcBlue,
       appBar: AppBar(
-        title: Text('My Classes ${widget.user.email}'),
+        title: Text('My Classes'),
       ),
       body: Column(
         //crossAxisAlignment: CrossAxisAlignment.start,
@@ -779,19 +779,18 @@ class ChildTileWidget extends StatelessWidget {
                       );
                     },
                   );
-                  
                 },
               ),
               FlatButton(
-                    child: Text(
-                      'Manage Classes',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    color: CustomColors.bagcBlue,
-                    onPressed: () {
-                      MyClassesLogic.navToJoinClasses(context, user);
-                    },
-                  ),
+                child: Text(
+                  'Add Classes',
+                  style: TextStyle(color: Colors.white),
+                ),
+                color: CustomColors.bagcBlue,
+                onPressed: () {
+                  MyClassesLogic.navToJoinClasses(context, user);
+                },
+              ),
             ],
           ),
         ],

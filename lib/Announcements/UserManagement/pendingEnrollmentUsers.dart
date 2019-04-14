@@ -22,7 +22,6 @@ class PendingUsersPage extends StatefulWidget {
 }
 
 class _PendingUsersPage extends State<PendingUsersPage> {
-
   @override
   Widget build(BuildContext context) {
     //*********** PAGE SCAFFOLD *****************\\
@@ -30,11 +29,7 @@ class _PendingUsersPage extends State<PendingUsersPage> {
       resizeToAvoidBottomPadding: false,
       backgroundColor: Color.fromRGBO(28, 165, 229, 1),
       appBar: null,
-      body: _buildEnrolledBody(
-        context,
-        widget.user,
-        widget.code
-      ),
+      body: _buildEnrolledBody(context, widget.user, widget.code),
     );
   }
 
@@ -63,14 +58,19 @@ class _PendingUsersPage extends State<PendingUsersPage> {
   }
 
 // BUILD EACH PENDING USER
-  Widget _buildEnrolledListItem(
-      BuildContext context, DocumentSnapshot data, FirebaseUser user, int code) {
+  Widget _buildEnrolledListItem(BuildContext context, DocumentSnapshot data,
+      FirebaseUser user, int code) {
     final users = Users.fromSnapshot(data);
     List<String> userID = ['${user.uid}'];
     return Padding(
         key: ValueKey(users.id),
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: UserCard(users: users, userID: userID, user: user, code: code,classes:widget.classes));
+        child: UserCard(
+            users: users,
+            userID: userID,
+            user: user,
+            code: code,
+            classes: widget.classes));
   }
 }
 
@@ -108,14 +108,19 @@ class UserCard extends StatelessWidget {
                   child: Text('${users.firstName[0]}${users.lastName[0]}',
                       style: TextStyle(color: Colors.white))),
               label: Text(
-                '${users.firstName} ${users.lastName}\n${users.email}',
+                '${users.firstName} ${users.lastName}',
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
               backgroundColor: Colors.transparent,
             ),
-            AllowButton(users: users, userID: userID, code: code, classes: classes,),
+            AllowButton(
+              users: users,
+              userID: userID,
+              code: code,
+              classes: classes,
+            ),
           ],
         ),
       ),
@@ -171,7 +176,8 @@ class AllowButton extends StatelessWidget {
                 FlatButton(
                   child: Text("Yes"),
                   onPressed: () {
-                    AnnouncementLogic.sendPasscode(classes.clsName, "bagcn2019@gmail.com", classes.passcode);
+                    AnnouncementLogic.sendPasscode(classes.clsName,
+                        "bagcn2019@gmail.com", classes.passcode);
                     // SEND EMAIL WITH PASSCODE \\
 
                     // users.reference.updateData({
@@ -181,7 +187,7 @@ class AllowButton extends StatelessWidget {
                     //   "enrolledIn": FieldValue.arrayUnion(codeList),
                     // });
                     //AnnouncementLogic.addUserToClass(code, users.id);
-                     Navigator.of(context).pop();
+                    Navigator.of(context).pop();
                   },
                 ),
               ],

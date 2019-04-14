@@ -105,7 +105,7 @@ class _ClassAnnouncementPage extends State<ClassAnnouncementPage> {
   Widget build(BuildContext context) {
     role = widget.isSuper;
     //get enrolled user count
-enrolledUserCount(widget.code);
+    enrolledUserCount(widget.code);
     pendingUserCount(widget.code);
 
     return buildScaffold(
@@ -388,7 +388,7 @@ Widget _buildListItem(
       color: Colors.white,
       child: Container(
         width: announcements.clsName == 'Boys and Girls Club Niagara'
-            ? queryData.size.width - 20
+            ? queryData.size.width - 80
             : null,
         child: Column(
           children: <Widget>[
@@ -426,23 +426,26 @@ Widget _buildListItem(
                                     });
                               },
                             )
-                          : announcements.notifyUsers.contains(user.uid) == true
-                              ? IconButton(
-                                  icon: Icon(Icons.notifications_active),
-                                  color: Color(0xFF1ca5e5),
-                                  onPressed: () {
-                                    AnnouncementLogic.notifyClick(
-                                        user, announcements);
-                                  },
-                                )
-                              : IconButton(
-                                  icon: Icon(Icons.notifications_off),
-                                  color: Colors.grey,
-                                  onPressed: () {
-                                    AnnouncementLogic.notifyClick(
-                                        user, announcements);
-                                  },
-                                ),
+                          : Expanded(
+                              child: Container(),
+                            )
+                  // announcements.notifyUsers.contains(user.uid) == true
+                  //     ? IconButton(
+                  //         icon: Icon(Icons.notifications_active),
+                  //         color: Color(0xFF1ca5e5),
+                  //         onPressed: () {
+                  //           AnnouncementLogic.notifyClick(
+                  //               user, announcements);
+                  //         },
+                  //       )
+                  //     : IconButton(
+                  //         icon: Icon(Icons.notifications_off),
+                  //         color: Colors.grey,
+                  //         onPressed: () {
+                  //           AnnouncementLogic.notifyClick(
+                  //               user, announcements);
+                  //         },
+                  //       ),
                 ],
               ),
             ),
