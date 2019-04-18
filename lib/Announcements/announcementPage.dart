@@ -383,12 +383,12 @@ Widget _buildListItem(
     key: ValueKey(announcements.clsName),
     padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 2.0),
     child: Card(
-      margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+      margin: EdgeInsets.only(left: 5, right: 5, bottom: 10),
       elevation: 5.0,
       color: Colors.white,
       child: Container(
         width: announcements.clsName == 'Boys and Girls Club Niagara'
-            ? queryData.size.width - 80
+            ? queryData.size.width - 40
             : null,
         child: Column(
           children: <Widget>[

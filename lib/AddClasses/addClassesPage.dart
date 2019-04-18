@@ -3,12 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:validators/validators.dart';
 
-// LOGIC 
+// LOGIC
 import 'package:bagcndemo/AddClasses/addClassesLogic.dart';
 // MODELS
 import 'package:bagcndemo/Models/ClassesModel.dart';
-
-
 
 // Search Text
 String _search = '';
@@ -97,10 +95,8 @@ class _AddClassesPage extends State<AddClassesPage> {
 // BUILD QUERY STREAM
   Widget _buildBody(BuildContext context, FirebaseUser user) {
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance
-      .collection('class')
-      .orderBy('clsName')
-      .snapshots(),
+      stream:
+          Firestore.instance.collection('class').orderBy('clsName').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
         return _buildList(context, snapshot.data.documents, user);
@@ -148,24 +144,25 @@ class ClassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return
-    classes.clsName == 'Boys and Girls Club Niagara' ? 
-    Card(
-      elevation: 5.0,
-      child: ListTile(
-        title: Text(classes.clsName),
-      ),
-    ) :
-     Card(
-      elevation: 5.0,
-      child: ListTile(
-        title: Text(classes.clsName),
-        subtitle: Text('Course Code: ${classes.code}'),
-        trailing: classes.supervisors.contains(user.uid) == false
-            ? new OpenButton(classes: classes, userID: userID)
-            : new RemoveButton(classes: classes, userID: userID, user: user),
-      ),
-    );
+    return classes.clsName == 'Boys and Girls Club Niagara'
+        ? Card(
+            elevation: 5.0,
+            child: ListTile(
+              title: Text(classes.clsName),
+            ),
+          )
+        : Card(
+            elevation: 5.0,
+            child: ListTile(
+                title: Text(classes.clsName),
+                subtitle: Text('Course Code: ${classes.code}'),
+                trailing: classes.supervisors.contains(user.uid)
+                    ? new RemoveButton(
+                        classes: classes, userID: userID, user: user)
+                    : classes.supervisors.length < 1
+                        ? new OpenButton(classes: classes, userID: userID)
+                        : Text('')),
+          );
   }
 }
 
@@ -263,7 +260,8 @@ class OpenButton extends StatelessWidget {
               ),
               content: Container(
                 width: 300,
-                child: new OpenClassForm(formKey: _formKey, passcodeFocus: _passcodeFocus),
+                child: new OpenClassForm(
+                    formKey: _formKey, passcodeFocus: _passcodeFocus),
               ),
               actions: <Widget>[
                 FlatButton(
@@ -299,7 +297,9 @@ class OpenClassForm extends StatelessWidget {
     Key key,
     @required GlobalKey<FormState> formKey,
     @required FocusNode passcodeFocus,
-  }) : _formKey = formKey, _passcodeFocus = passcodeFocus, super(key: key);
+  })  : _formKey = formKey,
+        _passcodeFocus = passcodeFocus,
+        super(key: key);
 
   final GlobalKey<FormState> _formKey;
   final FocusNode _passcodeFocus;
@@ -340,8 +340,7 @@ class OpenClassForm extends StatelessWidget {
                 Icons.lock,
                 color: Color.fromRGBO(123, 193, 67, 1),
               ),
-              contentPadding:
-                  EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
+              contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20.0),
                 borderSide: BorderSide(
@@ -349,8 +348,8 @@ class OpenClassForm extends StatelessWidget {
                   width: 2,
                 ),
               ),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20.0)),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
             ),
           )
         ],
